@@ -69,7 +69,7 @@ postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMidd
     const findBlogWithID = await blogsRepositories.getBlogById(req.body.blogId);
     const findPostWithID = await postsRepositories.getPostById(req.params.id);
 
-    if(findBlogWithID || !findPostWithID)
+    if(findBlogWithID && findPostWithID)
     {
         await postsRepositories.updatePost(req.body, req.params.id);
         res.sendStatus(204);
