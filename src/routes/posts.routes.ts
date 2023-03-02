@@ -12,6 +12,7 @@ export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
 //get all posts
 postsRouter.get('/', async (req:Request, res: Response) =>
 {
+    console.log('allBlogs')
     const allPosts = await postsRepositories.allPosts();
 
     if(allPosts)
@@ -30,6 +31,7 @@ postsRouter.get('/', async (req:Request, res: Response) =>
 postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
     const foundBlog : blogsViewTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+    console.log('foundBlog: ' + foundBlog)
 
     if(foundBlog === null)
     {
@@ -63,8 +65,9 @@ postsRouter.get('/:id', async (req:Request, res: Response) =>
 //update post
 postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
+    console.log('req.params.id: '+ req.params.id);
     const findPostWithID = await blogsRepositories.getBlogById(req.params.id);
-
+    console.log('findPostWithID: '+ findPostWithID);
     if(findPostWithID)
     {
         await postsRepositories.updatePost(req.body, req.params.id);

@@ -14,6 +14,7 @@ export const blogsRepositories =
     //return all blogs
     async allBlogs() : Promise<blogsViewTypes[]>
     {
+
         return await blogsCollection.find({}, {projection: {_id: 0}}).toArray();
     },
 
