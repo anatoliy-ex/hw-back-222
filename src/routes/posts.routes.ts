@@ -33,7 +33,7 @@ postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddl
     const foundBlog : blogsViewTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
     console.log('foundBlog: ' + foundBlog)
 
-    if(foundBlog === null)
+    if(!foundBlog)
     {
         res.sendStatus(404);
     }
