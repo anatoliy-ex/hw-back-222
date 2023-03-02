@@ -65,10 +65,11 @@ postsRouter.get('/:id', async (req:Request, res: Response) =>
 //update post
 postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
-    console.log('req.params.id: '+ req.params.id);
-    const findPostWithID = await blogsRepositories.getBlogById(req.body.blogId);
-    console.log('findPostWithID: '+ findPostWithID);
-    if(findPostWithID)
+
+    const findBlogWithID = await blogsRepositories.getBlogById(req.body.blogId);
+    const findPostWithID = await postsRepositories.getPostById(req.params.id);
+
+    if(findBlogWithID || !findPostWithID)
     {
         await postsRepositories.updatePost(req.body, req.params.id);
         res.sendStatus(204);
