@@ -55,6 +55,7 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 //get blogs by ID
 blogsRouter.get('/:id', async(req:Request, res: Response) =>
 {
+    console.log('req.params.id: ' + req.params.id)
     const BlogWithId : blogsViewTypes | null = await blogsRepositories.getBlogById(req.params.id);
 
     if(BlogWithId)

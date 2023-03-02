@@ -32,9 +32,12 @@ export const blogsRepositories =
     },
 
     //get blog bu ID
-    async getBlogById(id: string) : Promise<blogsViewTypes | null>
+    async getBlogById(id: string)/*: Promise<blogsViewTypes | null>*/
     {
-        return await blogsCollection.findOne({id: id}, {projection: {_id: 0}});
+        console.log('id: '+ id)
+        const blog  = await blogsCollection.findOne({id: id}, {projection: {_id: 0}});
+        console.log('blog: '+ blog)
+        return blog;
     },
 
     //update blog by ID
