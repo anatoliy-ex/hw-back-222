@@ -15,7 +15,7 @@ const findBlogId : CustomValidator = async value =>
     }
 };
 
-const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -59,6 +59,3 @@ export const createPostValidator = [
     contentValidator,
     blogIdValidator
 ];
-
-const expressBasicAuth = require('express-basic-auth')
-export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});

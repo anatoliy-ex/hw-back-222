@@ -4,7 +4,7 @@ import {blogsViewTypes} from "../types/blogs.types";
 import {postsViewTypes} from "../types/posts.types";
 import {postsRepositories} from "../repositories/posts.repositories";
 import {blogsRepositories} from "../repositories/blogs.repositories";
-import {createPostValidator} from "../middlewares/middlewares.validators";
+import {createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
 
@@ -27,7 +27,7 @@ postsRouter.get('/', async (req:Request, res: Response) =>
 });
 
 //create new post
-postsRouter.post('/', adminStatusAuth, createPostValidator, async (req:Request, res: Response) =>
+postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
     const foundBlog : blogsViewTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
@@ -61,7 +61,7 @@ postsRouter.get('/:id', async (req:Request, res: Response) =>
 });
 
 //update post
-postsRouter.put('/:id',adminStatusAuth, createPostValidator, async (req:Request, res: Response) =>
+postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
     const isUpdated = await postsRepositories.updatePost(req.body, req.params.id);
 
@@ -78,7 +78,7 @@ postsRouter.put('/:id',adminStatusAuth, createPostValidator, async (req:Request,
 });
 
 //delete post by ID
-postsRouter.delete('/:id', adminStatusAuth, async (req:Request, res: Response) =>
+postsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
     const isDelete = await postsRepositories.deletePostsById(req.params.id);
 
