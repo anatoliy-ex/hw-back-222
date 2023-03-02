@@ -11,7 +11,7 @@ const findBlogId : CustomValidator = async value =>
 
     if(foundBlog === null)
     {
-        throw new Error('not blogId')
+        throw new Error('not blogId');
     }
 };
 
@@ -25,8 +25,9 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
                 field: e.param
             }
         })
-        res.status(400).json({errorsMessages: errorsOccurred})
-    } else
+        res.status(400).json({errorsMessages: errorsOccurred});
+    }
+    else
     {
         next();
     }
@@ -42,10 +43,10 @@ const websiteUrlValidator = body('websiteUrl')
     .isString();
 
 //for posts
-const titleValidator = body('title').trim().isLength({min: 1, max: 30}).isString();
-const shortDescriptionValidator = body('shortDescription').trim().isLength({min: 1, max: 100}).isString();
-const contentValidator = body('content').trim().isLength({min: 1, max: 1000}).isString();
-const blogIdValidator = body('blogId').trim().custom(findBlogId).isString();
+const titleValidator = body('title').isString().trim().notEmpty().isLength({min: 1, max: 30});
+const shortDescriptionValidator = body('shortDescription').isString().trim().notEmpty().isLength({min: 1, max: 100});
+const contentValidator = body('content').trim().notEmpty().isLength({min: 1, max: 1000});
+const blogIdValidator = body('blogId').trim().notEmpty().custom(findBlogId);
 
 export const createBlogValidator = [
     nameValidator,
