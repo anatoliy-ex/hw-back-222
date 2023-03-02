@@ -76,7 +76,7 @@ blogsRouter.put('/:id', adminStatusAuth, createBlogValidator, inputValidationMid
 
     if(isUpdated)
     {
-        res.status(204);
+        res.sendStatus(204);
         return;
     }
     else

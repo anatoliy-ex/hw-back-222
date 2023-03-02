@@ -63,10 +63,11 @@ postsRouter.get('/:id', async (req:Request, res: Response) =>
 //update post
 postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
-    const isUpdated = await postsRepositories.updatePost(req.body, req.params.id);
+    const findPostWithID = await blogsRepositories.getBlogById(req.params.id);
 
-    if(isUpdated)
+    if(findPostWithID)
     {
+        await postsRepositories.updatePost(req.body, req.params.id);
         res.status(204);
         return;
     }
