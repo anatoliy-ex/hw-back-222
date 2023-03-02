@@ -46,3 +46,19 @@ const titleValidator = body('title').trim().isLength({min: 1, max: 30}).isString
 const shortDescriptionValidator = body('shortDescription').trim().isLength({min: 1, max: 100}).isString();
 const contentValidator = body('content').trim().isLength({min: 1, max: 1000}).isString();
 const blogIdValidator = body('blogId').trim().custom(findBlogId).isString();
+
+export const createBlogValidator = [
+    nameValidator,
+    descriptionValidator,
+    websiteUrlValidator,
+];
+
+export const createPostValidator = [
+    titleValidator,
+    shortDescriptionValidator,
+    contentValidator,
+    blogIdValidator
+];
+
+const expressBasicAuth = require('express-basic-auth')
+export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
