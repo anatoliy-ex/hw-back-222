@@ -6,5 +6,4 @@ export type postsViewTypes = {
     blogId:	string,
     blogName: string,
     createdAt: string,
-    isMembership: false,
 };

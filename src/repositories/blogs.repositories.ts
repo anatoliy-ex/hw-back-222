@@ -29,6 +29,7 @@ export const blogsRepositories =
             description: blog.description,
             websiteUrl: blog.websiteUrl,
             createdAt: now.toISOString(),
+            isMembership: false,
         };
         await blogsCollection.insertOne({...newBlog});
         return newBlog;

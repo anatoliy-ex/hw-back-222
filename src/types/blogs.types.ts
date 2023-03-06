@@ -4,4 +4,5 @@ export type blogsViewTypes = {
     description: string,
     websiteUrl: string,
     createdAt: string,
+    isMembership: boolean,
 };

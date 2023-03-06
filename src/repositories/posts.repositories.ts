@@ -23,7 +23,6 @@ export const postsRepositories =
             blogId: post.blogId,
             blogName: blogName,
             createdAt: now.toISOString(),
-            isMembership: post.isMembership,
         };
         await postsCollection.insertOne({...newPost});
         return newPost;
