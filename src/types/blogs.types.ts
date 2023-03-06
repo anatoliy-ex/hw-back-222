@@ -3,4 +3,5 @@ export type blogsViewTypes = {
     name: string,
     description: string,
     websiteUrl: string,
+    createdAt: string,
 };

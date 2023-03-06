@@ -21,11 +21,14 @@ export const blogsRepositories =
     //create new blog
     async createNewBlog(blog: blogsViewTypes) : Promise<blogsViewTypes>
     {
+        const now = new Date();
+
         const newBlog = {
             id: `${Date.now()}`,
             name: blog.name,
             description: blog.description,
             websiteUrl: blog.websiteUrl,
+            createdAt: now.toISOString(),
         };
         await blogsCollection.insertOne({...newBlog});
         return newBlog;

@@ -5,4 +5,6 @@ export type postsViewTypes = {
     content: string,
     blogId:	string,
     blogName: string,
+    createdAt: string,
+    isMembership: false,
 };

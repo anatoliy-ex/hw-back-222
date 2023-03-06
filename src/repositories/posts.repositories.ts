@@ -12,6 +12,8 @@ export const postsRepositories =
     //create new post
     async createNewPost(post: postsViewTypes, blogName : string) : Promise<postsViewTypes>
     {
+        const now = new Date();
+
         const newPost  =
         {
             id: `${Date.now()}`,
@@ -20,6 +22,8 @@ export const postsRepositories =
             content: post.content,
             blogId: post.blogId,
             blogName: blogName,
+            createdAt: now.toISOString(),
+            isMembership: post.isMembership,
         };
         await postsCollection.insertOne({...newPost});
         return newPost;
