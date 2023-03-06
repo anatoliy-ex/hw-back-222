@@ -35,13 +35,22 @@ export const blogsRepositories =
         return newBlog;
     },
 
+    // get posts for specified blog
+    // async getPostsForVblog() : Promise<blogsViewTypes>
+    // {
+    //
+    // },
+    //
+    // //create new post for specific blog
+    // async createPostForSpecificBlog() : Promise<blogsViewTypes>
+    // {
+    //
+    // },
+
     //get blog bu ID
-    async getBlogById(id: string)/*: Promise<blogsViewTypes | null>*/
+    async getBlogById(id: string): Promise<blogsViewTypes | null>
     {
-        console.log('id: '+ id)
-        const blog  = await blogsCollection.findOne({id: id}, {projection: {_id: 0}});
-        console.log('blog: '+ blog)
-        return blog;
+        return await blogsCollection.findOne({id: id}, {projection: {_id: 0}});
     },
 
     //update blog by ID
