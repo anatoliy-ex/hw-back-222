@@ -31,7 +31,6 @@ postsRouter.get('/', async (req:Request, res: Response) =>
 postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
     const foundBlog : blogsViewTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
-    console.log('foundBlog: ' + foundBlog)
 
     if(!foundBlog)
     {

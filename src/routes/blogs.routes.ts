@@ -52,10 +52,59 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
     }
 });
 
+//get posts for specified blog
+blogsRouter.get(':id/posts', async (req: Request, res: Response) =>
+{
+    const foundBlog : blogsViewTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+
+
+    if(foundBlog)
+    {
+        const foundPostsForBlog : postsViewTypes[] | null = await blogsRepositories.getPostsForBlog(req.body.blogId);
+
+        const sortingCreatedAt = () =>
+        {
+            return [...foundPostsForBlog].sort((a: postsViewTypes, b:postsViewTypes) =>
+            {
+                if(a.createdAt < b.createdAt) return -1
+                if(a.createdAt > b.createdAt) return 1
+                return 0
+            });
+
+        }
+
+
+        res.status(200).send(foundPostsForBlog);
+        return;
+    }
+    else
+    {
+        res.sendStatus(404);
+        return;
+    }
+});
+
+//create new post for specific blog
+blogsRouter.post(':id/posts', async (req: Request, res: Response) =>
+{
+    const foundBlog : blogsViewTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+
+    if(foundBlog)
+    {
+        const newPostsForBlog : postsViewTypes = await blogsRepositories.createPostForSpecificBlog(req.body, req.params.blogId, req.body.blogName)
+        res.status(201).send(newPostsForBlog);
+        return;
+    }
+    else
+    {
+        res.sendStatus(404);
+        return;
+    }
+});
+
 //get blogs by ID
 blogsRouter.get('/:id', async(req:Request, res: Response) =>
 {
-    console.log('req.params.id: ' + req.params.id)
     const BlogWithId : blogsViewTypes | null = await blogsRepositories.getBlogById(req.params.id);
 
     if(BlogWithId)

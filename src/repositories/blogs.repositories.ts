@@ -1,5 +1,6 @@
 import {blogsCollection, postsCollection} from "../dataBase/db.posts.and.blogs";
 import {blogsViewTypes} from "../types/blogs.types";
+import {postsViewTypes} from "../types/posts.types";
 
 export const blogsRepositories =
 {
@@ -14,7 +15,6 @@ export const blogsRepositories =
     //return all blogs
     async allBlogs() : Promise<blogsViewTypes[]>
     {
-
         return await blogsCollection.find({}, {projection: {_id: 0}}).toArray();
     },
 
@@ -35,17 +35,30 @@ export const blogsRepositories =
         return newBlog;
     },
 
-    // get posts for specified blog
-    // async getPostsForVblog() : Promise<blogsViewTypes>
-    // {
-    //
-    // },
-    //
-    // //create new post for specific blog
-    // async createPostForSpecificBlog() : Promise<blogsViewTypes>
-    // {
-    //
-    // },
+    //get posts for specified blog
+    async getPostsForBlog(blogId : string): Promise<postsViewTypes[]>
+    {
+       return await postsCollection.find({id: blogId}, {projection: {_id: 0}}).toArray();
+    },
+
+    //create new post for specific blog
+    async createPostForSpecificBlog(post: postsViewTypes, blogId :string, blogName: string) : Promise<postsViewTypes>
+    {
+        const now = new Date();
+
+        const newPost  =
+            {
+                id: `${Date.now()}`,
+                title: post.title,
+                shortDescription: post.shortDescription,
+                content: post.content,
+                blogId: blogId,
+                blogName: blogName,
+                createdAt: now.toISOString(),
+            };
+        await postsCollection.insertOne({...newPost});
+        return newPost;
+    },
 
     //get blog bu ID
     async getBlogById(id: string): Promise<blogsViewTypes | null>
