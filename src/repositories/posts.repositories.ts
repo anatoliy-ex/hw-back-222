@@ -1,12 +1,31 @@
 import {postsCollection} from "../dataBase/db.posts.and.blogs";
 import {postsTypes} from "../types/posts.types";
+import {PaginationQueryType} from "../routes/blogs.routes";
+import {OutputType} from "../types/outputType";
 
 export const postsRepositories =
 {
     //return all posts
-    async allPosts() : Promise<postsTypes[]>
+    async allPosts(pagination: PaginationQueryType) : Promise<OutputType<postsTypes[]>>
     {
-        return await postsCollection.find({},{projection: {_id: 0}}).toArray();
+        const filter = {name: {$regex: pagination.searchNameTerm, caption: 'i'}};
+        const posts: postsTypes[] = await postsCollection
+            .find(filter, {projection: {_id: 0}})
+            .sort({[pagination.sortBy]: pagination.sortDirection})
+            .skip((pagination.pageNumber - 1) * pagination.pageSize)
+            .limit(pagination.pageSize)
+            .toArray();
+
+        const countOfPosts = await postsCollection.countDocuments(filter);
+        const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
+
+        return {
+          page: pagination.pageNumber,
+          pagesCount: pageCount === 0 ?  1 : pageCount,
+          pageSize: pagination.pageSize,
+          totalCount: countOfPosts,
+          items: posts
+        };
     },
 
     //create new post

@@ -5,6 +5,7 @@ import {postsTypes} from "../types/posts.types";
 import {postsRepositories} from "../repositories/posts.repositories";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
+import {getPaginationFromQuery} from "./blogs.routes";
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
 
@@ -12,19 +13,10 @@ export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
 //get all posts
 postsRouter.get('/', async (req:Request, res: Response) =>
 {
-    console.log('allBlogs')
-    const allPosts = await postsRepositories.allPosts();
+    const pagination = getPaginationFromQuery(req.query)
+    const allPosts = await postsRepositories.allPosts(pagination);
+    res.status(200).send(allPosts);
 
-    if(allPosts)
-    {
-        res.status(200).send(allPosts);
-        return;
-    }
-    else
-    {
-        res.sendStatus(404);
-        return;
-    }
 });
 
 //create new post

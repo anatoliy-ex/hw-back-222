@@ -1,11 +1,8 @@
 import {Request, Response, Router} from "express"
-
 export const blogsRouter = Router({});
 import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
-import {blogsCollection} from "../dataBase/db.posts.and.blogs";
 import {blogsRepositories} from "../repositories/blogs.repositories";
-import {postsRepositories} from "../repositories/posts.repositories";
 import {createBlogValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 
 export const expressBasicAuth = require('express-basic-auth');
@@ -21,7 +18,7 @@ export type PaginationQueryType = {
 
 //TODO: redix? "??"?
 
-const getPaginationFromQuery = (query: any): PaginationQueryType => {
+export const getPaginationFromQuery = (query: any): PaginationQueryType => {
 
     const pageNumber = parseInt(query.pageNumber, 10);
     const pageSize = parseInt(query.pageSize, 10);
@@ -45,9 +42,10 @@ blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
 
 //get all blogs
 blogsRouter.get('/', async (req: Request, res: Response) => {
+
     const pagination = getPaginationFromQuery(req.query);
-    const blogs = await blogsRepositories.allBlogs(pagination);
-    res.status(200).send(blogs);
+    const allBlogs = await blogsRepositories.allBlogs(pagination);
+    res.status(200).send(allBlogs);
 });
 
 //create new blogs
@@ -71,14 +69,6 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
     if (foundBlog) {
         const foundPostsForBlog: postsTypes[] | null = await blogsRepositories.getPostsForBlog(req.body.blogId);
 
-        const sortingCreatedAt = () => {
-            return [...foundPostsForBlog].sort((a: postsTypes, b: postsTypes) => {
-                if (a.createdAt < b.createdAt) return -1
-                if (a.createdAt > b.createdAt) return 1
-                return 0
-            });
-
-        }
 
 
         res.status(200).send(foundPostsForBlog);
