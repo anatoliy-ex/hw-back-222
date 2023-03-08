@@ -1,4 +1,4 @@
-export type postsViewTypes = {
+export type postsTypes = {
     id: string,
     title: string,
     shortDescription: string,

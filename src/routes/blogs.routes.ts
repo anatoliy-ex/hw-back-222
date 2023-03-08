@@ -1,73 +1,80 @@
 import {Request, Response, Router} from "express"
+
 export const blogsRouter = Router({});
-import {blogsViewTypes} from "../types/blogs.types";
-import {postsViewTypes} from "../types/posts.types";
+import {blogsTypes} from "../types/blogs.types";
+import {postsTypes} from "../types/posts.types";
 import {blogsCollection} from "../dataBase/db.posts.and.blogs";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {postsRepositories} from "../repositories/posts.repositories";
 import {createBlogValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
-export const expressBasicAuth = require('express-basic-auth');
-export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
 
+export const expressBasicAuth = require('express-basic-auth');
+export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
+
+export type PaginationQueryType = {
+    searchNameTerm: string,
+    sortBy: string,
+    sortDirection: 'asc' | 'desc',
+    pageNumber: number,
+    pageSize: number,
+}
+
+//TODO: redix? "??"?
+
+const getPaginationFromQuery = (query: any): PaginationQueryType => {
+
+    const pageNumber = parseInt(query.pageNumber, 10);
+    const pageSize = parseInt(query.pageSize, 10);
+    const sortDirection = query.sortDirection === 'asc' ? 'asc' : 'desc';
+
+    return {
+        searchNameTerm: query.searchNameTerm ?? '',
+        sortBy: query.sortBy ?? 'createdAt',
+        sortDirection,
+        pageNumber: isNaN(pageNumber) ? 1 : pageNumber,
+        pageSize: isNaN(pageSize) ? 10 : pageSize,
+    };
+}
 
 //delete all
-blogsRouter.delete('/all-data', async (req:Request, res: Response) =>
-{
-     await blogsRepositories.deleteAll();
-     res.sendStatus(204);
-     return;
+blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
+    await blogsRepositories.deleteAll();
+    res.sendStatus(204);
+    return;
 });
 
 //get all blogs
-blogsRouter.get('/', async(req:Request, res: Response) =>
-{
-    const allBlogs = await blogsRepositories.allBlogs()
-
-    if(allBlogs)
-    {
-        res.status(200).send(allBlogs);
-        return;
-    }
-    else
-    {
-        res.sendStatus(404);
-        return;
-    }
+blogsRouter.get('/', async (req: Request, res: Response) => {
+    const pagination = getPaginationFromQuery(req.query);
+    const blogs = await blogsRepositories.allBlogs(pagination);
+    res.status(200).send(blogs);
 });
 
 //create new blogs
-blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async(req:Request, res: Response) =>
-{
-    const newBlog : blogsViewTypes = await blogsRepositories.createNewBlog(req.body)
+blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
+    const newBlog: blogsTypes = await blogsRepositories.createNewBlog(req.body)
 
-    if(newBlog)
-    {
+    if (newBlog) {
         res.status(201).send(newBlog);
         return;
-    }
-    else
-    {
+    } else {
         res.sendStatus(404);
         return;
     }
 });
 
 //get posts for specified blog
-blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) =>
-{
-    const foundBlog : blogsViewTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
+    const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
 
-    if(foundBlog)
-    {
-        const foundPostsForBlog : postsViewTypes[] | null = await blogsRepositories.getPostsForBlog(req.body.blogId);
+    if (foundBlog) {
+        const foundPostsForBlog: postsTypes[] | null = await blogsRepositories.getPostsForBlog(req.body.blogId);
 
-        const sortingCreatedAt = () =>
-        {
-            return [...foundPostsForBlog].sort((a: postsViewTypes, b:postsViewTypes) =>
-            {
-                if(a.createdAt < b.createdAt) return -1
-                if(a.createdAt > b.createdAt) return 1
+        const sortingCreatedAt = () => {
+            return [...foundPostsForBlog].sort((a: postsTypes, b: postsTypes) => {
+                if (a.createdAt < b.createdAt) return -1
+                if (a.createdAt > b.createdAt) return 1
                 return 0
             });
 
@@ -76,78 +83,60 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) =>
 
         res.status(200).send(foundPostsForBlog);
         return;
-    }
-    else
-    {
+    } else {
         res.sendStatus(404);
         return;
     }
 });
 
 //create new post for specific blog
-blogsRouter.post('/:blogId/posts', async (req: Request, res: Response) =>
-{
-    const foundBlog : blogsViewTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+blogsRouter.post('/:blogId/posts', async (req: Request, res: Response) => {
+    const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
-    if(foundBlog)
-    {
-        const newPostsForBlog : postsViewTypes = await blogsRepositories.createPostForSpecificBlog(req.body, req.params.blogId, req.body.blogName)
+    if (foundBlog) {
+        const newPostsForBlog: postsTypes = await blogsRepositories.createPostForSpecificBlog(req.body, req.params.blogId, req.body.blogName)
         res.status(201).send(newPostsForBlog);
         return;
-    }
-    else
-    {
+    } else {
         res.sendStatus(404);
         return;
     }
 });
 
 //get blogs by ID
-blogsRouter.get('/:id', async(req:Request, res: Response) =>
-{
-    const BlogWithId : blogsViewTypes | null = await blogsRepositories.getBlogById(req.params.id);
+blogsRouter.get('/:id', async (req: Request, res: Response) => {
+    const BlogWithId: blogsTypes | null = await blogsRepositories.getBlogById(req.params.id);
 
-    if(BlogWithId)
-    {
+    if (BlogWithId) {
         res.status(200).send(BlogWithId);
         return;
-    }
-    else
-    {
+    } else {
         res.sendStatus(404);
         return;
     }
 });
 
 //update blogs by ID
-blogsRouter.put('/:id', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async(req:Request, res: Response) =>
-{
+blogsRouter.put('/:id', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
     const isUpdated = await blogsRepositories.updateBlog(req.body, req.params.id);
 
-    if(isUpdated)
-    {
+    if (isUpdated) {
         res.sendStatus(204);
         return;
-    }
-    else
-    {
+    } else {
         res.sendStatus(404);
         return;
     }
 });
 
 //delete blog by id
-blogsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, async(req:Request, res: Response) =>
-{
+blogsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, async (req: Request, res: Response) => {
     const isDelete = await blogsRepositories.deleteBlogById(req.params.id);
 
-    if(isDelete)
-    {
+    if (isDelete) {
         res.sendStatus(204);
         return;
-    }
-    else
-    {
+    } else {
         res.sendStatus(404);
         return;
     }

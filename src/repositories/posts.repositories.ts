@@ -1,16 +1,16 @@
 import {postsCollection} from "../dataBase/db.posts.and.blogs";
-import {postsViewTypes} from "../types/posts.types";
+import {postsTypes} from "../types/posts.types";
 
 export const postsRepositories =
 {
     //return all posts
-    async allPosts() : Promise<postsViewTypes[]>
+    async allPosts() : Promise<postsTypes[]>
     {
         return await postsCollection.find({},{projection: {_id: 0}}).toArray();
     },
 
     //create new post
-    async createNewPost(post: postsViewTypes, blogName : string) : Promise<postsViewTypes>
+    async createNewPost(post: postsTypes, blogName : string) : Promise<postsTypes>
     {
         const now = new Date();
 
@@ -29,14 +29,14 @@ export const postsRepositories =
     },
 
     //get post by ID
-    async getPostById(id: string) : Promise<postsViewTypes | null>
+    async getPostById(id: string) : Promise<postsTypes | null>
     {
         return await postsCollection.findOne({id: id}, {projection :{_id: 0}});
 
     },
 
     //update post by ID
-    async updatePost(newPost : postsViewTypes, id: string) : Promise<boolean>
+    async updatePost(newPost : postsTypes, id: string) : Promise<boolean>
     {
         const result = await postsCollection.updateOne({id: id}, {
             $set:

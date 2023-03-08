@@ -1,4 +1,4 @@
-export type blogsViewTypes = {
+export type blogsTypes = {
     id: string,
     name: string,
     description: string,
@@ -6,3 +6,4 @@ export type blogsViewTypes = {
     createdAt: string,
     isMembership: boolean,
 };
+

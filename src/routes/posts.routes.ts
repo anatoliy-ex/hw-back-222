@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express"
 export const postsRouter = Router({});
-import {blogsViewTypes} from "../types/blogs.types";
-import {postsViewTypes} from "../types/posts.types";
+import {blogsTypes} from "../types/blogs.types";
+import {postsTypes} from "../types/posts.types";
 import {postsRepositories} from "../repositories/posts.repositories";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
@@ -30,7 +30,7 @@ postsRouter.get('/', async (req:Request, res: Response) =>
 //create new post
 postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
-    const foundBlog : blogsViewTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+    const foundBlog : blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
     if(!foundBlog)
     {
@@ -39,7 +39,7 @@ postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddl
     else
     {
         const blogName = foundBlog.name;
-        const newPost : postsViewTypes = await postsRepositories.createNewPost(req.body, blogName);
+        const newPost : postsTypes = await postsRepositories.createNewPost(req.body, blogName);
         res.status(201).send(newPost);
     }
 });
@@ -47,7 +47,7 @@ postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddl
 //get post by ID
 postsRouter.get('/:id', async (req:Request, res: Response) =>
 {
-    const PostWithId : postsViewTypes | null = await postsRepositories.getPostById(req.params.id)
+    const PostWithId : postsTypes | null = await postsRepositories.getPostById(req.params.id)
 
     if(PostWithId)
     {
