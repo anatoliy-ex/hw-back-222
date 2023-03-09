@@ -45,6 +45,7 @@ blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
     return;
 });
 
+
 //get all blogs
 blogsRouter.get('/', async (req: Request, res: Response) => {
 
