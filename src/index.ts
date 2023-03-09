@@ -13,6 +13,7 @@ app.use('/posts', postsRouter)
 app.use('/blogs', blogsRouter)
 app.use("/testing", blogsRouter)
 
+
 const startApp = async () =>
 {
     await runDb()
