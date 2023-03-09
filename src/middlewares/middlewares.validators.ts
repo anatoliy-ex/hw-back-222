@@ -7,7 +7,6 @@ import {NextFunction} from "express";
 
 const findBlogId : CustomValidator = async value =>
 {
-    console.log(value)
     const foundBlog = await blogsRepositories.getBlogById(value)
 
     if(foundBlog === null)
