@@ -94,10 +94,6 @@ blogsRouter.post('/:blogId/posts', adminStatusAuth , createPostValidator, inputV
     const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.params.blogId);
 
     if (foundBlog) {
-        if(req.body === undefined)
-        {
-            res.sendStatus(401)
-        }
         const newPostsForBlog: postsTypes = await blogsRepositories.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
         res.status(201).send(newPostsForBlog);
         return;
