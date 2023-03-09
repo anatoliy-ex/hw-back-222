@@ -102,6 +102,7 @@ export const blogsRepositories =
             return newPost;
         },
 
+
         //get blog bu ID
         async getBlogById(id: string): Promise<blogsTypes | null> {
             return await blogsCollection.findOne({id: id}, {projection: {_id: 0}});
