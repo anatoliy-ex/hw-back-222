@@ -4,6 +4,7 @@ import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {createBlogValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
+import {PaginationQueryTypeForPosts} from "./posts.routes";
 
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
@@ -15,8 +16,6 @@ export type PaginationQueryTypeForBlogs = {
     pageNumber: number,
     pageSize: number,
 }
-
-//TODO: redix? "??"?
 
 export const getPaginationFromQueryBlogs = (query: any): PaginationQueryTypeForBlogs => {
 
@@ -31,7 +30,8 @@ export const getPaginationFromQueryBlogs = (query: any): PaginationQueryTypeForB
         pageNumber: isNaN(pageNumber) ? 1 : pageNumber,
         pageSize: isNaN(pageSize) ? 10 : pageSize,
     };
-}
+};
+
 
 //delete all
 blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
@@ -63,20 +63,11 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 
 //get posts for specified blog
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
-    const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
+    const pagination = getPaginationFromQueryBlogs(req.query);
+    const allBlogs = await blogsRepositories.getPostsForBlog(pagination, req.path);
 
-    if (foundBlog) {
-        const foundPostsForBlog: postsTypes[] | null = await blogsRepositories.getPostsForBlog(req.body.blogId);
-
-
-
-        res.status(200).send(foundPostsForBlog);
-        return;
-    } else {
-        res.sendStatus(404);
-        return;
-    }
+    res.status(200).send(allBlogs);
 });
 
 //create new post for specific blog

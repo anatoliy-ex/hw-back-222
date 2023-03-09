@@ -3,6 +3,7 @@ import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
 import {OutputType} from "../types/outputType";
 import {PaginationQueryTypeForBlogs} from "../routes/blogs.routes";
+import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
 
 export const blogsRepositories =
     {
@@ -55,8 +56,27 @@ export const blogsRepositories =
         },
 
         //get posts for specified blog
-        async getPostsForBlog(blogId: string): Promise<postsTypes[]> {
-            return await postsCollection.find({id: blogId}, {projection: {_id: 0}}).toArray();
+        async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<OutputType<postsTypes[]>> {
+
+            const filter = {name: {$regex: blogId, $options: 'i'}};
+
+            const posts: postsTypes[] = await postsCollection
+                .find( filter, {projection: {_id: 0}})
+                .sort({[pagination.sortBy]: pagination.sortDirection})
+                .skip((pagination.pageNumber - 1) * pagination.pageSize)
+                .limit(pagination.pageSize)
+                .toArray();
+
+            const countOfPosts = await postsCollection.countDocuments(filter);
+            const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
+
+            return {
+                page: pagination.pageNumber,
+                pagesCount: pageCount === 0 ? 1 : pageCount,
+                pageSize: pagination.pageSize,
+                totalCount: countOfPosts,
+                items: posts
+            }
         },
 
         //create new post for specific blog
