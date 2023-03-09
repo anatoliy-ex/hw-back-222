@@ -91,11 +91,11 @@ blogsRouter.post('/:blogId/posts', adminStatusAuth ,createPostValidator, inputVa
     const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
     if (foundBlog) {
-        const newPostsForBlog: postsTypes = await blogsRepositories.createPostForSpecificBlog(req.body, req.params.blogId, req.body.blogName)
+        const newPostsForBlog: postsTypes = await blogsRepositories.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
         res.status(201).send(newPostsForBlog);
         return;
     } else {
-        res.sendStatus(404);
+        res.sendStatus(400);
         return;
     }
 });
