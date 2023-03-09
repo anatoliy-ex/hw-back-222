@@ -5,7 +5,7 @@ import {blogsRouter} from "./routes/blogs.routes";
 
 const express = require('express')
 const app = express()
-const port = process.env.PORT || 444
+const port = process.env.PORT || 1234
 const parserMiddleware = bodyParser({})
 
 app.use(parserMiddleware)

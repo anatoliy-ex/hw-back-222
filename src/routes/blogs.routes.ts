@@ -3,13 +3,8 @@ export const blogsRouter = Router({});
 import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
-import {
-    createBlogValidator,
-    createPostValidator,
-    inputValidationMiddleware
-} from "../middlewares/middlewares.validators";
+import {createBlogValidator, createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 import {getPaginationFromQueryPosts, PaginationQueryTypeForPosts} from "./posts.routes";
-import {log} from "util";
 
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
@@ -56,7 +51,7 @@ blogsRouter.get('/', async (req: Request, res: Response) => {
 
 
 //create new blogs
-blogsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
+blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
     const newBlog: blogsTypes = await blogsRepositories.createNewBlog(req.body)
 
     if (newBlog) {
