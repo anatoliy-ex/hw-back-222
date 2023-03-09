@@ -4,7 +4,7 @@ import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {createBlogValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
-import {PaginationQueryTypeForPosts} from "./posts.routes";
+import {getPaginationFromQueryPosts, PaginationQueryTypeForPosts} from "./posts.routes";
 
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
@@ -64,13 +64,8 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 //get posts for specified blog
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 
-    const pagination = getPaginationFromQueryBlogs(req.query);
+    const pagination = getPaginationFromQueryPosts(req.query);
     const postsForBlog = await blogsRepositories.getPostsForBlog(pagination, req.params.blogId);
-
-    if(postsForBlog.items.length === 0)
-    {
-        res.sendStatus(404);
-    }
 
     res.status(200).send(postsForBlog);
 });
