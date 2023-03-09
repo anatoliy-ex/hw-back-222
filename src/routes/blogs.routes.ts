@@ -68,7 +68,7 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 });
 
 //get posts for specified blog
-blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
+blogsRouter.get('/:blogId/posts',adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.params.blogId);
 
