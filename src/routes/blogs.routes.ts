@@ -68,7 +68,7 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 });
 
 //get posts for specified blog
-blogsRouter.get('/:blogId/posts',adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
+blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 
     const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.params.blogId);
 
@@ -89,7 +89,7 @@ blogsRouter.get('/:blogId/posts',adminStatusAuth, createPostValidator, inputVali
 
 
 //create new post for specific blog
-blogsRouter.post('/:blogId/posts', async (req: Request, res: Response) => {
+blogsRouter.post('/:blogId/posts', adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.params.blogId);
 
