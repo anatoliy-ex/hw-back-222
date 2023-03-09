@@ -88,7 +88,7 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 //create new post for specific blog
 blogsRouter.post('/:blogId/posts', adminStatusAuth ,createPostValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
-    const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+    const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.params.blogId);
 
     if (foundBlog) {
         const newPostsForBlog: postsTypes = await blogsRepositories.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
