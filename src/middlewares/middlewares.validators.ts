@@ -9,10 +9,14 @@ const findBlogId : CustomValidator = async value =>
 {
     const foundBlog = await blogsRepositories.getBlogById(value)
 
+    console.log(foundBlog)
+
     if(foundBlog === null)
     {
         throw new Error('not blogId');
     }
+
+
 };
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {

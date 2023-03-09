@@ -9,6 +9,7 @@ import {
     inputValidationMiddleware
 } from "../middlewares/middlewares.validators";
 import {getPaginationFromQueryPosts, PaginationQueryTypeForPosts} from "./posts.routes";
+import {log} from "util";
 
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
@@ -55,7 +56,7 @@ blogsRouter.get('/', async (req: Request, res: Response) => {
 //create new blogs
 blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
     const newBlog: blogsTypes = await blogsRepositories.createNewBlog(req.body)
-
+    console.log(newBlog, 'new blog from blogs router')
     if (newBlog) {
         res.status(201).send(newBlog);
         return;
