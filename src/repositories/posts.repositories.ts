@@ -8,7 +8,8 @@ export const postsRepositories =
     //return all posts
     async allPosts(pagination: PaginationQueryType) : Promise<OutputType<postsTypes[]>>
     {
-        const filter = {name: {$regex: pagination.searchNameTerm, caption: 'i'}};
+        const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}};
+
         const posts: postsTypes[] = await postsCollection
             .find(filter, {projection: {_id: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
