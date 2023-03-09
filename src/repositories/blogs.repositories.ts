@@ -58,7 +58,7 @@ export const blogsRepositories =
         //get posts for specified blog
         async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<OutputType<postsTypes[]>> {
 
-            const filter = {id: blogId};
+            const filter = {name: {$regex: blogId}};
 
             const posts: postsTypes[] = await postsCollection
                 .find( filter, {projection: {_id: 0}})
