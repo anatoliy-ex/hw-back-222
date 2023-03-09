@@ -64,14 +64,26 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 //get posts for specified blog
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 
-    const pagination = getPaginationFromQueryPosts(req.query);
-    const postsForBlog = await blogsRepositories.getPostsForBlog(pagination, req.params.blogId);
+    const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.params.blogId);
 
-    res.status(200).send(postsForBlog);
+    if(foundBlog)
+    {
+        const pagination = getPaginationFromQueryPosts(req.query);
+        const postsForBlog = await blogsRepositories.getPostsForBlog(pagination, foundBlog.id);
+
+        res.status(200).send(postsForBlog);
+        return;
+    }
+    else
+    {
+        res.sendStatus(404);
+        return;
+    }
 });
 
 //create new post for specific blog
 blogsRouter.post('/:blogId/posts', adminStatusAuth ,async (req: Request, res: Response) => {
+
     const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
     if (foundBlog) {
@@ -86,6 +98,7 @@ blogsRouter.post('/:blogId/posts', adminStatusAuth ,async (req: Request, res: Re
 
 //get blogs by ID
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
+
     const BlogWithId: blogsTypes | null = await blogsRepositories.getBlogById(req.params.id);
 
     if (BlogWithId) {

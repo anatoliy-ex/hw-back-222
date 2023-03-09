@@ -58,12 +58,13 @@ export const blogsRepositories =
         //get posts for specified blog
         async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<OutputType<postsTypes[]>> {
 
-            const filter = {blogId};
-            console.log(filter)
+            //const filter = {name: {$regex:blogId}};
+            const filter = {blogId: {$regex: blogId}}
+            console.log(blogId)
 
 
             const posts: postsTypes[] = await postsCollection
-                .find( filter, {projection: {_id: 0}})
+                .find(filter, {projection: {_id: 0}})
                 .sort({[pagination.sortBy]: pagination.sortDirection})
                 .skip((pagination.pageNumber - 1) * pagination.pageSize)
                 .limit(pagination.pageSize)
