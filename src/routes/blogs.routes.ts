@@ -57,7 +57,7 @@ blogsRouter.get('/', async (req: Request, res: Response) => {
 //create new blogs
 blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
     const newBlog: blogsTypes = await blogsRepositories.createNewBlog(req.body)
-    console.log(newBlog, 'new blog from blogs router')
+
     if (newBlog) {
         res.status(201).send(newBlog);
         return;
@@ -94,6 +94,10 @@ blogsRouter.post('/:blogId/posts', adminStatusAuth , createPostValidator, inputV
     const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.params.blogId);
 
     if (foundBlog) {
+        if(req.body === undefined)
+        {
+            res.sendStatus(401)
+        }
         const newPostsForBlog: postsTypes = await blogsRepositories.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
         res.status(201).send(newPostsForBlog);
         return;
