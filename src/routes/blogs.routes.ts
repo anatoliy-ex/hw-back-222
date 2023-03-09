@@ -71,7 +71,7 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 });
 
 //create new post for specific blog
-blogsRouter.post('/:blogId/posts', async (req: Request, res: Response) => {
+blogsRouter.post('/:blogId/posts', adminStatusAuth ,async (req: Request, res: Response) => {
     const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
     if (foundBlog) {
