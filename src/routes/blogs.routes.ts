@@ -95,7 +95,7 @@ blogsRouter.post('/:blogId/posts', adminStatusAuth ,createPostValidator, inputVa
         res.status(201).send(newPostsForBlog);
         return;
     } else {
-        res.sendStatus(400);
+        res.sendStatus(404);
         return;
     }
 });
