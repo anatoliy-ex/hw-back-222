@@ -2,7 +2,7 @@ import {blogsCollection, postsCollection} from "../dataBase/db.posts.and.blogs";
 import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
 import {OutputType} from "../types/outputType";
-import {PaginationQueryType} from "../routes/blogs.routes";
+import {PaginationQueryTypeForBlogs} from "../routes/blogs.routes";
 
 export const blogsRepositories =
     {
@@ -15,7 +15,7 @@ export const blogsRepositories =
 
         //return all blogs
         // async allBlogs(blogs: outputTypes) : Promise<blogsTypes[]>
-        async allBlogs(pagination: PaginationQueryType): Promise<OutputType<blogsTypes[]>> {
+        async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<blogsTypes[]>> {
 
             const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}}
 

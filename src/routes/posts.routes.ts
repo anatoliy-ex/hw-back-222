@@ -5,15 +5,36 @@ import {postsTypes} from "../types/posts.types";
 import {postsRepositories} from "../repositories/posts.repositories";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
-import {getPaginationFromQuery} from "./blogs.routes";
+import {getPaginationFromQueryBlogs, PaginationQueryTypeForBlogs} from "./blogs.routes";
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
+
+export type PaginationQueryTypeForPosts = {
+    sortBy: string,
+    sortDirection: 'asc' | 'desc',
+    pageNumber: number,
+    pageSize: number,
+}
+
+export const getPaginationFromQueryPosts = (query: any): PaginationQueryTypeForPosts => {
+
+    const pageNumber = parseInt(query.pageNumber, 10);
+    const pageSize = parseInt(query.pageSize, 10);
+    const sortDirection = query.sortDirection === 'asc' ? 'asc' : 'desc';
+
+    return {
+        sortBy: query.sortBy ?? 'createdAt',
+        sortDirection,
+        pageNumber: isNaN(pageNumber) ? 1 : pageNumber,
+        pageSize: isNaN(pageSize) ? 10 : pageSize,
+    };
+}
 
 
 //get all posts
 postsRouter.get('/', async (req:Request, res: Response) =>
 {
-    const pagination = getPaginationFromQuery(req.query)
+    const pagination = getPaginationFromQueryPosts(req.query)
     const allPosts = await postsRepositories.allPosts(pagination);
     res.status(200).send(allPosts);
 

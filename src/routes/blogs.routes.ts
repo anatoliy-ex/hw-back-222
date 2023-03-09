@@ -8,7 +8,7 @@ import {createBlogValidator, inputValidationMiddleware} from "../middlewares/mid
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
 
-export type PaginationQueryType = {
+export type PaginationQueryTypeForBlogs = {
     searchNameTerm: string,
     sortBy: string,
     sortDirection: 'asc' | 'desc',
@@ -18,7 +18,7 @@ export type PaginationQueryType = {
 
 //TODO: redix? "??"?
 
-export const getPaginationFromQuery = (query: any): PaginationQueryType => {
+export const getPaginationFromQueryBlogs = (query: any): PaginationQueryTypeForBlogs => {
 
     const pageNumber = parseInt(query.pageNumber, 10);
     const pageSize = parseInt(query.pageSize, 10);
@@ -43,7 +43,7 @@ blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
 //get all blogs
 blogsRouter.get('/', async (req: Request, res: Response) => {
 
-    const pagination = getPaginationFromQuery(req.query);
+    const pagination = getPaginationFromQueryBlogs(req.query);
     const allBlogs = await blogsRepositories.allBlogs(pagination);
     res.status(200).send(allBlogs);
 });

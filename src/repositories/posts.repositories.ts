@@ -1,23 +1,24 @@
 import {postsCollection} from "../dataBase/db.posts.and.blogs";
 import {postsTypes} from "../types/posts.types";
-import {PaginationQueryType} from "../routes/blogs.routes";
+import {PaginationQueryTypeForBlogs} from "../routes/blogs.routes";
 import {OutputType} from "../types/outputType";
+import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
 
 export const postsRepositories =
 {
     //return all posts
-    async allPosts(pagination: PaginationQueryType) : Promise<OutputType<postsTypes[]>>
+    async allPosts(pagination: PaginationQueryTypeForPosts) : Promise<OutputType<postsTypes[]>>
     {
-        const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}};
+        //const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}};
 
         const posts: postsTypes[] = await postsCollection
-            .find(filter, {projection: {_id: 0}})
+            .find({}, {projection: {_id: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
             .toArray();
 
-        const countOfPosts = await postsCollection.countDocuments(filter);
+        const countOfPosts = await postsCollection.countDocuments();
         const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
 
         return {
