@@ -3,7 +3,11 @@ export const blogsRouter = Router({});
 import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
-import {createBlogValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
+import {
+    createBlogValidator,
+    createPostValidator,
+    inputValidationMiddleware
+} from "../middlewares/middlewares.validators";
 import {getPaginationFromQueryPosts, PaginationQueryTypeForPosts} from "./posts.routes";
 
 export const expressBasicAuth = require('express-basic-auth');
@@ -82,7 +86,7 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 });
 
 //create new post for specific blog
-blogsRouter.post('/:blogId/posts', adminStatusAuth ,async (req: Request, res: Response) => {
+blogsRouter.post('/:blogId/posts', adminStatusAuth ,createPostValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
