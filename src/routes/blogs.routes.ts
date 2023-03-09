@@ -65,9 +65,14 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 
     const pagination = getPaginationFromQueryBlogs(req.query);
-    const allBlogs = await blogsRepositories.getPostsForBlog(pagination, req.params.blogId);
+    const postsForBlog = await blogsRepositories.getPostsForBlog(pagination, req.params.blogId);
 
-    res.status(200).send(allBlogs);
+    if(postsForBlog.items.length === 0)
+    {
+        res.sendStatus(404);
+    }
+
+    res.status(200).send(postsForBlog);
 });
 
 //create new post for specific blog
