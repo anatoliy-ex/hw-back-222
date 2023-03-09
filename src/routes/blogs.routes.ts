@@ -65,7 +65,7 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 
     const pagination = getPaginationFromQueryBlogs(req.query);
-    const allBlogs = await blogsRepositories.getPostsForBlog(pagination, req.path);
+    const allBlogs = await blogsRepositories.getPostsForBlog(pagination, req.params.blogId);
 
     res.status(200).send(allBlogs);
 });
