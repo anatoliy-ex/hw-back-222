@@ -55,7 +55,7 @@ blogsRouter.get('/', async (req: Request, res: Response) => {
 
 
 //create new blogs
-blogsRouter.post('/', adminStatusAuth, async (req: Request, res: Response) => {
+blogsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
     const newBlog: blogsTypes = await blogsRepositories.createNewBlog(req.body)
 
     if (newBlog) {
