@@ -58,6 +58,12 @@ export const createBlogValidator = [
     websiteUrlValidator,
 ];
 
+export const createPostForBlog = [
+    titleValidator,
+    shortDescriptionValidator,
+    contentValidator,
+]
+
 export const createPostValidator = [
     titleValidator,
     shortDescriptionValidator,
