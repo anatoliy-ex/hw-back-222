@@ -18,7 +18,8 @@ export const blogsService =
         //return all blogs+++
         async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<blogsTypes[]>> {
 
-            const blogs = await blogsRepositories.allBlogs(pagination)
+            const blogs = await blogsRepositories.allBlogs(pagination);
+            const countBlogs = pagination.searchNameTerm
 
 
             // const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}}
@@ -30,7 +31,7 @@ export const blogsService =
             //     .limit(pagination.pageSize)
             //     .toArray();
 
-            const countOfBlogs = await blogsCollection.countDocuments(blogs);
+            const countOfBlogs = await blogsCollection.countDocuments({countBlogs});
             const pagesCount =  Math.ceil(countOfBlogs/pagination.pageSize);
 
             return {
