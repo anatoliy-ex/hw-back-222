@@ -18,29 +18,7 @@ export const blogsService =
         //return all blogs+++
         async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<blogsTypes[]>> {
 
-            const blogs = await blogsRepositories.allBlogs(pagination);
-            const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}}
-
-
-            // const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}}
-            //
-            // const blogs: blogsTypes[] = await blogsCollection
-            //     .find(filter, {projection: {_id: 0}})
-            //     .sort({[pagination.sortBy]: pagination.sortDirection})
-            //     .skip((pagination.pageNumber - 1) * pagination.pageSize)
-            //     .limit(pagination.pageSize)
-            //     .toArray();
-
-            const countOfBlogs = await blogsCollection.countDocuments(filter);
-            const pagesCount =  Math.ceil(countOfBlogs/pagination.pageSize);
-
-            return {
-                page: pagination.pageNumber,
-                pagesCount: pagesCount === 0 ? 1 : pagesCount,
-                pageSize: pagination.pageSize,
-                totalCount: countOfBlogs,
-                items: blogs
-            };
+            return blogsRepositories.allBlogs(pagination);
         },
 
         //create new blog+++
@@ -65,19 +43,8 @@ export const blogsService =
         async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<OutputType<postsTypes[]>> {
 
             const posts = await blogsRepositories.getPostsForBlog(pagination, blogId)
-            // const filter = {blogId: {$regex: blogId}}
-            //
-            //
-            // const posts: postsTypes[] = await postsCollection
-            //     .find(filter, {projection: {_id: 0}})
-            //     .sort({[pagination.sortBy]: pagination.sortDirection})
-            //     .skip((pagination.pageNumber - 1) * pagination.pageSize)
-            //     .limit(pagination.pageSize)
-            //     .toArray();
-
             const countOfPosts = await postsCollection.countDocuments({blogId});
             const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
-
 
             return {
                 page: pagination.pageNumber,

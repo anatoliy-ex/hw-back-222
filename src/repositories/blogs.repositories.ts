@@ -3,6 +3,7 @@ import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
 import {PaginationQueryTypeForBlogs} from "../routes/blogs.routes";
 import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
+import {OutputType} from "../types/outputType";
 
 export const blogsRepositories =
     {
@@ -15,27 +16,27 @@ export const blogsRepositories =
 
         //return all blogs
         // async allBlogs(blogs: outputTypes) : Promise<blogsTypes[]>
-        async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<blogsTypes[]> {
+        async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<blogsTypes[]>> {
 
             const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}}
 
-            return await blogsCollection
+            const blogs : blogsTypes[] =  await blogsCollection
                 .find(filter, {projection: {_id: 0}})
                 .sort({[pagination.sortBy]: pagination.sortDirection})
                 .skip((pagination.pageNumber - 1) * pagination.pageSize)
                 .limit(pagination.pageSize)
                 .toArray()
 
-            // const countOfBlogs = await blogsCollection.countDocuments(filter);
-            // const pagesCount =  Math.ceil(countOfBlogs/pagination.pageSize);
-            //
-            // return {
-            //     page: pagination.pageNumber,
-            //     pagesCount: pagesCount === 0 ? 1 : pagesCount,
-            //     pageSize: pagination.pageSize,
-            //     totalCount: countOfBlogs,
-            //     items: blogs
-            // };
+            const countOfBlogs = await blogsCollection.countDocuments(filter);
+            const pagesCount =  Math.ceil(countOfBlogs/pagination.pageSize);
+
+            return {
+                page: pagination.pageNumber,
+                pagesCount: pagesCount === 0 ? 1 : pagesCount,
+                pageSize: pagination.pageSize,
+                totalCount: countOfBlogs,
+                items: blogs
+            };
         },
 
         //create new blog
@@ -56,17 +57,6 @@ export const blogsRepositories =
                 .skip((pagination.pageNumber - 1) * pagination.pageSize)
                 .limit(pagination.pageSize)
                 .toArray()
-            // const countOfPosts = await postsCollection.countDocuments(filter);
-            // const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
-            //
-            //
-            // return {
-            //     page: pagination.pageNumber,
-            //     pagesCount: pageCount === 0 ? 1 : pageCount,
-            //     pageSize: pagination.pageSize,
-            //     totalCount: countOfPosts,
-            //     items: posts
-            // }
         },
 
         //create new post for specific blog
