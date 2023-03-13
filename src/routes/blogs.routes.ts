@@ -2,14 +2,13 @@ import {Request, Response, Router} from "express"
 export const blogsRouter = Router({});
 import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
-import {blogsRepositories} from "../repositories/blogs.repositories";
 import {
     createBlogValidator,
     createPostForBlog,
-    createPostValidator,
     inputValidationMiddleware
 } from "../middlewares/middlewares.validators";
-import {getPaginationFromQueryPosts, PaginationQueryTypeForPosts} from "./posts.routes";
+import {getPaginationFromQueryPosts} from "./posts.routes";
+import {blogsService} from "../domain/blogs.service";
 
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
@@ -40,7 +39,7 @@ export const getPaginationFromQueryBlogs = (query: any): PaginationQueryTypeForB
 
 //delete all
 blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
-    await blogsRepositories.deleteAll();
+    await blogsService.deleteAll();
     res.sendStatus(204);
     return;
 });
@@ -50,14 +49,14 @@ blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
 blogsRouter.get('/', async (req: Request, res: Response) => {
 
     const pagination = getPaginationFromQueryBlogs(req.query);
-    const allBlogs = await blogsRepositories.allBlogs(pagination);
+    const allBlogs = await blogsService.allBlogs(pagination);
     res.status(200).send(allBlogs);
 });
 
 
 //create new blogs
 blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
-    const newBlog: blogsTypes = await blogsRepositories.createNewBlog(req.body)
+    const newBlog: blogsTypes = await blogsService.createNewBlog(req.body)
 
     if (newBlog) {
         res.status(201).send(newBlog);
@@ -71,12 +70,12 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 //get posts for specified blog
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 
-    const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.params.blogId);
+    const foundBlog: blogsTypes | null = await blogsService.getBlogById(req.params.blogId);
 
     if(foundBlog)
     {
         const pagination = getPaginationFromQueryPosts(req.query);
-        const postsForBlog = await blogsRepositories.getPostsForBlog(pagination, foundBlog.id);
+        const postsForBlog = await blogsService.getPostsForBlog(pagination, foundBlog.id);
 
         res.status(200).send(postsForBlog);
         return;
@@ -91,10 +90,10 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 //create new post for specific blog
 blogsRouter.post('/:blogId/posts', adminStatusAuth , createPostForBlog, inputValidationMiddleware, async (req: Request, res: Response) => {
 
-    const foundBlog: blogsTypes | null = await blogsRepositories.getBlogById(req.params.blogId);
+    const foundBlog: blogsTypes | null = await blogsService.getBlogById(req.params.blogId);
 
     if (foundBlog) {
-        const newPostsForBlog: postsTypes = await blogsRepositories.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
+        const newPostsForBlog: postsTypes = await blogsService.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
         res.status(201).send(newPostsForBlog);
         return;
     } else {
@@ -106,7 +105,7 @@ blogsRouter.post('/:blogId/posts', adminStatusAuth , createPostForBlog, inputVal
 //get blogs by ID
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
-    const BlogWithId: blogsTypes | null = await blogsRepositories.getBlogById(req.params.id);
+    const BlogWithId: blogsTypes | null = await blogsService.getBlogById(req.params.id);
 
     if (BlogWithId) {
         res.status(200).send(BlogWithId);
@@ -119,7 +118,7 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
 //update blogs by ID
 blogsRouter.put('/:id', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
-    const isUpdated = await blogsRepositories.updateBlog(req.body, req.params.id);
+    const isUpdated = await blogsService.updateBlog(req.body, req.params.id);
 
     if (isUpdated) {
         res.sendStatus(204);
@@ -132,7 +131,7 @@ blogsRouter.put('/:id', adminStatusAuth, createBlogValidator, inputValidationMid
 
 //delete blog by id
 blogsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, async (req: Request, res: Response) => {
-    const isDelete = await blogsRepositories.deleteBlogById(req.params.id);
+    const isDelete = await blogsService.deleteBlogById(req.params.id);
 
     if (isDelete) {
         res.sendStatus(204);
