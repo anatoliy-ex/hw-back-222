@@ -74,7 +74,7 @@ export const blogsService =
             //     .limit(pagination.pageSize)
             //     .toArray();
 
-            const countOfPosts = await postsCollection.countDocuments(posts);
+            const countOfPosts = await postsCollection.countDocuments({blogId});
             const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
 
 
