@@ -35,8 +35,7 @@ export const blogsService =
                 isMembership: false,
             };
 
-            let createdBlog;
-            return  createdBlog = await blogsRepositories.createNewBlog(newBlog);
+           return  blogsRepositories.createNewBlog(newBlog);
         },
 
         //get posts for specified blog

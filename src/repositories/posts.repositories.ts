@@ -1,6 +1,5 @@
 import {postsCollection} from "../dataBase/db.posts.and.blogs";
 import {postsTypes} from "../types/posts.types";
-import {PaginationQueryTypeForBlogs} from "../routes/blogs.routes";
 import {OutputType} from "../types/outputType";
 import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
 
@@ -9,8 +8,6 @@ export const postsRepositories =
     //return all posts
     async allPosts(pagination: PaginationQueryTypeForPosts) : Promise<OutputType<postsTypes[]>>
     {
-        //const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}};
-
         const posts: postsTypes[] = await postsCollection
             .find({}, {projection: {_id: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
@@ -31,20 +28,9 @@ export const postsRepositories =
     },
 
     //create new post
-    async createNewPost(post: postsTypes, blogName : string) : Promise<postsTypes>
+    async createNewPost(newPost: postsTypes) : Promise<postsTypes>
     {
-        const now = new Date();
 
-        const newPost  =
-        {
-            id: `${Date.now()}`,
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName: blogName,
-            createdAt: now.toISOString(),
-        };
         await postsCollection.insertOne({...newPost});
         return newPost;
     },

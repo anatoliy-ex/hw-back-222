@@ -2,10 +2,9 @@ import {Request, Response, Router} from "express"
 export const postsRouter = Router({});
 import {blogsTypes} from "../types/blogs.types";
 import {postsTypes} from "../types/posts.types";
-import {postsRepositories} from "../repositories/posts.repositories";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
-import {getPaginationFromQueryBlogs, PaginationQueryTypeForBlogs} from "./blogs.routes";
+import {postsService} from "../domain/posts.service";
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
 
@@ -30,14 +29,12 @@ export const getPaginationFromQueryPosts = (query: any): PaginationQueryTypeForP
     };
 }
 
-
 //get all posts
 postsRouter.get('/', async (req:Request, res: Response) =>
 {
     const pagination = getPaginationFromQueryPosts(req.query)
-    const allPosts = await postsRepositories.allPosts(pagination);
+    const allPosts = await postsService.allPosts(pagination);
     res.status(200).send(allPosts);
-
 });
 
 //create new post
@@ -52,7 +49,7 @@ postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddl
     else
     {
         const blogName = foundBlog.name;
-        const newPost : postsTypes = await postsRepositories.createNewPost(req.body, blogName);
+        const newPost : postsTypes = await postsService.createNewPost(req.body, blogName);
         res.status(201).send(newPost);
     }
 });
@@ -60,7 +57,7 @@ postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddl
 //get post by ID
 postsRouter.get('/:id', async (req:Request, res: Response) =>
 {
-    const PostWithId : postsTypes | null = await postsRepositories.getPostById(req.params.id)
+    const PostWithId : postsTypes | null = await postsService.getPostById(req.params.id)
 
     if(PostWithId)
     {
@@ -79,11 +76,11 @@ postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMidd
 {
 
     const findBlogWithID = await blogsRepositories.getBlogById(req.body.blogId);
-    const findPostWithID = await postsRepositories.getPostById(req.params.id);
+    const findPostWithID = await postsService.getPostById(req.params.id);
 
     if(findBlogWithID && findPostWithID)
     {
-        await postsRepositories.updatePost(req.body, req.params.id);
+        await postsService.updatePost(req.body, req.params.id);
         res.sendStatus(204);
         return;
     }
@@ -97,7 +94,7 @@ postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMidd
 //delete post by ID
 postsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
-    const isDelete = await postsRepositories.deletePostsById(req.params.id);
+    const isDelete = await postsService.deletePostsById(req.params.id);
 
     if(isDelete)
     {
