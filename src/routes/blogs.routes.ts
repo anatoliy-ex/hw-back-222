@@ -1,19 +1,15 @@
 import {Request, Response, Router} from "express"
 export const blogsRouter = Router({});
-import {blogsTypes} from "../types/blogs.types";
-import {postsTypes} from "../types/posts.types";
-import {
-    createBlogValidator,
-    createPostForBlog,
-    inputValidationMiddleware
-} from "../middlewares/middlewares.validators";
+import {BlogsTypes} from "../types/blogsTypes";
+import {PostsTypes} from "../types/postsTypes";
+import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 import {getPaginationFromQueryPosts} from "./posts.routes";
 import {blogsService} from "../domain/blogs.service";
 
 export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
 
-export type PaginationQueryTypeForBlogs = {
+ export type PaginationQueryTypeForBlogs = {
     searchNameTerm: string,
     sortBy: string,
     sortDirection: 'asc' | 'desc',
@@ -56,7 +52,8 @@ blogsRouter.get('/', async (req: Request, res: Response) => {
 
 //create new blogs
 blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
-    const newBlog: blogsTypes = await blogsService.createNewBlog(req.body)
+
+    const newBlog: BlogsTypes = await blogsService.createNewBlog(req.body)
 
     if (newBlog) {
         res.status(201).send(newBlog);
@@ -70,7 +67,7 @@ blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddl
 //get posts for specified blog
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 
-    const foundBlog: blogsTypes | null = await blogsService.getBlogById(req.params.blogId);
+    const foundBlog: BlogsTypes | null = await blogsService.getBlogById(req.params.blogId);
 
     if(foundBlog)
     {
@@ -90,10 +87,10 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 //create new post for specific blog
 blogsRouter.post('/:blogId/posts', adminStatusAuth , createPostForBlog, inputValidationMiddleware, async (req: Request, res: Response) => {
 
-    const foundBlog: blogsTypes | null = await blogsService.getBlogById(req.params.blogId);
+    const foundBlog: BlogsTypes | null = await blogsService.getBlogById(req.params.blogId);
 
     if (foundBlog) {
-        const newPostsForBlog: postsTypes = await blogsService.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
+        const newPostsForBlog: PostsTypes = await blogsService.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
         res.status(201).send(newPostsForBlog);
         return;
     } else {
@@ -105,7 +102,7 @@ blogsRouter.post('/:blogId/posts', adminStatusAuth , createPostForBlog, inputVal
 //get blogs by ID
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
-    const BlogWithId: blogsTypes | null = await blogsService.getBlogById(req.params.id);
+    const BlogWithId: BlogsTypes | null = await blogsService.getBlogById(req.params.id);
 
     if (BlogWithId) {
         res.status(200).send(BlogWithId);

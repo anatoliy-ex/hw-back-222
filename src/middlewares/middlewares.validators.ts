@@ -52,6 +52,12 @@ const shortDescriptionValidator = body('shortDescription').isString().trim().not
 const contentValidator = body('content').trim().notEmpty().isLength({min: 1, max: 1000});
 const blogIdValidator = body('blogId').trim().notEmpty().custom(findBlogId);
 
+//for users
+const loginValidator = body('login').trim().isLength({min: 3, max: 10}).matches(/^[a-zA-Z0-9_-]*$/).isString();
+const passwordValidator = body('password').trim().isLength({min: 6, max: 20}).isString();
+const emailValidator = body('email').trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString();
+
+
 export const createBlogValidator = [
     nameValidator,
     descriptionValidator,
@@ -62,11 +68,17 @@ export const createPostForBlog = [
     titleValidator,
     shortDescriptionValidator,
     contentValidator,
-]
+];
 
 export const createPostValidator = [
     titleValidator,
     shortDescriptionValidator,
     contentValidator,
     blogIdValidator
+];
+
+export const createUsersValidator =[
+    loginValidator,
+    passwordValidator,
+    emailValidator
 ];

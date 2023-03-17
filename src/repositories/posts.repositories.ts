@@ -1,14 +1,14 @@
 import {postsCollection} from "../dataBase/db.posts.and.blogs";
-import {postsTypes} from "../types/posts.types";
+import {PostsTypes} from "../types/postsTypes";
 import {OutputType} from "../types/outputType";
 import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
 
 export const postsRepositories =
 {
     //return all posts
-    async allPosts(pagination: PaginationQueryTypeForPosts) : Promise<OutputType<postsTypes[]>>
+    async allPosts(pagination: PaginationQueryTypeForPosts) : Promise<OutputType<PostsTypes[]>>
     {
-        const posts: postsTypes[] = await postsCollection
+        const posts: PostsTypes[] = await postsCollection
             .find({}, {projection: {_id: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
@@ -28,7 +28,7 @@ export const postsRepositories =
     },
 
     //create new post
-    async createNewPost(newPost: postsTypes) : Promise<postsTypes>
+    async createNewPost(newPost: PostsTypes) : Promise<PostsTypes>
     {
 
         await postsCollection.insertOne({...newPost});
@@ -36,14 +36,14 @@ export const postsRepositories =
     },
 
     //get post by ID
-    async getPostById(id: string) : Promise<postsTypes | null>
+    async getPostById(id: string) : Promise<PostsTypes | null>
     {
         return await postsCollection.findOne({id: id}, {projection :{_id: 0}});
 
     },
 
     //update post by ID
-    async updatePost(newPost : postsTypes, id: string) : Promise<boolean>
+    async updatePost(newPost : PostsTypes, id: string) : Promise<boolean>
     {
         const result = await postsCollection.updateOne({id: id}, {
             $set:

@@ -1,6 +1,6 @@
 import {blogsCollection, postsCollection} from "../dataBase/db.posts.and.blogs";
-import {blogsTypes} from "../types/blogs.types";
-import {postsTypes} from "../types/posts.types";
+import {BlogsTypes} from "../types/blogsTypes";
+import {PostsTypes} from "../types/postsTypes";
 import {PaginationQueryTypeForBlogs} from "../routes/blogs.routes";
 import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
 import {OutputType} from "../types/outputType";
@@ -15,12 +15,11 @@ export const blogsRepositories =
         },
 
         //return all blogs
-        // async allBlogs(blogs: outputTypes) : Promise<blogsTypes[]>
-        async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<blogsTypes[]>> {
+        async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<BlogsTypes[]>> {
 
             const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}}
 
-            const blogs : blogsTypes[] =  await blogsCollection
+            const blogs : BlogsTypes[] =  await blogsCollection
                 .find(filter, {projection: {_id: 0}})
                 .sort({[pagination.sortBy]: pagination.sortDirection})
                 .skip((pagination.pageNumber - 1) * pagination.pageSize)
@@ -40,14 +39,14 @@ export const blogsRepositories =
         },
 
         //create new blog
-        async createNewBlog(newBlog: blogsTypes): Promise<blogsTypes> {
+        async createNewBlog(newBlog: BlogsTypes): Promise<BlogsTypes> {
 
             await blogsCollection.insertOne({...newBlog});
             return newBlog;
         },
 
         //get posts for specified blog
-        async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<postsTypes[]> {
+        async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<PostsTypes[]> {
 
             const filter = {blogId: {$regex: blogId}}
 
@@ -60,7 +59,7 @@ export const blogsRepositories =
         },
 
         //create new post for specific blog
-        async createPostForSpecificBlog(newPost: postsTypes): Promise<postsTypes> {
+        async createPostForSpecificBlog(newPost: PostsTypes): Promise<PostsTypes> {
 
             await postsCollection.insertOne({...newPost});
             return newPost;
@@ -68,12 +67,12 @@ export const blogsRepositories =
 
 
         //get blog bu ID
-        async getBlogById(id: string): Promise<blogsTypes | null> {
+        async getBlogById(id: string): Promise<BlogsTypes | null> {
             return await blogsCollection.findOne({id: id}, {projection: {_id: 0}});
         },
 
         //update blog by ID
-        async updateBlog(newBlog: blogsTypes, id: string): Promise<boolean> {
+        async updateBlog(newBlog: BlogsTypes, id: string): Promise<boolean> {
             const result = await blogsCollection.updateOne({id: id}, {
                 $set:
                     {

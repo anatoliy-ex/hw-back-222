@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express"
 export const postsRouter = Router({});
-import {blogsTypes} from "../types/blogs.types";
-import {postsTypes} from "../types/posts.types";
+import {BlogsTypes} from "../types/blogsTypes";
+import {PostsTypes} from "../types/postsTypes";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 import {postsService} from "../domain/posts.service";
@@ -40,7 +40,7 @@ postsRouter.get('/', async (req:Request, res: Response) =>
 //create new post
 postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
 {
-    const foundBlog : blogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+    const foundBlog : BlogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
 
     if(!foundBlog)
     {
@@ -49,7 +49,7 @@ postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddl
     else
     {
         const blogName = foundBlog.name;
-        const newPost : postsTypes = await postsService.createNewPost(req.body, blogName);
+        const newPost : PostsTypes = await postsService.createNewPost(req.body, blogName);
         res.status(201).send(newPost);
     }
 });
@@ -57,7 +57,7 @@ postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddl
 //get post by ID
 postsRouter.get('/:id', async (req:Request, res: Response) =>
 {
-    const PostWithId : postsTypes | null = await postsService.getPostById(req.params.id)
+    const PostWithId : PostsTypes | null = await postsService.getPostById(req.params.id)
 
     if(PostWithId)
     {

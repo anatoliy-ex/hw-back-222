@@ -1,6 +1,6 @@
 import {blogsCollection, postsCollection} from "../dataBase/db.posts.and.blogs";
-import {blogsTypes} from "../types/blogs.types";
-import {postsTypes} from "../types/posts.types";
+import {BlogsTypes} from "../types/blogsTypes";
+import {PostsTypes} from "../types/postsTypes";
 import {OutputType} from "../types/outputType";
 import {PaginationQueryTypeForBlogs} from "../routes/blogs.routes";
 import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
@@ -16,13 +16,13 @@ export const blogsService =
         },
 
         //return all blogs+++
-        async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<blogsTypes[]>> {
+        async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<BlogsTypes[]>> {
 
             return blogsRepositories.allBlogs(pagination);
         },
 
         //create new blog+++
-        async createNewBlog(blog: blogsTypes): Promise<blogsTypes> {
+        async createNewBlog(blog: BlogsTypes): Promise<BlogsTypes> {
 
             const now = new Date();
 
@@ -39,7 +39,7 @@ export const blogsService =
         },
 
         //get posts for specified blog
-        async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<OutputType<postsTypes[]>> {
+        async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<OutputType<PostsTypes[]>> {
 
             const posts = await blogsRepositories.getPostsForBlog(pagination, blogId)
             const countOfPosts = await postsCollection.countDocuments({blogId});
@@ -55,7 +55,7 @@ export const blogsService =
         },
 
         //create new post for specific blog+++
-        async createPostForSpecificBlog(post: postsTypes, blogId: string, blogName: string): Promise<postsTypes> {
+        async createPostForSpecificBlog(post: PostsTypes, blogId: string, blogName: string): Promise<PostsTypes> {
             const now = new Date();
 
             const newPost =
@@ -75,13 +75,13 @@ export const blogsService =
 
 
         //get blog bu ID+++
-        async getBlogById(id: string): Promise<blogsTypes | null> {
+        async getBlogById(id: string): Promise<BlogsTypes | null> {
 
             return await blogsRepositories.getBlogById(id);
         },
 
         //update blog by ID+++
-        async updateBlog(newBlog: blogsTypes, id: string): Promise<boolean> {
+        async updateBlog(newBlog: BlogsTypes, id: string): Promise<boolean> {
 
             return await blogsRepositories.updateBlog(newBlog, id);
         },
