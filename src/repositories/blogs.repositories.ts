@@ -1,9 +1,10 @@
-import {blogsCollection, postsCollection} from "../dataBase/db.posts.and.blogs";
+import {blogsCollection, postsCollection, usersCollection} from "../dataBase/db.posts.and.blogs";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {PaginationQueryTypeForBlogs} from "../routes/blogs.routes";
 import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
 import {OutputType} from "../types/output.type";
+import {usersRepositories} from "./users.repositories";
 
 export const blogsRepositories =
     {
@@ -11,6 +12,7 @@ export const blogsRepositories =
         async deleteAll(): Promise<[]> {
             await postsCollection.deleteMany({});
             await blogsCollection.deleteMany({});
+            await usersCollection.deleteMany({});
             return [];
         },
 
