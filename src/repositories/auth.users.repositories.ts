@@ -14,7 +14,7 @@ export const authUsersRepositories = {
            ]
        };
 
-        const user: any = await usersCollection.find(filter,{projection: {_id: 0}})
+       const user: any = await usersCollection.find(filter)
 
        if(user)
        {

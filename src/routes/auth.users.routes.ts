@@ -15,6 +15,5 @@ authUsersRoutes.post('/', async (req: Request, res: Response) =>{
     {
         res.sendStatus(401)
         return;
-
     }
 });
