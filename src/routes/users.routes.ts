@@ -35,7 +35,7 @@ usersRouter.get('/', async (req: Request, res: Response)=>
 {
     const paginationUsers = getPaginationFromQueryUsers(req.query);
     const allUsers = await usersRepositories.allUsers(paginationUsers);
-    res.sendStatus(200).send(allUsers)
+    res.status(200).send(allUsers);
 
 });
 
