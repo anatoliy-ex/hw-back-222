@@ -1,6 +1,6 @@
 import {postsCollection} from "../dataBase/db.posts.and.blogs";
-import {PostsTypes} from "../types/postsTypes";
-import {OutputType} from "../types/outputType";
+import {PostsTypes} from "../types/posts.types";
+import {OutputType} from "../types/output.type";
 import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
 
 export const postsRepositories =

@@ -1,6 +1,6 @@
 import {Request, Response, Router} from "express"
 import {usersRepositories} from "../repositories/users.repositories";
-import {createUsersValidator} from "../middlewares/middlewares.validators";
+import {createUsersValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 export const usersRouter = Router({});
 
 export const expressBasicAuth = require('express-basic-auth');
@@ -40,7 +40,7 @@ usersRouter.get('/', async (req: Request, res: Response)=>
 });
 
 //post user
-usersRouter.post('/', adminStatusAuth, createUsersValidator, async (req: Request, res: Response)=>
+usersRouter.post('/', adminStatusAuth, createUsersValidator, inputValidationMiddleware, async (req: Request, res: Response)=>
 {
     const newUser = await usersRepositories.createNewUser(req.body)
 

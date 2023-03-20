@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express"
 export const postsRouter = Router({});
-import {BlogsTypes} from "../types/blogsTypes";
-import {PostsTypes} from "../types/postsTypes";
+import {BlogsTypes} from "../types/blogs.types";
+import {PostsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 import {postsService} from "../domain/posts.service";

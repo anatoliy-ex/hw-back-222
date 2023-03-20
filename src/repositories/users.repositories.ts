@@ -1,8 +1,8 @@
-import {OutputType} from "../types/outputType";
-import {UsersTypes} from "../types/users.types";
+import {OutputType} from "../types/output.type";
+import {OutputUserType, UsersTypes} from "../types/users.types";
 import {blogsCollection, usersCollection} from "../dataBase/db.posts.and.blogs";
 import {PaginationQueryTypeForUsers} from "../routes/users.routes";
-import {BlogsTypes} from "../types/blogsTypes";
+import * as bcrypt from "bcrypt";
 
 export const usersRepositories = {
 
@@ -35,8 +35,11 @@ export const usersRepositories = {
     },
 
     //create user
-    async createNewUser(user: UsersTypes): Promise<UsersTypes>
+    async createNewUser(user: OutputUserType): Promise<UsersTypes>
     {
+        const passwordSalt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(user.password, passwordSalt)
+
         const now = new Date();
 
         const newUser = {

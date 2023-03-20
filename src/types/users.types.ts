@@ -4,3 +4,8 @@ export type UsersTypes ={
     email: string,
     createdAt: string,
 };
+export type OutputUserType ={
+    login: string,
+    password: string,
+    email: string
+};

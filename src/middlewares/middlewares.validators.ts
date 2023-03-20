@@ -1,4 +1,3 @@
-import express from 'express';
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {CustomValidator} from "express-validator";
 import { Response, Request } from "express";
