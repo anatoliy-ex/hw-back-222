@@ -21,10 +21,8 @@ export const authUsersRepositories = {
            const passwordSalt = await bcrypt.genSalt(10);
            const passwordHash = await bcrypt.hash(authUser.password, passwordSalt);
            const filter = {hash: {$regex: passwordHash, $options: 'i'}}
-           if(filter)
-           {
-               return true;
-           }
+           return !!filter;
+
        }
        else
        {

@@ -14,6 +14,7 @@ export const usersRepositories = {
                 {email: {$regex: paginationUsers.searchEmailTerm, $options: 'i'}}
             ]
         };
+        console.log(filter)
 
         const users: UsersTypes[] = await usersCollection
             .find(filter, {projection: {_id: 0, hash: 0}})
