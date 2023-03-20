@@ -1,4 +1,4 @@
-import {runDb} from "./dataBase/db.posts.and.blogs";
+import {runDb, usersCollection} from "./dataBase/db.posts.and.blogs";
 import {postsRouter} from "./routes/posts.routes";
 import {blogsRouter} from "./routes/blogs.routes";
 import {usersRouter} from "./routes/users.routes";
@@ -20,7 +20,6 @@ app.use('/auth/login', loginUsersRoutes)
 const startApp = async () =>
 {
     await runDb();
-
     app.listen(port, () =>
     {
         console.log(`Example app listening on port ${port}`);

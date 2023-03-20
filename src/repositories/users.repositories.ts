@@ -33,7 +33,6 @@ export const usersRepositories = {
             totalCount: countOfUsers,
             items: users
         };
-
     },
 
     //create user
