@@ -14,7 +14,6 @@ export const usersRepositories = {
                 {email: {$regex: paginationUsers.searchEmailTerm, $options: 'i'}}
             ]
         };
-        console.log(filter)
 
         const users: UsersTypes[] = await usersCollection
             .find(filter, {projection: {_id: 0, hash: 0}})
@@ -26,12 +25,13 @@ export const usersRepositories = {
 
         const countOfUsers = await usersCollection.countDocuments(filter);
         const pagesCount = Math.ceil(countOfUsers / paginationUsers.pageSize);
+        console.log(countOfUsers)
 
         return {
             page: paginationUsers.pageNumber,
             pagesCount: pagesCount === 0 ? 1 : pagesCount,
             pageSize: paginationUsers.pageSize,
-            totalCount: countOfUsers,
+            totalCount: countOfUsers - 1,
             items: users
         };
     },

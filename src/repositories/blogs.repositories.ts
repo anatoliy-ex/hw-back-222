@@ -35,7 +35,7 @@ export const blogsRepositories =
                 page: pagination.pageNumber,
                 pagesCount: pagesCount === 0 ? 1 : pagesCount,
                 pageSize: pagination.pageSize,
-                totalCount: (countOfBlogs - 1),
+                totalCount: countOfBlogs,
                 items: blogs
             };
         },
