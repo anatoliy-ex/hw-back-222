@@ -15,9 +15,7 @@ export async function runDb()
 {
     try
     {
-        db.dropDatabase(blogsCollection)
-        db.dropDatabase(postsCollection)
-        db.dropDatabase(usersCollection)
+
 
         await client.connect();
         await client.db("blogs").command({ping: 1});

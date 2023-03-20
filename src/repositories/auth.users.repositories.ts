@@ -14,6 +14,7 @@ export const authUsersRepositories = {
        };
 
        const user = await usersCollection.findOne(filter)
+       console.log(user)
 
        if(user)
        {
