@@ -46,7 +46,7 @@ usersRouter.post('/', adminStatusAuth, createUsersValidator, inputValidationMidd
 
     if(newUser)
     {
-        res.sendStatus(201).send(newUser)
+        res.status(201).send(newUser)
         return;
     }
     else
