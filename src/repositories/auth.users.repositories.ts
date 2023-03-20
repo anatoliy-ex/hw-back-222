@@ -22,8 +22,6 @@ export const authUsersRepositories = {
            console.log(user.hash)
            console.log(passwordHash)
            return user.hash === passwordHash;
-
-
        }
        else
        {
