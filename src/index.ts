@@ -2,7 +2,7 @@ import {runDb, usersCollection} from "./dataBase/db.posts.and.blogs";
 import {postsRouter} from "./routes/posts.routes";
 import {blogsRouter} from "./routes/blogs.routes";
 import {usersRouter} from "./routes/users.routes";
-import {loginUsersRoutes} from "./routes/login.users.routes";
+import {authUsersRoutes} from "./routes/auth.users.routes";
 
 const express = require('express');
 const app = express();
@@ -14,7 +14,7 @@ app.use('/posts', postsRouter);
 app.use('/blogs', blogsRouter);
 app.use('/testing', blogsRouter);
 app.use('/users', usersRouter);
-app.use('/auth/login', loginUsersRoutes)
+app.use('/auth/login', authUsersRoutes)
 
 
 const startApp = async () =>

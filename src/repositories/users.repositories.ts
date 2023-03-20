@@ -1,5 +1,5 @@
 import {OutputType} from "../types/output.type";
-import {InputUserType, UserDBType, UserViewType} from "../types/userDBType";
+import {InputUserType, UsersTypes, UserViewType} from "../types/users.types";
 import {usersCollection} from "../dataBase/db.posts.and.blogs";
 import {PaginationQueryTypeForUsers} from "../routes/users.routes";
 import * as bcrypt from "bcrypt";
@@ -7,15 +7,15 @@ import * as bcrypt from "bcrypt";
 export const usersRepositories = {
 
     //return all users
-    async allUsers(paginationUsers: PaginationQueryTypeForUsers): Promise<OutputType<UserDBType[]>> {
+    async allUsers(paginationUsers: PaginationQueryTypeForUsers): Promise<OutputType<UsersTypes[]>> {
         const filter = {
             $or: [
-                {login: {$regex: paginationUsers.searchEmailTerm, $options: 'i'}},
-                {email: {$regex: paginationUsers.searchLoginTerm, $options: 'i'}}
+                {login: {$regex: paginationUsers.searchLoginTerm, $options: 'i'}},
+                {email: {$regex: paginationUsers.searchEmailTerm, $options: 'i'}}
             ]
         };
 
-        const users: UserDBType[] = await usersCollection
+        const users: UsersTypes[] = await usersCollection
             .find(filter, {projection: {_id: 0, hash: 0}})
             .sort({[paginationUsers.sortBy]: paginationUsers.sortDirection})
             .skip((paginationUsers.pageNumber - 1) * paginationUsers.pageSize)
@@ -42,7 +42,7 @@ export const usersRepositories = {
 
         const now = new Date();
 
-        const newUser: UserDBType = {
+        const newUser: UsersTypes = {
             id: `${Date.now()}`,
             login: user.login,
             email: user.email,
@@ -56,7 +56,6 @@ export const usersRepositories = {
             login: newUser.login,
             createdAt: newUser.createdAt,
         }
-
     },
 
     //delete user bu ID

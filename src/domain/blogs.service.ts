@@ -69,8 +69,7 @@ export const blogsService =
                     createdAt: now.toISOString(),
                 };
 
-            let createdPostsForBlog;
-            return  createdPostsForBlog = await blogsRepositories.createPostForSpecificBlog(newPost);
+            return blogsRepositories.createPostForSpecificBlog(newPost);
         },
 
 

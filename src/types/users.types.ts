@@ -1,4 +1,4 @@
-export type UserDBType ={
+export type UsersTypes ={
     id: string,
     login: string,
     hash: string,

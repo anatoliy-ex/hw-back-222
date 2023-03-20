@@ -1,7 +1,7 @@
 import {MongoClient} from "mongodb";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
-import {UserDBType} from "../types/userDBType";
+import {UsersTypes} from "../types/users.types";
 
 const mongoUri = process.env.mongoURL || "mongodb+srv://flex:Wm6Jo7Gnuy4SCn7l@cluster0.b1gxtc6.mongodb.net/hw2-api-beck?retryWrites=true&w=majority";
 export const client = new MongoClient(mongoUri)
@@ -9,7 +9,7 @@ export const client = new MongoClient(mongoUri)
 export const db = client.db ("it-incubator-blog");
 export const blogsCollection = db.collection<BlogsTypes>("blogs");
 export const postsCollection = db.collection<PostsTypes>("posts");
-export const usersCollection = db.collection<UserDBType>("users")
+export const usersCollection = db.collection<UsersTypes>("users")
 
 export async function runDb()
 {
