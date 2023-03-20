@@ -1,4 +1,3 @@
-import bodyParser from "body-parser";
 import {runDb} from "./dataBase/db.posts.and.blogs";
 import {postsRouter} from "./routes/posts.routes";
 import {blogsRouter} from "./routes/blogs.routes";
@@ -8,7 +7,7 @@ import {loginUsersRoutes} from "./routes/login.users.routes";
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 1234;
-const parserMiddleware = bodyParser({});
+const parserMiddleware = express.json()
 
 app.use(parserMiddleware);
 app.use('/posts', postsRouter);

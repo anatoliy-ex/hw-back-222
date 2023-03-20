@@ -1,5 +1,5 @@
 import {OutputType} from "../types/output.type";
-import {OutputUserType, UsersTypes} from "../types/users.types";
+import {InputUserType, UserDBType, UserViewType} from "../types/userDBType";
 import {blogsCollection, usersCollection} from "../dataBase/db.posts.and.blogs";
 import {PaginationQueryTypeForUsers} from "../routes/users.routes";
 import * as bcrypt from "bcrypt";
@@ -7,15 +7,15 @@ import * as bcrypt from "bcrypt";
 export const usersRepositories = {
 
     //return all users
-    async allUsers(paginationUsers : PaginationQueryTypeForUsers) : Promise<OutputType<UsersTypes[]>>
+    async allUsers(paginationUsers : PaginationQueryTypeForUsers) : Promise<OutputType<UserDBType[]>>
     {
         const filter = {$or: [
             {searchEmailTerm: {$regex: paginationUsers.searchEmailTerm, $options: 'i'}},
             {searchEmailTerm: {$regex: paginationUsers.searchLoginTerm, $options: 'i'}}
             ]};
 
-        const users : UsersTypes[] =  await usersCollection
-            .find(filter, {projection: {_id: 0}})
+        const users : UserDBType[] =  await usersCollection
+            .find(filter, {projection: {_id: 0, hash: 0}})
             .sort({[paginationUsers.sortBy]: paginationUsers.sortDirection})
             .skip((paginationUsers.pageNumber - 1) * paginationUsers.pageSize)
             .limit(paginationUsers.pageSize)
@@ -35,21 +35,28 @@ export const usersRepositories = {
     },
 
     //create user
-    async createNewUser(user: OutputUserType): Promise<UsersTypes>
+    async createNewUser(user: InputUserType): Promise<UserViewType>
     {
         const passwordSalt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(user.password, passwordSalt)
 
         const now = new Date();
 
-        const newUser = {
+        const newUser: UserDBType = {
             id: `${Date.now()}`,
             login: user.login,
             email: user.email,
+            hash: passwordHash,
             createdAt: now.toISOString(),
         }
         await usersCollection.insertOne({...newUser});
-        return newUser;
+        return {
+            id: newUser.id,
+            email: newUser.email,
+            login: newUser.login,
+            createdAt: newUser.createdAt,
+        }
+
     },
 
     //delete user bu ID
