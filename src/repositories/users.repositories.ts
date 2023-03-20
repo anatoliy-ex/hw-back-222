@@ -1,28 +1,30 @@
 import {OutputType} from "../types/output.type";
 import {InputUserType, UserDBType, UserViewType} from "../types/userDBType";
-import {blogsCollection, usersCollection} from "../dataBase/db.posts.and.blogs";
+import {usersCollection} from "../dataBase/db.posts.and.blogs";
 import {PaginationQueryTypeForUsers} from "../routes/users.routes";
 import * as bcrypt from "bcrypt";
 
 export const usersRepositories = {
 
     //return all users
-    async allUsers(paginationUsers : PaginationQueryTypeForUsers) : Promise<OutputType<UserDBType[]>>
-    {
-        const filter = {$or: [
-            {searchEmailTerm: {$regex: paginationUsers.searchEmailTerm, $options: 'i'}},
-            {searchEmailTerm: {$regex: paginationUsers.searchLoginTerm, $options: 'i'}}
-            ]};
+    async allUsers(paginationUsers: PaginationQueryTypeForUsers): Promise<OutputType<UserDBType[]>> {
+        const filter = {
+            $or: [
+                {login: {$regex: paginationUsers.searchEmailTerm, $options: 'i'}},
+                {email: {$regex: paginationUsers.searchLoginTerm, $options: 'i'}}
+            ]
+        };
 
-        const users : UserDBType[] =  await usersCollection
+        const users: UserDBType[] = await usersCollection
             .find(filter, {projection: {_id: 0, hash: 0}})
             .sort({[paginationUsers.sortBy]: paginationUsers.sortDirection})
             .skip((paginationUsers.pageNumber - 1) * paginationUsers.pageSize)
             .limit(paginationUsers.pageSize)
             .toArray()
 
-        const countOfUsers = await blogsCollection.countDocuments(filter);
-        const pagesCount =  Math.ceil(countOfUsers/paginationUsers.pageSize);
+
+        const countOfUsers = await usersCollection.countDocuments(filter);
+        const pagesCount = Math.ceil(countOfUsers / paginationUsers.pageSize);
 
         return {
             page: paginationUsers.pageNumber,
@@ -35,8 +37,7 @@ export const usersRepositories = {
     },
 
     //create user
-    async createNewUser(user: InputUserType): Promise<UserViewType>
-    {
+    async createNewUser(user: InputUserType): Promise<UserViewType> {
         const passwordSalt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(user.password, passwordSalt)
 
@@ -60,8 +61,7 @@ export const usersRepositories = {
     },
 
     //delete user bu ID
-    async deleteUserById(id: string): Promise<boolean>
-    {
+    async deleteUserById(id: string): Promise<boolean> {
         const isDeleted = await usersCollection.deleteOne({id: id})
         return isDeleted.deletedCount === 1;
     },

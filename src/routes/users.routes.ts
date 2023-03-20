@@ -7,8 +7,8 @@ export const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
 
 export type PaginationQueryTypeForUsers = {
-    searchLoginTerm: string | null,
-    searchEmailTerm: string | null,
+    searchLoginTerm: string,
+    searchEmailTerm: string,
     sortBy: string,
     sortDirection: 'asc' | 'desc',
     pageNumber: number,
@@ -21,8 +21,8 @@ export const getPaginationFromQueryUsers = (query: any): PaginationQueryTypeForU
     const sortDirection = query.sortDirection === 'asc' ? 'asc' : 'desc';
 
     return {
-        searchLoginTerm: query.searchLoginTerm ?? ' ',
-        searchEmailTerm: query.searchEmailTerm ?? ' ',
+        searchLoginTerm: query.searchLoginTerm ?? '',
+        searchEmailTerm: query.searchEmailTerm ?? '',
         sortBy: query.sortBy ?? 'createdAt',
         sortDirection,
         pageNumber: isNaN(pageNumber) ? 1 : pageNumber,
