@@ -14,15 +14,14 @@ export const authUsersRepositories = {
        };
 
        const user = await usersCollection.findOne(filter)
-       console.log(user)
+
 
        if(user)
        {
-           const passwordSalt = await bcrypt.genSalt(10);
-           const passwordHash = await bcrypt.hash(authUser.password, passwordSalt);
+           const passwordHash = await bcrypt.compare(authUser.password, user.hash);
            console.log(user.hash)
            console.log(passwordHash)
-           return user.hash === passwordHash;
+           return passwordHash;
        }
        else
        {

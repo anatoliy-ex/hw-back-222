@@ -31,15 +31,15 @@ export const usersRepositories = {
             page: paginationUsers.pageNumber,
             pagesCount: pagesCount === 0 ? 1 : pagesCount,
             pageSize: paginationUsers.pageSize,
-            totalCount: countOfUsers - 1,
+            totalCount: countOfUsers,
             items: users
         };
     },
 
     //create user
     async createNewUser(user: InputUserType): Promise<UserViewType> {
-        const passwordSalt = await bcrypt.genSalt(10);
-        const passwordHash = await bcrypt.hash(user.password, passwordSalt)
+
+        const passwordHash = await bcrypt.hash(user.password, 10)
 
         const now = new Date();
 
