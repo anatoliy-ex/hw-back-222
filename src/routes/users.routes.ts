@@ -1,6 +1,6 @@
 import {Request, Response, Router} from "express"
-import {usersRepositories} from "../repositories/users.repositories";
 import {createUsersValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
+import {usersService} from "../domain/users.service";
 export const usersRouter = Router({});
 
 export const expressBasicAuth = require('express-basic-auth');
@@ -34,7 +34,7 @@ export const getPaginationFromQueryUsers = (query: any): PaginationQueryTypeForU
 usersRouter.get('/', async (req: Request, res: Response)=>
 {
     const paginationUsers = getPaginationFromQueryUsers(req.query);
-    const allUsers = await usersRepositories.allUsers(paginationUsers);
+    const allUsers = await usersService.allUsers(paginationUsers);
     res.status(200).send(allUsers);
 
 });
@@ -42,7 +42,7 @@ usersRouter.get('/', async (req: Request, res: Response)=>
 //post user
 usersRouter.post('/', adminStatusAuth, createUsersValidator, inputValidationMiddleware, async (req: Request, res: Response)=>
 {
-    const newUser = await usersRepositories.createNewUser(req.body)
+    const newUser = await usersService.createNewUser(req.body)
 
     if(newUser)
     {
@@ -59,7 +59,7 @@ usersRouter.post('/', adminStatusAuth, createUsersValidator, inputValidationMidd
 //delete user bu ID
 usersRouter.delete('/:id', adminStatusAuth, async (req: Request, res: Response)=>
 {
-    const isDelete = await usersRepositories.deleteUserById(req.params.id)
+    const isDelete = await usersService.deleteUserById(req.params.id)
 
     if(isDelete)
     {

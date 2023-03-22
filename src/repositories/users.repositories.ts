@@ -37,20 +37,10 @@ export const usersRepositories = {
     },
 
     //create user
-    async createNewUser(user: InputUserType): Promise<UserViewType> {
+    async createNewUser(newUser: UsersTypes): Promise<UserViewType> {
 
-        const passwordHash = await bcrypt.hash(user.password, 10)
-
-        const now = new Date();
-
-        const newUser: UsersTypes = {
-            id: `${Date.now()}`,
-            login: user.login,
-            email: user.email,
-            hash: passwordHash,
-            createdAt: now.toISOString(),
-        }
         await usersCollection.insertOne({...newUser});
+
         return {
             id: newUser.id,
             email: newUser.email,
