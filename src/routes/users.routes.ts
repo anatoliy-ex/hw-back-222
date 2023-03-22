@@ -2,9 +2,7 @@ import {Request, Response, Router} from "express"
 import {createUsersValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 import {usersService} from "../domain/users.service";
 export const usersRouter = Router({});
-
-export const expressBasicAuth = require('express-basic-auth');
-export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
+import {adminStatusAuth} from "../middlewares/auth/auth.express";
 
 export type PaginationQueryTypeForUsers = {
     searchLoginTerm: string,

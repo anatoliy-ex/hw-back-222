@@ -5,8 +5,7 @@ import {PostsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
 import {createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 import {postsService} from "../domain/posts.service";
-export const expressBasicAuth = require('express-basic-auth');
-export const adminStatusAuth = expressBasicAuth({users: { 'admin': 'qwerty' }});
+import {adminStatusAuth} from "../middlewares/auth/auth.express";
 
 export type PaginationQueryTypeForPosts = {
     sortBy: string,

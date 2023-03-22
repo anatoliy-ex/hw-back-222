@@ -5,9 +5,9 @@ import {PostsTypes} from "../types/posts.types";
 import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from "../middlewares/middlewares.validators";
 import {getPaginationFromQueryPosts} from "./posts.routes";
 import {blogsService} from "../domain/blogs.service";
+import {adminStatusAuth} from "../middlewares/auth/auth.express";
 
-export const expressBasicAuth = require('express-basic-auth');
-export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
+
 
  export type PaginationQueryTypeForBlogs = {
     searchNameTerm: string,
