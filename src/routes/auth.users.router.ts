@@ -8,10 +8,11 @@ export const authUsersRouter = Router({});
 authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 
     const user = await authUsersService.loginUser(req.body);
+    const token = await jwtService.createJWT(req.body)
 
     if(user)
     {
-        res.sendStatus(204)
+        res.status(200).send(token)
         return;
     }
     else
