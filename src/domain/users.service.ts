@@ -1,8 +1,9 @@
 import {OutputType} from "../types/output.type";
 import {InputUserType, UsersTypes, UserViewType} from "../types/users.types";
-import {PaginationQueryTypeForUsers} from "../routes/users.routes";
+import {PaginationQueryTypeForUsers} from "../routes/users.router";
 import * as bcrypt from "bcrypt";
 import {usersRepositories} from "../repositories/users.repositories";
+import {usersCollection} from "../dataBase/db.posts.and.blogs";
 
 export const usersService = {
 
@@ -34,5 +35,19 @@ export const usersService = {
     async deleteUserById(id: string): Promise<boolean> {
 
         return usersRepositories.deleteUserById(id);
+    },
+
+    //get user bu ID
+    async findUserById(id: string){
+        const user =   await usersCollection.findOne({id}, {projection: {_id:0, hash:0, createdAt:0}})
+
+        if(!user)
+        {
+            return null;
+        }
+        else
+        {
+            return user;
+        }
     },
 };

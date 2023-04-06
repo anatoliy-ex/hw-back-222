@@ -2,10 +2,10 @@ import {Request, Response, Router} from "express"
 export const blogsRouter = Router({});
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
-import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from "../middlewares/middlewares.validators";
-import {getPaginationFromQueryPosts} from "./posts.routes";
+import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from "../middlewares/middleware.validators";
+import {getPaginationFromQueryPosts} from "./posts.router";
 import {blogsService} from "../domain/blogs.service";
-import {adminStatusAuth} from "../middlewares/auth/auth.express";
+import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
 
 
 

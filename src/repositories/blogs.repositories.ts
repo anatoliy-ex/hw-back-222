@@ -1,8 +1,8 @@
 import {blogsCollection, postsCollection, usersCollection} from "../dataBase/db.posts.and.blogs";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
-import {PaginationQueryTypeForBlogs} from "../routes/blogs.routes";
-import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
+import {PaginationQueryTypeForBlogs} from "../routes/blogs.router";
+import {PaginationQueryTypeForPosts} from "../routes/posts.router";
 import {OutputType} from "../types/output.type";
 import {usersRepositories} from "./users.repositories";
 

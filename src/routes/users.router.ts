@@ -1,8 +1,8 @@
 import {Request, Response, Router} from "express"
-import {createUsersValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
+import {createUsersValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 import {usersService} from "../domain/users.service";
 export const usersRouter = Router({});
-import {adminStatusAuth} from "../middlewares/auth/auth.express";
+import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
 
 export type PaginationQueryTypeForUsers = {
     searchLoginTerm: string,

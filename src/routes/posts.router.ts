@@ -3,9 +3,10 @@ export const postsRouter = Router({});
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
-import {createPostValidator, inputValidationMiddleware} from "../middlewares/middlewares.validators";
+import {createPostValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 import {postsService} from "../domain/posts.service";
-import {adminStatusAuth} from "../middlewares/auth/auth.express";
+import {adminStatusAuth, authMiddleware} from "../middlewares/auth/auth.middleware";
+import {postsRepositories} from "../repositories/posts.repositories";
 
 export type PaginationQueryTypeForPosts = {
     sortBy: string,
@@ -27,6 +28,63 @@ export const getPaginationFromQueryPosts = (query: any): PaginationQueryTypeForP
         pageSize: isNaN(pageSize) ? 10 : pageSize,
     };
 }
+
+export type PaginationQueryTypeForComments = {
+    sortBy: string,
+    sortDirection: 'asc' | 'desc',
+    pageNumber: number,
+    pageSize: number,
+}
+
+export const getPaginationFromQueryComments = (query: any): PaginationQueryTypeForPosts => {
+
+    const pageNumber = parseInt(query.pageNumber, 10);
+    const pageSize = parseInt(query.pageSize, 10);
+    const sortDirection = query.sortDirection === 'asc' ? 'asc' : 'desc';
+
+    return {
+        sortBy: query.sortBy ?? 'createdAt',
+        sortDirection,
+        pageNumber: isNaN(pageNumber) ? 1 : pageNumber,
+        pageSize: isNaN(pageSize) ? 10 : pageSize,
+    };
+}
+
+//get comment for post
+postsRouter.get('/:postId/comments', async (req: Request, res: Response) =>
+{
+    const post = await postsRepositories.getPostById(req.params.id);
+
+    if(post)
+    {
+        const paginationComments = getPaginationFromQueryComments(req.query)
+        const commentsForPost = await postsRepositories.getCommentsForPost(paginationComments,post.id);
+        res.status(200).send(commentsForPost);
+    }
+    else
+    {
+        res.sendStatus(404);
+    }
+});
+
+//create new comment
+postsRouter.post('/:postId/comments',authMiddleware, async (req: Request, res: Response)=>
+{
+    const post = await postsRepositories.getPostById(req.params.id);
+    const content =  req.body;
+    if(req.user != null)
+    {
+        if(post)
+        {
+            const newComment = await postsRepositories.createCommentForPost(req.params.id, content, req.user);
+            res.status(201).send(newComment);
+        }
+        else
+        {
+            res.sendStatus(404);
+        }
+    }
+});
 
 //get all posts
 postsRouter.get('/', async (req:Request, res: Response) =>

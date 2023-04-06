@@ -1,7 +1,7 @@
 import {postsCollection} from "../dataBase/db.posts.and.blogs";
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
-import {PaginationQueryTypeForPosts} from "../routes/posts.routes";
+import {PaginationQueryTypeForPosts} from "../routes/posts.router";
 import {postsRepositories} from "../repositories/posts.repositories";
 
 export const postsService =

@@ -1,6 +1,7 @@
 import {LoginType} from "../types/auth.users.types";
 import * as bcrypt from 'bcrypt'
 import {usersCollection} from "../dataBase/db.posts.and.blogs";
+import {jwtService} from "../application/jwtService";
 
 export const authUsersRepositories = {
   //login users
@@ -25,4 +26,18 @@ export const authUsersRepositories = {
            return false;
        }
    },
+
+    //get information about user
+    async getUser(token: string)
+    {
+        const userId = await  jwtService.getUserIdByToken(token);
+
+        if(userId != null) {
+            return await usersCollection.findOne({id: userId.id})
+        }
+        else
+        {
+            return null
+        }
+    }
 };

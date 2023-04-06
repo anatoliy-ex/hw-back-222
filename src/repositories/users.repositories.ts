@@ -1,7 +1,7 @@
 import {OutputType} from "../types/output.type";
 import {InputUserType, UsersTypes, UserViewType} from "../types/users.types";
 import {usersCollection} from "../dataBase/db.posts.and.blogs";
-import {PaginationQueryTypeForUsers} from "../routes/users.routes";
+import {PaginationQueryTypeForUsers} from "../routes/users.router";
 import * as bcrypt from "bcrypt";
 
 export const usersRepositories = {
