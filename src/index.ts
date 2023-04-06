@@ -15,7 +15,7 @@ app.use('/posts', postsRouter);
 app.use('/blogs', blogsRouter);
 app.use('/testing', blogsRouter);
 app.use('/users', usersRouter);
-app.use('/auth/login', authUsersRouter)
+app.use('/auth/', authUsersRouter)
 app.use('/comments', commentRouter)
 
 
