@@ -3,7 +3,7 @@ import {postsRouter} from "./routes/posts.router";
 import {blogsRouter} from "./routes/blogs.router";
 import {usersRouter} from "./routes/users.router";
 import {authUsersRouter} from "./routes/auth.users.router";
-import {feedbackRouter} from "./routes/feedback.router";
+import {commentRouter} from "./routes/comment.router";
 
 const express = require('express');
 export const app = express();
@@ -16,7 +16,7 @@ app.use('/blogs', blogsRouter);
 app.use('/testing', blogsRouter);
 app.use('/users', usersRouter);
 app.use('/auth/login', authUsersRouter)
-app.use('/comments', feedbackRouter)
+app.use('/comments', commentRouter)
 
 
 const startApp = async () =>

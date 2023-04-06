@@ -1,5 +1,4 @@
 import {Request, Response, Router} from "express"
-import {commentsCollection} from "../dataBase/db.posts.and.blogs";
 import {commentRepositories} from "../repositories/comment.repositories";
 import {authMiddleware} from "../middlewares/auth/auth.middleware";
 export const commentRouter = Router({});
