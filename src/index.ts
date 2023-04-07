@@ -7,7 +7,7 @@ import {commentRouter} from "./routes/comment.router";
 
 const express = require('express');
 export const app = express();
-const port = process.env.PORT || 1234;
+const port = process.env.PORT || 5001;
 const parserMiddleware = express.json()
 
 app.use(parserMiddleware);
@@ -15,7 +15,7 @@ app.use('/posts', postsRouter);
 app.use('/blogs', blogsRouter);
 app.use('/testing', blogsRouter);
 app.use('/users', usersRouter);
-app.use('/auth/', authUsersRouter)
+app.use('/auth', authUsersRouter)
 app.use('/comments', commentRouter)
 
 
