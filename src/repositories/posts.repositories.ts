@@ -38,6 +38,7 @@ export const postsRepositories =
     async createCommentForPost(postId: string, content: string, user: UsersTypes) : Promise<TypeViewCommentModel<TypeCommentatorInfo>>{
 
         const now = new Date();
+
         const newComment = {
             id: `${Date.now()}`,
             content: content,
@@ -49,6 +50,7 @@ export const postsRepositories =
             createdAt: now.toISOString(),
             postId: postId,
         }
+
         await commentsCollection.findOne({...newComment})
         return newComment
     },

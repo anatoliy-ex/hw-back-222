@@ -14,21 +14,24 @@ export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) =>
 {
    if(!req.headers.authorization) {
+       console.log("1")
        res.sendStatus(401)
        return
    }
    const token = req.headers.authorization.split(' ')[1]
 
     try{
-       const decode: any = jwt.verify(token, '34343434')
+        const decode: any = jwt.verify(token, '34343434')
         const user = await usersService.findUserById(decode.userId)
         if(!user) {
-            res.sendStatus(401)
+            console.log("2")
+            res.sendStatus(404)
             return
         }
         req.user = user
     } catch (e) {
         console.log(e)
+        console.log("3")
         res.sendStatus(401)
     }
    next()

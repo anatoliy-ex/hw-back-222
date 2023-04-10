@@ -71,7 +71,7 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) =>
 postsRouter.post('/:postId/comments',authMiddleware, async (req: Request, res: Response)=>
 {
     const post = await postsRepositories.getPostById(req.params.id);
-    const content =  req.body;
+    const content =  req.body.content;
     if(req.user != null)
     {
         if(post)

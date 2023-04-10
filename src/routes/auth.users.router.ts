@@ -14,6 +14,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
     if(userId)
     {
         const token = await jwtService.createJWT(userId);
+        console.log(token)
         const accessToken = {accessToken: token};
         res.status(200).send(accessToken)
         return;
