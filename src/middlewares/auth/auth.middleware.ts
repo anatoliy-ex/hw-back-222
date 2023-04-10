@@ -30,7 +30,6 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         console.log(e)
         console.log("3")
         res.sendStatus(401)
-        return;
     }
    next()
 }
