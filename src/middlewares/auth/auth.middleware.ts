@@ -23,13 +23,15 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     try{
         const decode: any = jwt.verify(token, '34343434')
         const user = await usersService.findUserById(decode.userId)
-        if(!user) {
+        if(user == null) {
             console.log("2")
             res.sendStatus(404)
             return
         }
-        req.user = user
-    } catch (e) {
+        return req.user = user
+    }
+    catch (e)
+    {
         console.log(e)
         console.log("3")
         res.sendStatus(401)
