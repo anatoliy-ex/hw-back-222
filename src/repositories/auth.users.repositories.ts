@@ -39,5 +39,20 @@ export const authUsersRepositories = {
         {
             return null
         }
+    },
+
+    //get user id by login or email
+    async getUserIdByLoginOrEmail(authUser: LoginType){
+        const filter = {
+            $or: [
+                {login: {$regex: authUser.loginOrEmail, $options: 'i'}},
+                {email: {$regex: authUser.loginOrEmail, $options: 'i'}}
+            ]
+        };
+
+        const user = await usersCollection.findOne(filter)
+        return user!.id
     }
+
+
 };
