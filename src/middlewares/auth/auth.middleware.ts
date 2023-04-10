@@ -34,10 +34,14 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             if(user === null)
             {
                 console.log("2")
-                res.sendStatus(402)
+                res.sendStatus(404)
                 return
             }
-            req.user = user
+            else
+            {
+                req.user = user
+                next()
+            }
         }
     }
    catch (e)
