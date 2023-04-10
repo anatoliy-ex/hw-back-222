@@ -72,6 +72,7 @@ postsRouter.post('/:postId/comments',authMiddleware, async (req: Request, res: R
 {
     const post = await postsRepositories.getPostById(req.params.id);
     const content =  req.body.content;
+
     if(req.user != null)
     {
         if(post)
@@ -83,6 +84,10 @@ postsRouter.post('/:postId/comments',authMiddleware, async (req: Request, res: R
         {
             res.sendStatus(404);
         }
+    }
+    else
+    {
+        res.sendStatus(404);
     }
 });
 
