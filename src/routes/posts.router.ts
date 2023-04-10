@@ -79,15 +79,18 @@ postsRouter.post('/:postId/comments',authMiddleware, async (req: Request, res: R
         {
             const newComment = await postsRepositories.createCommentForPost(req.params.id, content, req.user);
             res.status(201).send(newComment);
+            return;
         }
         else
         {
             res.sendStatus(404);
+            return;
         }
     }
     else
     {
         res.sendStatus(404);
+        return;
     }
 });
 
