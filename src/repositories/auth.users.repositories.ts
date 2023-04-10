@@ -5,7 +5,7 @@ import {jwtService} from "../application/jwtService";
 
 export const authUsersRepositories = {
   //login users
-   async loginUser(authUser: LoginType): Promise<boolean>
+   async loginUser(authUser: LoginType)
    {
        const filter = {
            $or: [
@@ -18,7 +18,16 @@ export const authUsersRepositories = {
 
        if(user)
        {
-           return await bcrypt.compare(authUser.password, user.hash);
+           const isLogin =  await bcrypt.compare(authUser.password, user.hash);
+
+           if(isLogin)
+           {
+               return user.id
+           }
+           else
+           {
+              return false;
+           }
 
        }
        else

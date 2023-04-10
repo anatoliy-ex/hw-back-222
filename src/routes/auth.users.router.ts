@@ -9,30 +9,43 @@ export const authUsersRouter = Router({});
 //login user
 authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 
-    const user = await authUsersService.loginUser(req.body);
+    const userId = await authUsersService.loginUser(req.body);
 
-    if(user)
+    if(userId)
     {
-        const userId = await authUsersRepositories.getUserIdByLoginOrEmail(req.body)
         const token = await jwtService.createJWT(userId);
         const accessToken = {accessToken: token};
-
-        if(userId)
-        {
-            res.status(200).send(accessToken)
-            return;
-        }
-        else
-        {
-            res.sendStatus(401)
-            return;
-        }
+        res.status(200).send(accessToken)
+        return;
     }
     else
     {
         res.sendStatus(401)
         return;
     }
+
+    // if(user)
+    // {
+    //     const userId = await authUsersRepositories.getUserIdByLoginOrEmail(req.body)
+    //     const token = await jwtService.createJWT(userId);
+    //     const accessToken = {accessToken: token};
+    //
+    //     if(userId)
+    //     {
+    //         res.status(200).send(accessToken)
+    //         return;
+    //     }
+    //     else
+    //     {
+    //         res.sendStatus(401)
+    //         return;
+    //     }
+    // }
+    // else
+    // {
+    //     res.sendStatus(401)
+    //     return;
+    // }
 });
 
 //get information about user
