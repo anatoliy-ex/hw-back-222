@@ -34,7 +34,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             if(user === null)
             {
                 console.log("2")
-                res.sendStatus(404)
+                res.sendStatus(402)
                 return
             }
             req.user = user
