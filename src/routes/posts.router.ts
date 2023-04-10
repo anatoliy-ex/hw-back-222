@@ -3,7 +3,11 @@ export const postsRouter = Router({});
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
-import {createPostValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
+import {
+    contentCommentValidator,
+    createPostValidator,
+    inputValidationMiddleware
+} from "../middlewares/middleware.validators";
 import {postsService} from "../domain/posts.service";
 import {adminStatusAuth, authMiddleware} from "../middlewares/auth/auth.middleware";
 import {postsRepositories} from "../repositories/posts.repositories";
@@ -68,7 +72,7 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) =>
 });
 
 //create new comment
-postsRouter.post('/:postId/comments',authMiddleware, async (req: Request, res: Response)=>
+postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, inputValidationMiddleware, async (req: Request, res: Response)=>
 {
     const post = await postsRepositories.getPostById(req.params.id);
     const content =  req.body.content;

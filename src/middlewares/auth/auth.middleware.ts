@@ -39,8 +39,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             }
             else
             {
-                req.user = user
-                next()
+                return req.user = user
             }
         }
     }

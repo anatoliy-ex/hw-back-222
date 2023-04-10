@@ -45,17 +45,20 @@ const websiteUrlValidator = body('websiteUrl')
     .matches(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/)
     .isString();
 
-//for posts
+//for post
 const titleValidator = body('title').isString().trim().notEmpty().isLength({min: 1, max: 30});
 const shortDescriptionValidator = body('shortDescription').isString().trim().notEmpty().isLength({min: 1, max: 100});
 const contentValidator = body('content').trim().notEmpty().isLength({min: 1, max: 1000});
 const blogIdValidator = body('blogId').trim().notEmpty().custom(findBlogId);
 
-//for users
+//for user
 const loginValidator = body('login').isString().trim().isLength({min: 3, max: 10}).matches(/^[a-zA-Z0-9_-]*$/)
 const passwordValidator = body('password').isString().trim().isLength({min: 6, max: 20})
 // const emailValidator = body('email').isString().trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
 const emailValidator = body('email').isEmail()
+
+//for comment
+export const contentCommentValidator = body('content').isString().trim().isLength({min: 20, max: 300});
 
 
 export const createBlogValidator = [
@@ -82,3 +85,4 @@ export const createUsersValidator =[
     passwordValidator,
     emailValidator
 ];
+
