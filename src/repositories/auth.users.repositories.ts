@@ -51,8 +51,14 @@ export const authUsersRepositories = {
         };
 
         const user = await usersCollection.findOne(filter)
-        return user!.id
-    }
 
-
+        if(user)
+        {
+            return user.id
+        }
+        else
+        {
+            return false;
+        }
+    },
 };

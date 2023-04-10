@@ -16,7 +16,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
     const accessToken = {accessToken: token};
 
 
-    if(user)
+    if(userId)
     {
         res.status(200).send(accessToken)
         return;
