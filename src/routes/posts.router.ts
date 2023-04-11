@@ -57,7 +57,7 @@ export const getPaginationFromQueryComments = (query: any): PaginationQueryTypeF
 //get comment for post
 postsRouter.get('/:postId/comments', async (req: Request, res: Response) =>
 {
-    const post = await postsRepositories.getPostById(req.params.id);
+    const post = await postsRepositories.getPostById(req.params.postId);
 
     if(post)
     {
