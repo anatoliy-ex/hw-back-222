@@ -16,7 +16,7 @@ export const postsRepositories =
         console.log(postId)
 
         const comments: TypeGetCommentModel<TypeCommentatorInfo>[] = await commentsCollection
-            .find({}, {projection: {_id: 0, postId: 0}})
+            .find(filter, {projection: {_id: 0, postId: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
@@ -24,7 +24,7 @@ export const postsRepositories =
 
         console.log(comments)
 
-        const countOfComments = await commentsCollection.countDocuments();
+        const countOfComments = await commentsCollection.countDocuments(filter);
         const pagesCount =  Math.ceil(countOfComments/pagination.pageSize);
         console.log(countOfComments)
 
