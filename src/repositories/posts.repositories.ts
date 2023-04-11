@@ -15,7 +15,7 @@ export const postsRepositories =
         const filter = {postId: postId};
 
         const comments: TypeGetCommentModel[] = await commentsCollection
-            .find(filter, {projection: {_id: 0, createdAt: 0, postId: 0}})
+            .find(filter, {projection: {_id: 0, postId: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
