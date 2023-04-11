@@ -10,6 +10,12 @@ export const commentRouter = Router({});
 //update comment by ID
 commentRouter.put('/:commentId', authMiddleware, contentCommentValidator, inputValidationMiddleware ,async (req: Request, res:Response) => {
 
+    const comment = await commentsCollection.findOne({id: req.params.commentId})
+
+    if(req.user!.id != comment!.commentatorInfo.userId)
+    {
+        res.sendStatus(403);
+    }
     const newComment = await commentRepositories.updateComment(req.params.commentId, req.body.content);
 
     if(newComment)
@@ -24,13 +30,6 @@ commentRouter.put('/:commentId', authMiddleware, contentCommentValidator, inputV
 
 //delete comment by ID
 commentRouter.delete('/:commentId', authMiddleware, async (req: Request, res:Response) => {
-
-    // const comment = await commentsCollection.findOne({id: req.params.commentId})
-    //
-    // if(req.user!.id != comment!.commentatorInfo.userId)
-    // {
-    //     res.sendStatus(403);
-    // }
 
     const isDeleted = await commentRepositories.deleteComment(req.params.commentId);
 
