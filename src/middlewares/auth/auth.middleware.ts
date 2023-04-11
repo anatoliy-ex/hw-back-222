@@ -24,6 +24,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     }
     const token = req.headers.authorization.split(' ')[1];
 
+    const comment = await commentsCollection.findOne({id: req.params.commentId})
 
     try
     {
@@ -31,26 +32,20 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
         if(IsDecode)
         {
+            const user = await authUsersRepositories.getUser(token)
 
-            const outUser = await authUsersRepositories.getUser(token)
-
-            const comment = await commentRepositories.getComment(req.params.commentId)
-            const b = await usersCollection.findOne({id: comment!.commentatorInfo.userId})
-
-            if(outUser!.id != b!.id)
-            {
-                res.sendStatus(403)
-            }
-
-
-            if(outUser === null)
+            if(user === null)
             {
                 res.sendStatus(402)
                 return
             }
+            else if(user.id != comment!.commentatorInfo.userId)
+            {
+                res.sendStatus(403);
+            }
             else
             {
-                req.user = outUser
+                req.user = user
             }
         }
     }
