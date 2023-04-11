@@ -1,13 +1,14 @@
 import {Request, Response, Router} from "express"
 import {commentRepositories} from "../repositories/comment.repositories";
 import {authMiddleware} from "../middlewares/auth/auth.middleware";
+import {contentCommentValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 export const commentRouter = Router({});
 
 
 //update comment by ID
-commentRouter.put('/:commentId', authMiddleware, async (req: Request, res:Response) => {
+commentRouter.put('/:commentId', authMiddleware, contentCommentValidator, inputValidationMiddleware ,async (req: Request, res:Response) => {
 
-    const newComment = await commentRepositories.updateComment(req.params.commentId, req.body);
+    const newComment = await commentRepositories.updateComment(req.params.commentId, req.body.content);
 
     if(newComment)
     {
