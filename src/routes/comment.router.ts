@@ -36,9 +36,9 @@ commentRouter.delete('/:commentId', authMiddleware, async (req: Request, res:Res
 });
 
 //get comment by ID
-commentRouter.get('/:commentId', async (req: Request, res:Response) => {
+commentRouter.get('/:id', async (req: Request, res:Response) => {
 
-    const comment = await commentRepositories.getComment(req.params.commentId)
+    const comment = await commentRepositories.getComment(req.params.id)
 
     if(comment)
     {
