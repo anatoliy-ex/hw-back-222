@@ -21,7 +21,7 @@ export const postsRepositories =
             .limit(pagination.pageSize)
             .toArray()
 
-        const countOfComments = await blogsCollection.countDocuments(filter);
+        const countOfComments = await commentsCollection.countDocuments(filter);
         const pagesCount =  Math.ceil(countOfComments/pagination.pageSize);
 
 
