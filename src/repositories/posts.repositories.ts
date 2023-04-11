@@ -12,7 +12,7 @@ export const postsRepositories =
     //get comments for post
     async getCommentsForPost(pagination: PaginationQueryTypeForComments, postId: string) {
 
-        const filter = {postId: postId};
+        const filter = {postId: {$regex: postId}}
 
         const comments = await commentsCollection
             .find(filter, {projection: {_id: 0, postId: 0}})

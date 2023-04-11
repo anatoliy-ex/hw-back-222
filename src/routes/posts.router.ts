@@ -62,7 +62,7 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) =>
     if(post)
     {
         const paginationComments = getPaginationFromQueryComments(req.query)
-        const commentsForPost = await postsRepositories.getCommentsForPost(paginationComments,req.params.postId);
+        const commentsForPost = await postsRepositories.getCommentsForPost(paginationComments, req.params.postId);
         res.status(200).send(commentsForPost);
     }
     else
