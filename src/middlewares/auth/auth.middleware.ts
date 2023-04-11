@@ -51,18 +51,23 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
    next()
 }
 
-/*
-if(!req.headers.authorization){
-    res.status(401)
-    return;
-}
+//check if try edit the comment that
+export const checkForUser = async (req: Request, res: Response, next: NextFunction) => {
 
-const token = req.headers.authorization.split(' ')[1]
-const userId = await jwtService.getUserIdByToken(token)
+    const token : string = req.headers.authorization!.split(" ")[1]
 
-if(userId){
-    const user = await usersService.findUserById(userId);
-    req.user = user
-    next();
+    const userId = await jwtService.getUserIdByToken(token)
+    const comment = await commentRepositories.getComment(req.params.commentId)
+
+    if (!comment) {
+        res.sendStatus(404)
+    }
+    else if (comment.commentatorInfo.userId === userId)
+    {
+        next()
+    }
+    else
+    {
+        res.sendStatus(403)
+    }
 }
-res.status(401)*/
