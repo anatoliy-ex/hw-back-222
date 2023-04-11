@@ -12,16 +12,16 @@ export const postsRepositories =
     //get comments for post
     async getCommentsForPost(pagination: PaginationQueryTypeForComments, postId: string) {
 
-        const filter = {postId: {$regex: postId}}
+        //const filter = {postId: {$regex: postId}}
 
         const comments = await commentsCollection
-            .find(filter, {projection: {_id: 0, postId: 0}})
+            .find({postId: postId}, {projection: {_id: 0, postId: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
             .toArray()
 
-        const countOfComments = await commentsCollection.countDocuments(filter);
+        const countOfComments = await commentsCollection.countDocuments({postId: postId});
         const pagesCount =  Math.ceil(countOfComments/pagination.pageSize);
 
 
@@ -49,7 +49,7 @@ export const postsRepositories =
             },
             createdAt: now.toISOString(),
             postId: postId,
-        }
+        };
 
         await commentsCollection.insertOne({...newComment})
         return newComment
