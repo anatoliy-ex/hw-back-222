@@ -3,6 +3,7 @@ import {commentRepositories} from "../repositories/comment.repositories";
 import {authMiddleware} from "../middlewares/auth/auth.middleware";
 import {contentCommentValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
+import {commentsCollection} from "../dataBase/db.posts.and.blogs";
 export const commentRouter = Router({});
 
 
@@ -25,6 +26,13 @@ commentRouter.put('/:commentId', authMiddleware, contentCommentValidator, inputV
 commentRouter.delete('/:id', authMiddleware, async (req: Request, res:Response) => {
 
     const isDeleted = await commentRepositories.deleteComment(req.params.id);
+
+    const comment = await commentsCollection.findOne({id: req.params.commentId})
+
+    if(req.user!.id != comment!.commentatorInfo.userId)
+    {
+        res.sendStatus(403);
+    }
 
     if(isDeleted)
     {
