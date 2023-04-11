@@ -74,7 +74,7 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) =>
 //create new comment
 postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, inputValidationMiddleware, async (req: Request, res: Response)=>
 {
-    const post = await postsRepositories.getPostById(req.params.id);
+    const post = await postsRepositories.getPostById(req.params.postId);
     const content =  req.body.content;
 
     if(req.user != null)
