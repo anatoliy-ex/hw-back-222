@@ -7,7 +7,7 @@ export const commentRouter = Router({});
 //update comment by ID
 commentRouter.put('/:commentId', authMiddleware, async (req: Request, res:Response) => {
 
-    const newComment = await commentRepositories.updateComment(req.params.id, req.body);
+    const newComment = await commentRepositories.updateComment(req.params.commentId, req.body);
 
     if(newComment)
     {
@@ -22,7 +22,7 @@ commentRouter.put('/:commentId', authMiddleware, async (req: Request, res:Respon
 //delete comment by ID
 commentRouter.delete('/:commentId', authMiddleware, async (req: Request, res:Response) => {
 
-    const isDeleted = await commentRepositories.deleteComment(req.params.id);
+    const isDeleted = await commentRepositories.deleteComment(req.params.commentId);
 
     if(isDeleted)
     {
@@ -38,7 +38,7 @@ commentRouter.delete('/:commentId', authMiddleware, async (req: Request, res:Res
 //get comment by ID
 commentRouter.get('/:commentId', async (req: Request, res:Response) => {
 
-    const comment = await commentRepositories.getComment(req.params.id)
+    const comment = await commentRepositories.getComment(req.params.commentId)
 
     if(comment)
     {
