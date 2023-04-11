@@ -12,17 +12,21 @@ export const postsRepositories =
     //get comments for post
     async getCommentsForPost(pagination: PaginationQueryTypeForComments, postId: string) {
 
-        //const filter = {postId: {$regex: postId}}
+        const filter = {postId: postId}
+        console.log(postId)
 
-        const comments = await commentsCollection
-            .find({postId: postId}, {projection: {_id: 0, postId: 0}})
+        const comments: TypeGetCommentModel<TypeCommentatorInfo>[] = await commentsCollection
+            .find({}, {projection: {_id: 0, postId: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
             .toArray()
 
-        const countOfComments = await commentsCollection.countDocuments({postId: postId});
+        console.log(comments)
+
+        const countOfComments = await commentsCollection.countDocuments();
         const pagesCount =  Math.ceil(countOfComments/pagination.pageSize);
+        console.log(countOfComments)
 
 
         return {

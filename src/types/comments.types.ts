@@ -15,8 +15,9 @@ export type TypeViewCommentModel<T> = {
     postId: string,
 };
 
-export type TypeGetCommentModel = {
+export type TypeGetCommentModel<T> = {
     id: string,
     content: string,
-    commentatorInfo: TypeCommentatorInfo,
+    commentatorInfo: T,
+    createdAt: string,
 };

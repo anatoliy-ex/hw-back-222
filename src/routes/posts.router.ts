@@ -76,13 +76,12 @@ postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, in
 {
     const post = await postsRepositories.getPostById(req.params.postId);
     const content =  req.body.content;
-    console.log(req.params)
 
     if(req.user != null)
     {
         if(post)
         {
-            const newComment = await postsRepositories.createCommentForPost(req.params.id, content, req.user);
+            const newComment = await postsRepositories.createCommentForPost(req.params.postId, content, req.user);
             res.status(201).send(newComment);
         }
         else
