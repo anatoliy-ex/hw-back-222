@@ -51,7 +51,7 @@ export const postsRepositories =
             postId: postId,
         }
 
-        await commentsCollection.findOne({...newComment})
+        await commentsCollection.insertOne({...newComment})
         return newComment
     },
 
