@@ -26,7 +26,6 @@ export const postsRepositories =
 
         const countOfComments = await commentsCollection.countDocuments(filter);
         const pagesCount =  Math.ceil(countOfComments/pagination.pageSize);
-        console.log(countOfComments)
 
 
         return {
@@ -55,8 +54,8 @@ export const postsRepositories =
             postId: postId,
         };
 
-        await commentsCollection.insertOne({...newComment})
-        return newComment
+        await commentsCollection.insertOne({...newComment});
+        return newComment;
     },
 
     //return all posts

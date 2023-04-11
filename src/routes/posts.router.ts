@@ -11,6 +11,7 @@ import {
 import {postsService} from "../domain/posts.service";
 import {adminStatusAuth, authMiddleware} from "../middlewares/auth/auth.middleware";
 import {postsRepositories} from "../repositories/posts.repositories";
+import {commentRepositories} from "../repositories/comment.repositories";
 
 export type PaginationQueryTypeForPosts = {
     sortBy: string,
@@ -82,7 +83,8 @@ postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, in
         if(post)
         {
             const newComment = await postsRepositories.createCommentForPost(req.params.postId, content, req.user);
-            res.status(201).send(newComment);
+            const viewComment = await commentRepositories.getComment(newComment.id)
+            res.status(201).send(viewComment);
         }
         else
         {
