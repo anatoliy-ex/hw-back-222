@@ -25,12 +25,9 @@ commentRouter.put('/:commentId', authMiddleware, contentCommentValidator, inputV
 //delete comment by ID
 commentRouter.delete('/:commentId', authMiddleware, async (req: Request, res:Response) => {
 
-    const isDeleted = await commentRepositories.deleteComment(req.params.id);
+    const isDeleted = await commentRepositories.deleteComment(req.params.commentId);
 
     const comment = await commentsCollection.findOne({id: req.params.commentId})
-    // console.log(comment + "!!!!!")
-    // console.log(req.params.commentId)
-    // console.log(req.user!.id + "!!!!!!")
 
     if(req.user!.id != comment!.commentatorInfo.userId)
     {
