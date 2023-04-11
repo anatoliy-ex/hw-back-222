@@ -33,16 +33,18 @@ commentRouter.delete('/:commentId', authMiddleware, async (req: Request, res:Res
     {
         res.sendStatus(403);
     }
-
-    if(isDeleted)
-    {
-        res.sendStatus(204);
-    }
     else
     {
-        res.sendStatus(404);
-    }
+        if(isDeleted)
+        {
 
+            res.sendStatus(204);
+        }
+        else
+        {
+            res.sendStatus(404);
+        }
+    }
 });
 
 //get comment by ID
