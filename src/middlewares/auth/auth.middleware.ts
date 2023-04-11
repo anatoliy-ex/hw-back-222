@@ -29,7 +29,10 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
         if(IsDecode)
         {
+
             const user = await authUsersRepositories.getUser(token)
+
+            console.log(user)
 
             if(user === null)
             {
@@ -48,6 +51,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         console.log(e)
         console.log("3")
         res.sendStatus(401)
+        return;
     }
    next()
 }

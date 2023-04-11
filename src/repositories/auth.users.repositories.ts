@@ -42,7 +42,7 @@ export const authUsersRepositories = {
         const userId = await  jwtService.getUserIdByToken(token);
 
         if(userId != null) {
-            return await usersCollection.findOne({id: userId.id})
+            return await usersCollection.findOne({id: userId})
         }
         else
         {

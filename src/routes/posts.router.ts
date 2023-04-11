@@ -76,6 +76,7 @@ postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, in
 {
     const post = await postsRepositories.getPostById(req.params.postId);
     const content =  req.body.content;
+    console.log(req.params)
 
     if(req.user != null)
     {
