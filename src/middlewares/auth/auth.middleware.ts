@@ -40,16 +40,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             }
             else
             {
-                const com = await commentRepositories.getCommentByUserId(user.id)
-
-                if(com!.id != req.params.commentId)
-                {
-                    res.sendStatus(403);
-                }
-                else
-                {
-                    req.user = user
-                }
+                req.user = user
             }
         }
     }
