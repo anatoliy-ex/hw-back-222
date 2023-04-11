@@ -24,8 +24,6 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     }
     const token = req.headers.authorization.split(' ')[1];
 
-    const comment = await commentsCollection.findOne({id: req.params.commentId})
-
     try
     {
         const IsDecode: any = jwt.verify(token, '34343434')
@@ -38,10 +36,6 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             {
                 res.sendStatus(402)
                 return
-            }
-            else if(user.id != comment!.commentatorInfo.userId)
-            {
-                res.sendStatus(403);
             }
             else
             {
