@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import {usersCollection} from "../../dataBase/db.posts.and.blogs";
 import {usersRepositories} from "../../repositories/users.repositories";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
+import {commentRepositories} from "../../repositories/comment.repositories";
 
 //super admin check
 const expressBasicAuth = require('express-basic-auth');
@@ -17,11 +18,11 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 {
     if(!req.headers.authorization)
     {
-        console.log("1")
         res.sendStatus(401)
         return
     }
-    const token = req.headers.authorization.split(' ')[1]
+    const token = req.headers.authorization.split(' ')[1];
+
 
     try
     {
@@ -32,24 +33,28 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
             const user = await authUsersRepositories.getUser(token)
 
-            console.log(user)
-
             if(user === null)
             {
-                console.log("2")
                 res.sendStatus(402)
                 return
             }
             else
             {
-                req.user = user
+                const com = await commentRepositories.getCommentByUserId(user.id)
+
+                if(com!.id != req.params.commentId)
+                {
+                    res.sendStatus(403);
+                }
+                else
+                {
+                    req.user = user
+                }
             }
         }
     }
    catch (e)
     {
-        console.log(e)
-        console.log("3")
         res.sendStatus(401)
         return;
     }

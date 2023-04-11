@@ -2,6 +2,7 @@ import {Request, Response, Router} from "express"
 import {commentRepositories} from "../repositories/comment.repositories";
 import {authMiddleware} from "../middlewares/auth/auth.middleware";
 import {contentCommentValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
+import {authUsersRepositories} from "../repositories/auth.users.repositories";
 export const commentRouter = Router({});
 
 
@@ -23,8 +24,8 @@ commentRouter.put('/:commentId', authMiddleware, contentCommentValidator, inputV
 //delete comment by ID
 commentRouter.delete('/:id', authMiddleware, async (req: Request, res:Response) => {
 
-    const isDeleted = await commentRepositories.deleteComment(req.params.id);
 
+    const isDeleted = await commentRepositories.deleteComment(req.params.id);
     if(isDeleted)
     {
         res.sendStatus(204);

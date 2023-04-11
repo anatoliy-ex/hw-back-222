@@ -25,4 +25,9 @@ export const commentRepositories = {
     async getComment(id: string): Promise<TypeViewCommentModel<TypeCommentatorInfo> | null>{
         return await commentsCollection.findOne({id: id}, {projection: {_id: 0, postId: 0}});
     },
+
+    async getCommentByUserId(userId: string)
+    {
+        return await commentsCollection.findOne({userId: userId})
+    },
 };
