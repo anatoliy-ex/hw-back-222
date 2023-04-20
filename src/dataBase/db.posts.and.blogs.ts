@@ -3,8 +3,9 @@ import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {UsersTypes} from "../types/users.types";
 import {TypeCommentatorInfo, TypeViewCommentModel} from "../types/comments.types";
+import {settings} from "../../.env/settings";
 
-const mongoUri = process.env.mongoURL || "mongodb+srv://flex:Wm6Jo7Gnuy4SCn7l@cluster0.b1gxtc6.mongodb.net/hw2-api-beck?retryWrites=true&w=majority";
+const mongoUri = settings.MONGO_URI
 export const client = new MongoClient(mongoUri)
 
 export const db = client.db ("it-incubator-blog");

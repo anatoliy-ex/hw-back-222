@@ -54,7 +54,6 @@ const blogIdValidator = body('blogId').trim().notEmpty().custom(findBlogId);
 //for user
 const loginValidator = body('login').isString().trim().isLength({min: 3, max: 10}).matches(/^[a-zA-Z0-9_-]*$/)
 const passwordValidator = body('password').isString().trim().isLength({min: 6, max: 20})
-// const emailValidator = body('email').isString().trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
 const emailValidator = body('email').isEmail()
 
 //for comment
