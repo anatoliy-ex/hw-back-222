@@ -80,9 +80,8 @@ export const authUsersRepositories = {
         };
 
         const checkUserInSystem = await usersCollection.findOne(filter)
-        const checkUserInSystemNotConfirm = await usersNotConfirmCollection.findOne(filter)
 
-        if(checkUserInSystem != null || checkUserInSystemNotConfirm != null)
+        if(checkUserInSystem != null)
         {
             return false;
         }
