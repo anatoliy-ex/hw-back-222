@@ -68,7 +68,7 @@ authUsersRouter.post('/registration-email-resending', async (req: Request, res: 
     }
     else
     {
-        res.sendStatus(400);
+        res.status(400);
     }
 
 });
