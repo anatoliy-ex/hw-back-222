@@ -1,13 +1,12 @@
 import {OutputType} from "../types/output.type";
-import {InputUserType, UsersTypes, UserViewType} from "../types/users.types";
+import {InputUserType, UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
 import {usersCollection} from "../dataBase/db.posts.and.blogs";
 import {PaginationQueryTypeForUsers} from "../routes/users.router";
-import * as bcrypt from "bcrypt";
 
 export const usersRepositories = {
 
     //return all users
-    async allUsers(paginationUsers: PaginationQueryTypeForUsers): Promise<OutputType<UsersTypes[]>> {
+    async allUsers(paginationUsers: PaginationQueryTypeForUsers): Promise<OutputType<UserConfirmTypes[]>> {
         const filter = {
             $or: [
                 {login: {$regex: paginationUsers.searchLoginTerm, $options: 'i'}},
@@ -15,7 +14,7 @@ export const usersRepositories = {
             ]
         };
 
-        const users: UsersTypes[] = await usersCollection
+        const users: UserConfirmTypes[] = await usersCollection
             .find(filter, {projection: {_id: 0, hash: 0}})
             .sort({[paginationUsers.sortBy]: paginationUsers.sortDirection})
             .skip((paginationUsers.pageNumber - 1) * paginationUsers.pageSize)
@@ -37,7 +36,7 @@ export const usersRepositories = {
     },
 
     //create user
-    async createNewUser(newUser: UsersTypes): Promise<UserViewType> {
+    async createNewUser(newUser: UserConfirmTypes): Promise<UserViewType> {
 
         await usersCollection.insertOne({...newUser});
 

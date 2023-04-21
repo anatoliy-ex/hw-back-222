@@ -60,7 +60,17 @@ authUsersRouter.post('/registration', createUsersValidator, inputValidationMiddl
 //registration in system-3
 authUsersRouter.post('/registration-email-resending', async (req: Request, res: Response) =>{
 
-    const isResending = await authUsersRepositories.registrationWithSendingEmail(req.body.email)
+    const isResending = await authUsersRepositories.registrationWithSendingEmail(req.body.email);
+
+    if(isResending)
+    {
+        res.sendStatus(204);
+    }
+    else
+    {
+        res.sendStatus(400);
+    }
+
 });
 
 //get information about user

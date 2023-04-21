@@ -3,7 +3,7 @@ import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {PaginationQueryTypeForComments, PaginationQueryTypeForPosts} from "../routes/posts.router";
 import {TypeCommentatorInfo, TypeGetCommentModel, TypeViewCommentModel} from "../types/comments.types";
-import {UsersTypes, UserViewType} from "../types/users.types";
+import {UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
 
 export const postsRepositories =
 {
@@ -38,7 +38,7 @@ export const postsRepositories =
     },
 
     //create comment for post
-    async createCommentForPost(postId: string, content: string, user: UsersTypes) : Promise<TypeViewCommentModel<TypeCommentatorInfo>>{
+    async createCommentForPost(postId: string, content: string, user: UserConfirmTypes) : Promise<TypeViewCommentModel<TypeCommentatorInfo>>{
 
         const now = new Date();
 
