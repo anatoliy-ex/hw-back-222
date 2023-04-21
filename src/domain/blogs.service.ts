@@ -1,4 +1,9 @@
-import {blogsCollection, postsCollection, usersCollection} from "../dataBase/db.posts.and.blogs";
+import {
+    blogsCollection,
+    postsCollection,
+    usersCollection,
+    usersNotConfirmCollection
+} from "../dataBase/db.posts.and.blogs";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
@@ -13,6 +18,7 @@ export const blogsService =
             await postsCollection.deleteMany({});
             await blogsCollection.deleteMany({});
             await usersCollection.deleteMany({});
+            await usersNotConfirmCollection.deleteMany({})
             return [];
         },
 
