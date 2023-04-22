@@ -31,11 +31,11 @@ const emailOrLoginAlreadyExist : CustomValidator = async value =>
 
     if(checkUserInSystem != null)
     {
-        throw new Error('email already exist');
+        throw new Error();
     }
     else if(checkUserIsNotConfirmInSystem != null)
     {
-        throw new Error('email already exist');
+        throw new Error();
     }
 };
 
