@@ -19,12 +19,8 @@ const findBlogId : CustomValidator = async value =>
 
 const emailOrLoginAlreadyExist : CustomValidator = async value =>
 {
-    const filter = {
-        $or: [
-            {login: {$regex: value.login, $options: 'i'}},
-            {email: {$regex: value.email, $options: 'i'}}
-        ]
-    };
+    const filter = {email: {$regex: value.email, $options: 'i'}};
+
 
     const checkUserInSystem = await usersCollection.findOne(filter)
     const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
@@ -41,12 +37,7 @@ const emailOrLoginAlreadyExist : CustomValidator = async value =>
 
 const loginOrLoginAlreadyExist : CustomValidator = async value =>
 {
-    const filter = {
-        $or: [
-            {login: {$regex: value.login, $options: 'i'}},
-            {email: {$regex: value.email, $options: 'i'}}
-        ]
-    };
+    const filter = {login: {$regex: value.login, $options: 'i'}};
 
     const checkUserInSystem = await usersCollection.findOne(filter)
     const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
