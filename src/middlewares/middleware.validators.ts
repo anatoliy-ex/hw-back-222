@@ -53,11 +53,11 @@ const loginOrLoginAlreadyExist : CustomValidator = async value =>
 
     if(checkUserInSystem != null)
     {
-        throw new Error('login already exist');
+        throw new Error();
     }
     else if(checkUserIsNotConfirmInSystem != null)
     {
-        throw new Error('login already exist');
+        throw new Error();
     }
 };
 
