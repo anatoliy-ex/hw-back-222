@@ -122,10 +122,10 @@ export const authUsersRepositories = {
                 to: user.email, // list of receivers
                 subject: "Hello ✔", // Subject line
                 text: "Hello world?", // plain text body
-                html: "<h1>Thank for your registration</h1>\n" +
-                    " <p>To finish registration please follow the link below:\n" +
-                    "     <a href='https://somesite.com/confirm-email?code=546792'>complete registration</a>\n" +
-                    " </p>", // html body
+                html:  `<h1>Thank for your registration</h1>
+       <p>To finish registration please follow the link below:
+          <a href='https://somesite.com/confirm-email?code=${newUser.confirmationCode}'>complete registration</a>
+      </p>`
             });
 
             await usersNotConfirmCollection.insertOne({...newUser});
@@ -136,7 +136,7 @@ export const authUsersRepositories = {
     //registration in system-3
     async registrationWithSendingEmail(email: string){
 
-       const user = await usersCollection.findOne({email: email})
+       const user = await usersNotConfirmCollection.findOne({email: email})
 
         if(user && !user.isConfirm)
         {
@@ -153,10 +153,10 @@ export const authUsersRepositories = {
                 to: email, // list of receivers
                 subject: "Hello ✔", // Subject line
                 text: "Hello world?", // plain text body
-                html: "<h1>Thank for your registration</h1>\n" +
-                    " <p>To finish registration please follow the link below:\n" +
-                    "     <a href='https://somesite.com/confirm-email?code=546792'>complete registration</a>\n" +
-                    " </p>", // html body
+                html:`<h1>Thank for your registration</h1>
+       <p>To finish registration please follow the link below:
+          <a href='https://somesite.com/confirm-email?code=${user.confirmationCode}'>complete registration</a>
+      </p>`
             });
 
             return true;
