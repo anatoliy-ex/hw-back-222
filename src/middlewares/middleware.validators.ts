@@ -19,36 +19,35 @@ const findBlogId : CustomValidator = async value =>
 
 const emailAlreadyExist : CustomValidator = async value =>
 {
-    const filter = {email:value.email};
-
+    const filter = {email: value};
 
     const checkUserInSystem = await usersCollection.findOne(filter)
     const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
 
     if(checkUserInSystem != null)
     {
-        throw new Error();
+        throw new Error('email is exist');
     }
     else if(checkUserIsNotConfirmInSystem != null)
     {
-        throw new Error();
+        throw new Error('email is exist');
     }
 };
 
 const loginAlreadyExist : CustomValidator = async value =>
 {
-    const filter = {login: value.login};
+    const filter = {login: value};
 
     const checkUserInSystem = await usersCollection.findOne(filter)
     const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
 
     if(checkUserInSystem != null)
     {
-        throw new Error();
+        throw new Error('login is exist');
     }
     else if(checkUserIsNotConfirmInSystem != null)
     {
-        throw new Error();
+        throw new Error('login is exist');
     }
 };
 

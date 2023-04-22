@@ -74,15 +74,13 @@ export const authUsersRepositories = {
 
         const filter = {
             $or: [
-                {login: {$regex: user.login, $options: 'i'}},
-                {email: {$regex: user.email, $options: 'i'}}
+                {login: user.login},
+                {email: user.email}
             ]
         };
 
         const checkUserInSystem = await usersCollection.findOne(filter)
         const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
-        // console.log(checkUserInSystem)
-        // console.log(checkUserIsNotConfirmInSystem)
 
         if(checkUserInSystem != null )
         {
