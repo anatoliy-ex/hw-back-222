@@ -25,11 +25,7 @@ const emailOrLoginAlreadyExist : CustomValidator = async value =>
     const checkUserInSystem = await usersCollection.findOne(filter)
     const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
 
-    if(checkUserInSystem != null)
-    {
-        throw new Error();
-    }
-    else if(checkUserIsNotConfirmInSystem != null)
+    if(checkUserIsNotConfirmInSystem != null)
     {
         throw new Error();
     }
@@ -42,11 +38,7 @@ const loginOrLoginAlreadyExist : CustomValidator = async value =>
     const checkUserInSystem = await usersCollection.findOne(filter)
     const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
 
-    if(checkUserInSystem != null)
-    {
-        throw new Error();
-    }
-    else if(checkUserIsNotConfirmInSystem != null)
+    if(checkUserIsNotConfirmInSystem != null)
     {
         throw new Error();
     }
