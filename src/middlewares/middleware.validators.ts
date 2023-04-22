@@ -3,12 +3,11 @@ import {CustomValidator} from "express-validator";
 import { Response, Request } from "express";
 import {  body,  validationResult } from 'express-validator';
 import {NextFunction} from "express";
+import {usersCollection, usersNotConfirmCollection} from "../dataBase/db.posts.and.blogs";
 
 const findBlogId : CustomValidator = async value =>
 {
     const foundBlog = await blogsRepositories.getBlogById(value)
-
-    console.log(foundBlog)
 
     if(foundBlog === null)
     {
@@ -16,6 +15,50 @@ const findBlogId : CustomValidator = async value =>
     }
 
 
+};
+
+const emailOrLoginAlreadyExist : CustomValidator = async value =>
+{
+    const filter = {
+        $or: [
+            {login: {$regex: value.login, $options: 'i'}},
+            {email: {$regex: value.email, $options: 'i'}}
+        ]
+    };
+
+    const checkUserInSystem = await usersCollection.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
+
+    if(checkUserInSystem != null)
+    {
+        throw new Error('email already exist');
+    }
+    else if(checkUserIsNotConfirmInSystem != null)
+    {
+        throw new Error('email already exist');
+    }
+};
+
+const loginOrLoginAlreadyExist : CustomValidator = async value =>
+{
+    const filter = {
+        $or: [
+            {login: {$regex: value.login, $options: 'i'}},
+            {email: {$regex: value.email, $options: 'i'}}
+        ]
+    };
+
+    const checkUserInSystem = await usersCollection.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
+
+    if(checkUserInSystem != null)
+    {
+        throw new Error('login already exist');
+    }
+    else if(checkUserIsNotConfirmInSystem != null)
+    {
+        throw new Error('login already exist');
+    }
 };
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -52,9 +95,9 @@ const contentValidator = body('content').trim().notEmpty().isLength({min: 1, max
 const blogIdValidator = body('blogId').trim().notEmpty().custom(findBlogId);
 
 //for user
-const loginValidator = body('login').isString().trim().isLength({min: 3, max: 10}).matches(/^[a-zA-Z0-9_-]*$/)
+const loginValidator = body('login').isString().trim().isLength({min: 3, max: 10}).matches(/^[a-zA-Z0-9_-]*$/).custom(loginOrLoginAlreadyExist)
 const passwordValidator = body('password').isString().trim().isLength({min: 6, max: 20})
-const emailValidator = body ('email').trim().isLength({min: 1, max: 100}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString();
+const emailValidator = body ('email').trim().isLength({min: 1, max: 100}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString().custom(emailOrLoginAlreadyExist);
 
 //for comment
 export const contentCommentValidator = body('content').isString().trim().isLength({min: 20, max: 300});
