@@ -138,15 +138,15 @@ export const authUsersRepositories = {
     async registrationWithSendingEmail(email: string){
 
         const user = await usersNotConfirmCollection.findOne({email: email})
-        const newCode = settings.EMAIL_CODE
 
         if(user && !user.isConfirm)
         {
-            const a = await usersNotConfirmCollection.updateOne( {email: email}, {$set: {'confirmationCode': newCode}})
-           // const b = await usersNotConfirmCollection.findOne({email: email})
+            const newCode = settings.EMAIL_CODE
+            await usersNotConfirmCollection.updateOne( {email: email}, {$set: {'confirmationCode': newCode}})
+            const a = await usersNotConfirmCollection.findOne({'email': email})
+            console.log(user)
+            console.log(a)
             console.log(newCode)
-            //console.log(a)
-            //console.log(b)
 
             let transporter = nodemailer.createTransport({
                 service: "gmail",
@@ -163,7 +163,7 @@ export const authUsersRepositories = {
                 text: "Hello world?", // plain text body
                 html:`<h1>Thank for your registration</h1>
        <p>To finish registration please follow the link below:
-          <a href='https://somesite.com/confirm-email?code=${newCode}'>complete registration</a>
+          <a href='https://somesite.com/confirm-email?code=${a!.confirmationCode}'>complete registration</a>
       </p>`,});
 
             return true;
