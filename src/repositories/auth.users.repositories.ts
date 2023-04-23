@@ -95,6 +95,8 @@ export const authUsersRepositories = {
         {
             const passwordHash = await bcrypt.hash(user.password, 10)
             const now = new Date();
+            const code = settings.EMAIL_CODE
+            console.log(code)
 
             const newUser: UserIsNotConfirmTypes =
             {
@@ -104,7 +106,7 @@ export const authUsersRepositories = {
                 hash: passwordHash,
                 createdAt: now.toISOString(),
                 isConfirm: false,
-                confirmationCode: settings.EMAIL_CODE,
+                confirmationCode: code,
                 expirationDate: add(new Date(),{hours: 1,}),
             }
 
@@ -118,7 +120,7 @@ export const authUsersRepositories = {
             });
 
             let info = await transporter.sendMail({
-                from: 'IT-INCUBATOR Blogs Platform <endlessxxxpain@gmail.com>', // sender address
+                from: 'IT-INCUBATOR Blogs Platform <incubator.blogs.platform@gmail.com>', // sender address
                 to: user.email, // list of receivers
                 subject: "Hello ✔", // Subject line
                 text: "Hello world?", // plain text body
@@ -138,6 +140,8 @@ export const authUsersRepositories = {
 
         const user = await usersNotConfirmCollection.findOne({email: email})
         const newCode = settings.EMAIL_CODE
+        console.log(user)
+        console.log(newCode)
 
         if(user && !user.isConfirm)
         {
@@ -146,6 +150,7 @@ export const authUsersRepositories = {
                         confirmationCode: newCode
                     }
             })
+
 
             let transporter = nodemailer.createTransport({
                 service: "gmail",
@@ -156,7 +161,7 @@ export const authUsersRepositories = {
             });
 
             let info = await transporter.sendMail({
-                from: 'IT-INCUBATOR <endlessxxxpain@gmail.com>', // sender address
+                from: 'IT-INCUBATOR <incubator.blogs.platform@gmail.com>', // sender address
                 to: email, // list of receivers
                 subject: "Hello ✔", // Subject line
                 text: "Hello world?", // plain text body
