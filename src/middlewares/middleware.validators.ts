@@ -23,6 +23,8 @@ const emailAlreadyExist : CustomValidator = async value =>
 
     const checkUserInSystem = await usersCollection.findOne(filter)
     const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
+    console.log(checkUserInSystem)
+    console.log(checkUserIsNotConfirmInSystem)
 
     if(checkUserInSystem != null)
     {
@@ -100,12 +102,14 @@ const blogIdValidator = body('blogId').trim().notEmpty().custom(findBlogId);
 //for user
 const loginValidator = body('login').isString().trim().isLength({min: 3, max: 10}).matches(/^[a-zA-Z0-9_-]*$/).custom(loginAlreadyExist)
 const passwordValidator = body('password').isString().trim().isLength({min: 6, max: 20});
-const emailValidator = body ('email').trim().isLength({min: 1, max: 100}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString().custom(emailAlreadyExist);
+const emailValidator = body ('email').trim().isLength({min: 1, max: 100}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString()
 export const codeValidator = body('code').trim().isString().custom(codeAlreadyExist);
 
 //for comment
 export const contentCommentValidator = body('content').isString().trim().isLength({min: 20, max: 300});
 
+//check for exits email validator
+export const existEmailValidator = body('email').custom(emailAlreadyExist)
 
 export const createBlogValidator = [
     nameValidator,

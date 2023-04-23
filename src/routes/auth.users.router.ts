@@ -3,7 +3,12 @@ import {authUsersService} from "../domain/auth.users.service";
 import {authMiddleware} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
-import {codeValidator, createUsersValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
+import {
+    codeValidator,
+    createUsersValidator,
+    existEmailValidator,
+    inputValidationMiddleware
+} from "../middlewares/middleware.validators";
 export const authUsersRouter = Router({});
 
 //login user
@@ -57,8 +62,9 @@ authUsersRouter.post('/registration', createUsersValidator, inputValidationMiddl
     }
 });
 
+
 //registration in system-3
-authUsersRouter.post('/registration-email-resending', async (req: Request, res: Response) =>{
+authUsersRouter.post('/registration-email-resending',existEmailValidator, inputValidationMiddleware, async (req: Request, res: Response) =>{
 
     const isResending = await authUsersRepositories.registrationWithSendingEmail(req.body.email);
 

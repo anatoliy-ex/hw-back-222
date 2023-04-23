@@ -139,6 +139,7 @@ export const authUsersRepositories = {
     async registrationWithSendingEmail(email: string){
 
         const user = await usersNotConfirmCollection.findOne({email: email})
+        console.log(user)
 
         if(user == null)
         {
