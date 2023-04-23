@@ -48,7 +48,7 @@ export const authUsersRepositories = {
 
       let confirmationUser = await usersNotConfirmCollection.findOne({confirmationCode: code});
 
-      if(confirmationUser && confirmationUser.expirationDate < new Date())
+      if(confirmationUser && confirmationUser.expirationDate > new Date())
       {
           const updateUser : UserConfirmTypes = {
               id: confirmationUser.id,
@@ -140,8 +140,6 @@ export const authUsersRepositories = {
 
         const user = await usersNotConfirmCollection.findOne({email: email})
         const newCode = settings.EMAIL_CODE
-        console.log(user)
-        console.log(newCode)
 
         if(user && !user.isConfirm)
         {
