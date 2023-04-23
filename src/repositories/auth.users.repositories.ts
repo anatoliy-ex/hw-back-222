@@ -144,11 +144,11 @@ export const authUsersRepositories = {
 
         if(user && !user.isConfirm)
         {
-            await usersNotConfirmCollection.updateOne( {email: user.email}, {
-                    $set:{
-                        confirmationCode: newCode
-                    }
-            })
+            // await usersNotConfirmCollection.updateOne( {email: user.email}, {
+            //         $set:{
+            //             confirmationCode: newCode
+            //         }
+            // })
             console.log(user)
 
 
@@ -167,7 +167,7 @@ export const authUsersRepositories = {
                 text: "Hello world?", // plain text body
                 html:`<h1>Thank for your registration</h1>
        <p>To finish registration please follow the link below:
-          <a href='https://somesite.com/confirm-email?code=${newCode}'>complete registration</a>
+          <a href='https://somesite.com/confirm-email?code=${user.confirmationCode}'>complete registration</a>
       </p>`
             });
 
