@@ -140,10 +140,6 @@ export const authUsersRepositories = {
         const user = await usersNotConfirmCollection.findOne({email: email})
         console.log(user)
 
-        if(user == null)
-        {
-            return false;
-        }
         const newCode = settings.EMAIL_CODE
 
         if(user && !user.isConfirm)
@@ -153,6 +149,7 @@ export const authUsersRepositories = {
                         confirmationCode: newCode
                     }
             })
+            console.log(user)
 
 
             let transporter = nodemailer.createTransport({
