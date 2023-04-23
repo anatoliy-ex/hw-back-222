@@ -144,11 +144,11 @@ export const authUsersRepositories = {
 
         if(user && !user.isConfirm)
         {
-            await usersNotConfirmCollection.updateOne( {email: user.email}, {
-                    $set:{
-                        confirmationCode: newCode
-                    }
-            })
+            // await usersNotConfirmCollection.updateOne( {email: user.email}, {
+            //         $set:{
+            //             confirmationCode: newCode
+            //         }
+            // })
             await usersNotConfirmCollection.findOne({email: email})
             console.log(user)
 
