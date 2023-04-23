@@ -3,7 +3,7 @@ import {authUsersService} from "../domain/auth.users.service";
 import {authMiddleware} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
-import {createUsersValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
+import {codeValidator, createUsersValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 export const authUsersRouter = Router({});
 
 //login user
@@ -27,7 +27,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 });
 
 //confirm registration-2
-authUsersRouter.post('/registration-confirmation', async (req: Request, res: Response) =>{
+authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, async (req: Request, res: Response) =>{
 
     const confirmationWithCode = await authUsersRepositories.confirmEmailByUser(req.body.code);
 

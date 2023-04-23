@@ -3,7 +3,7 @@ import {CustomValidator} from "express-validator";
 import { Response, Request } from "express";
 import {  body,  validationResult } from 'express-validator';
 import {NextFunction} from "express";
-import {usersCollection, usersNotConfirmCollection} from "../dataBase/db.posts.and.blogs";
+import {db, usersCollection, usersNotConfirmCollection} from "../dataBase/db.posts.and.blogs";
 
 const findBlogId : CustomValidator = async value =>
 {
@@ -51,6 +51,23 @@ const loginAlreadyExist : CustomValidator = async value =>
     }
 };
 
+const codeAlreadyExist : CustomValidator = async value =>
+{
+    const filter = {confirmationCode: value};
+
+    const checkUserInSystem = await usersCollection.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
+
+    if(checkUserInSystem != null)
+    {
+        throw new Error('code is exist');
+    }
+    else if(checkUserIsNotConfirmInSystem != null)
+    {
+        throw new Error('login is exist');
+    }
+};
+
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
 
@@ -86,8 +103,9 @@ const blogIdValidator = body('blogId').trim().notEmpty().custom(findBlogId);
 
 //for user
 const loginValidator = body('login').isString().trim().isLength({min: 3, max: 10}).matches(/^[a-zA-Z0-9_-]*$/).custom(loginAlreadyExist)
-const passwordValidator = body('password').isString().trim().isLength({min: 6, max: 20})
+const passwordValidator = body('password').isString().trim().isLength({min: 6, max: 20});
 const emailValidator = body ('email').trim().isLength({min: 1, max: 100}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString().custom(emailAlreadyExist);
+export const codeValidator = body('code').trim().isString().custom(codeAlreadyExist);
 
 //for comment
 export const contentCommentValidator = body('content').isString().trim().isLength({min: 20, max: 300});
