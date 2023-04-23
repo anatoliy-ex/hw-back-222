@@ -144,11 +144,12 @@ export const authUsersRepositories = {
 
         if(user && !user.isConfirm)
         {
-            // await usersNotConfirmCollection.updateOne( {email: user.email}, {
-            //         $set:{
-            //             confirmationCode: newCode
-            //         }
-            // })
+            await usersNotConfirmCollection.updateOne( {email: user.email}, {
+                    $set:{
+                        confirmationCode: newCode
+                    }
+            })
+            await usersNotConfirmCollection.findOne({email: email})
             console.log(user)
 
 
@@ -168,8 +169,7 @@ export const authUsersRepositories = {
                 html:`<h1>Thank for your registration</h1>
        <p>To finish registration please follow the link below:
           <a href='https://somesite.com/confirm-email?code=${user.confirmationCode}'>complete registration</a>
-      </p>`
-            });
+      </p>`,});
 
             return true;
         }
