@@ -27,7 +27,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 });
 
 //confirm registration-2
-authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, async (req: Request, res: Response) =>{
+authUsersRouter.post('/registration-confirmation',async (req: Request, res: Response) =>{
 
     const confirmationWithCode = await authUsersRepositories.confirmEmailByUser(req.body.code);
 
