@@ -49,23 +49,19 @@ const loginAlreadyExist : CustomValidator = async value =>
     {
         throw new Error('login is exist');
     }
+
 };
 
 const codeAlreadyExist : CustomValidator = async value =>
 {
     const filter = {confirmationCode: value};
-
-    const checkUserInSystem = await usersCollection.findOne(filter)
     const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
 
-    if(checkUserInSystem != null)
+    if(checkUserIsNotConfirmInSystem == null)
     {
         throw new Error('code is exist');
     }
-    else if(checkUserIsNotConfirmInSystem != null)
-    {
-        throw new Error('login is exist');
-    }
+
 };
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
