@@ -94,7 +94,7 @@ export const authUsersRepositories = {
         {
             const passwordHash = await bcrypt.hash(user.password, 10)
             const now = new Date();
-            const code = settings.EMAIL_CODE
+            const code = uuidv4()
             console.log(code)
 
             const newUser: UserIsNotConfirmTypes =
@@ -141,7 +141,7 @@ export const authUsersRepositories = {
 
         if(user && !user.isConfirm)
         {
-            const newCode = settings.EMAIL_CODE
+            const newCode = uuidv4()
             await usersNotConfirmCollection.updateOne( {email: email}, {$set: {'confirmationCode': newCode}})
             const a = await usersNotConfirmCollection.findOne({'email': email})
             console.log(user)
