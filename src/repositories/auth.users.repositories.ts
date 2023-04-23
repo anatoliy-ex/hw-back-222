@@ -84,7 +84,6 @@ export const authUsersRepositories = {
 
         if(checkUserInSystem != null )
         {
-
             return false;
         }
         else if(checkUserIsNotConfirmInSystem != null)

@@ -5,7 +5,7 @@ import {jwtService} from "../application/jwtService";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
 import {
     codeValidator,
-    createUsersValidator,
+    createUsersValidator, emailAlreadyExistButNotConfirmedValidator,
     existEmailValidator,
     inputValidationMiddleware
 } from "../middlewares/middleware.validators";
@@ -48,7 +48,7 @@ authUsersRouter.post('/registration-confirmation', codeValidator, inputValidatio
 });
 
 //first registration in system => send to email code for verification-1
-authUsersRouter.post('/registration', createUsersValidator, inputValidationMiddleware,  async (req: Request, res: Response) =>{
+authUsersRouter.post('/registration', createUsersValidator, existEmailValidator, inputValidationMiddleware,  async (req: Request, res: Response) =>{
 
     const firstRegistration : boolean = await authUsersRepositories.firstRegistrationInSystem(req.body);
 
@@ -64,7 +64,7 @@ authUsersRouter.post('/registration', createUsersValidator, inputValidationMiddl
 
 
 //registration in system-3
-authUsersRouter.post('/registration-email-resending',existEmailValidator, inputValidationMiddleware, async (req: Request, res: Response) =>{
+authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotConfirmedValidator, inputValidationMiddleware, async (req: Request, res: Response) =>{
 
     const isResending = await authUsersRepositories.registrationWithSendingEmail(req.body.email);
 
