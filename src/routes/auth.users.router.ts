@@ -110,14 +110,7 @@ authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res:
 //get information about user
 authUsersRouter.get('/me', authMiddleware, async (req: Request, res: Response) => {
 
-    const user = req.user
+    const user = req.user!
 
-    if(user != null)
-    {
-        res.status(200).send(user)
-    }
-    else
-    {
-        res.sendStatus(401)
-    }
+    res.status(200).send({email: user.email, login: user.login, userId: user.id})
 });
