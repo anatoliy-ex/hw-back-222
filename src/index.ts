@@ -4,12 +4,14 @@ import {blogsRouter} from "./routes/blogs.router";
 import {usersRouter} from "./routes/users.router";
 import {authUsersRouter} from "./routes/auth.users.router";
 import {commentRouter} from "./routes/comment.router";
+import cookieParser from "cookie-parser";
 
 const express = require('express');
 export const app = express();
 const port = process.env.PORT || 5001;
 const parserMiddleware = express.json()
 
+app.use(cookieParser())
 app.use(parserMiddleware);
 app.use('/posts', postsRouter);
 app.use('/blogs', blogsRouter);
@@ -17,6 +19,7 @@ app.use('/testing', blogsRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authUsersRouter)
 app.use('/comments', commentRouter)
+
 
 
 const startApp = async () =>

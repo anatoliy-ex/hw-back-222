@@ -1,13 +1,11 @@
 import {LoginType} from "../types/auth.users.types";
 import * as bcrypt from 'bcrypt'
-import {usersCollection, usersNotConfirmCollection} from "../dataBase/db.posts.and.blogs";
+import {refreshTokenCollection, usersCollection, usersNotConfirmCollection} from "../dataBase/db.posts.and.blogs";
 import {jwtService} from "../application/jwtService";
 import {InputUserType, UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import nodemailer from 'nodemailer'
-import {settings} from "../../.env/settings";
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
-import {promises} from "dns";
 
 
 export const authUsersRepositories = {
@@ -42,6 +40,20 @@ export const authUsersRepositories = {
            return false;
        }
    },
+
+    async checkRefreshToken(refreshToken: string): Promise<boolean> {
+
+
+
+        try {
+            const isGoodToken = await refreshTokenCollection.findOne({token: refreshToken})
+            return !isGoodToken!;
+
+        }
+        catch (e) {
+            return false;
+        }
+    },
 
     ////confirm registration-2
     async confirmEmailByUser(code: string) : Promise<boolean> {
@@ -143,10 +155,7 @@ export const authUsersRepositories = {
         {
             const newCode = uuidv4()
             await usersNotConfirmCollection.updateOne( {email: email}, {$set: {'confirmationCode': newCode}})
-            const a = await usersNotConfirmCollection.findOne({'email': email})
-            console.log(user)
-            console.log(a)
-            console.log(newCode)
+            const updatedUser = await usersNotConfirmCollection.findOne({'email': email})
 
             let transporter = nodemailer.createTransport({
                 service: "gmail",
@@ -163,7 +172,7 @@ export const authUsersRepositories = {
                 text: "Hello world?", // plain text body
                 html:`<h1>Thank for your registration</h1>
        <p>To finish registration please follow the link below:
-          <a href='https://somesite.com/confirm-email?code=${a!.confirmationCode}'>complete registration</a>
+          <a href='https://somesite.com/confirm-email?code=${updatedUser!.confirmationCode}'>complete registration</a>
       </p>`,});
 
             return true;
@@ -188,6 +197,11 @@ export const authUsersRepositories = {
         {
             return null
         }
+    },
+
+    //logout if bad refresh token
+    async logoutIfRefreshTokenBad(){
+
     },
 
     //get user id by login or email

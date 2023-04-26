@@ -4,6 +4,7 @@ import {PostsTypes} from "../types/posts.types";
 import {UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import {TypeCommentatorInfo, TypeViewCommentModel} from "../types/comments.types";
 import {settings} from "../../.env/settings";
+import {RefreshTokenTypes} from "../types/refresh.token.types";
 
 const mongoUri = settings.MONGO_URI
 export const client = new MongoClient(mongoUri)
@@ -14,6 +15,7 @@ export const postsCollection = db.collection<PostsTypes>("posts");
 export const usersCollection = db.collection<UserConfirmTypes>("users")
 export const commentsCollection = db.collection<TypeViewCommentModel<TypeCommentatorInfo>>("comments")
 export const usersNotConfirmCollection = db.collection<UserIsNotConfirmTypes>("notConfirmUser")
+export const refreshTokenCollection = db.collection<RefreshTokenTypes>('refreshToken')
 
 export async function runDb()
 {
@@ -21,7 +23,7 @@ export async function runDb()
     {
         await client.connect();
         await client.db("blogs").command({ping: 1});
-        console.log("Connect successfull to mongo server");
+        console.log("Connect successfully to mongo server");
     }
     catch
     {
