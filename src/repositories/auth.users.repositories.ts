@@ -191,7 +191,7 @@ export const authUsersRepositories = {
     },
 
     //get information about user
-    async getUser(token: string)
+    async getUserWithAccessToken(token: string)
     {
         const userId = await  jwtService.getUserIdByToken(token);
 
@@ -203,6 +203,23 @@ export const authUsersRepositories = {
             return null
         }
     },
+
+
+    //get information about user
+    async getUserWithRefreshToken(token: string)
+    {
+        const userId = await  jwtService.getUserIdByRefreshToken(token);
+
+        if(userId != null) {
+            return await usersCollection.findOne({id: userId})
+        }
+        else
+        {
+            return null
+        }
+    },
+
+
 
     //logout if bad refresh token
     async logoutIfRefreshTokenBad(){

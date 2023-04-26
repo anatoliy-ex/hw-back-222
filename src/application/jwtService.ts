@@ -23,5 +23,17 @@ export const jwtService = {
         catch(error){
             return null
         }
-    }
+    },
+
+    async getUserIdByRefreshToken(token: string) {
+        try
+        {
+            const result : any = jwt.verify(token, settings.REFRESH_TOKEN_SECRET)
+
+            return result.userId
+        }
+        catch(error){
+            return null
+        }
+    },
 };

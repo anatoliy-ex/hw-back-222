@@ -7,6 +7,7 @@ import {usersRepositories} from "../../repositories/users.repositories";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
 import {commentRepositories} from "../../repositories/comment.repositories";
 import {postsRepositories} from "../../repositories/posts.repositories";
+import {settings} from "../../../.env/settings";
 
 //super admin check
 const expressBasicAuth = require('express-basic-auth');
@@ -30,7 +31,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
         if(IsDecode)
         {
-            const user = await authUsersRepositories.getUser(token)
+            const user = await authUsersRepositories.getUserWithAccessToken(token)
 
             if(user === null)
             {
@@ -49,6 +50,43 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         return;
     }
    next()
+}
+
+export const refreshAuthMiddleware = async (req: Request, res: Response, next: NextFunction) =>
+{
+    const refreshToken = req.cookies.refreshToken
+
+    if(!refreshToken)
+    {
+        res.sendStatus(401)
+        return
+    }
+
+    try
+    {
+        const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
+
+        if(IsDecode)
+        {
+            const user = await authUsersRepositories.getUserWithRefreshToken(refreshToken)
+
+            if(user === null)
+            {
+                res.sendStatus(402)
+                return
+            }
+            else
+            {
+                req.user = user
+            }
+        }
+    }
+    catch (e)
+    {
+        res.sendStatus(401)
+        return;
+    }
+    next()
 }
 
 //check if try edit the comment that

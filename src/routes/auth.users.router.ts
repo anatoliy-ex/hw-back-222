@@ -1,6 +1,6 @@
 import e, {Request, Response, Router} from "express"
 import {authUsersService} from "../domain/auth.users.service";
-import {authMiddleware} from "../middlewares/auth/auth.middleware";
+import {authMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
 import {codeValidator,
@@ -46,7 +46,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 });
 
 //generate new refresh Token and access Token
-authUsersRouter.post('/refresh-token', async (req: Request, res: Response) => {
+authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
     const refreshTokenAndAccess = await authUsersRepositories.checkRefreshToken(req.cookies.refreshToken)
 
