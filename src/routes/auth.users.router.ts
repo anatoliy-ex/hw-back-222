@@ -9,7 +9,7 @@ import {codeValidator,
     existEmailValidator,
     inputValidationMiddleware
 } from "../middlewares/middleware.validators";
-import {refreshTokenCollection} from "../dataBase/db.posts.and.blogs";
+import {refreshTokenBlackListCollection} from "../dataBase/db.posts.and.blogs";
 import {RefreshTokenTypes} from "../types/refresh.token.types";
 export const authUsersRouter = Router({});
 
@@ -23,19 +23,10 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
         const token = await jwtService.createJWT(userId);
         const refreshToken = await jwtService.createRefreshToken(userId)
 
-        console.log(token)
-        console.log(refreshToken)
 
-        const refreshTokenObject : RefreshTokenTypes = {
-            userId: userId,
-            tokenId: `${Date.now()}`,
-            token: refreshToken
-        }
-        await refreshTokenCollection.insertOne({...refreshTokenObject})
-        const accessToken = {accessToken: token};
 
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
-        res.status(200).send(accessToken);
+        res.status(200).send({accessToken: token});
         return;
     }
     else
@@ -45,36 +36,21 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
     }
 });
 
+
+// TODO: cron job for delete old tokens (scheduler)
 //generate new refresh Token and access Token
 authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
-    const refreshTokenAndAccess = await authUsersRepositories.checkRefreshToken(req.cookies.refreshToken)
-
-    if(!refreshTokenAndAccess)
-    {
-        res.sendStatus(401);
-    }
-    else
-    {
-        const refreshTokenInfo = await refreshTokenCollection.findOne({token:req.cookies.refreshToken})
-        await refreshTokenCollection.deleteOne({token: req.cookies.refreshToken})
-
-        const userId = jwtService.getUserIdByToken(req.cookies.refreshToken);
+        const userId = req.user!.id
         const token = await jwtService.createJWT(userId);
         const refreshToken = await jwtService.createRefreshToken(userId);
 
-        const refreshTokenObject : RefreshTokenTypes = {
-            userId: refreshTokenInfo!.userId,
-            tokenId: `${Date.now()}`,
-            token: refreshToken
-        }
-
-        await refreshTokenCollection.insertOne({...refreshTokenObject})
-        const accessToken = {accessToken: token};
+        const oldRefreshToken = req.cookies.refreshToken
+        await refreshTokenBlackListCollection.insertOne({refreshToken: oldRefreshToken})
 
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
-        res.status(200).send(accessToken)
-    }
+        res.status(200).send({accessToken: token})
+
 })
 
 //confirm registration-2
@@ -126,17 +102,9 @@ authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotCon
 
 //logout if bad refresh token
 authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res: Response) => {
-
-    const refreshTokenAndAccess = authUsersRepositories.checkRefreshToken(req.cookies.refreshToken)
-
-    if(!refreshTokenAndAccess)
-    {
-        res.sendStatus(401);
-    }
-    else
-    {
-        res.sendStatus(204);
-    }
+    const {refreshToken} = req.cookies
+    await refreshTokenBlackListCollection.insertOne({refreshToken})
+    res.cookie('refreshToken', '', {httpOnly: true, secure: true}).status(204).send()
 });
 
 //get information about user

@@ -1,4 +1,5 @@
 import {Request, Response, Router} from "express"
+
 export const blogsRouter = Router({});
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
@@ -6,10 +7,10 @@ import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from 
 import {getPaginationFromQueryPosts} from "./posts.router";
 import {blogsService} from "../domain/blogs.service";
 import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
+import {collections} from "../dataBase/db.posts.and.blogs";
 
 
-
- export type PaginationQueryTypeForBlogs = {
+export type PaginationQueryTypeForBlogs = {
     searchNameTerm: string,
     sortBy: string,
     sortDirection: 'asc' | 'desc',
@@ -35,7 +36,9 @@ export const getPaginationFromQueryBlogs = (query: any): PaginationQueryTypeForB
 
 //delete all
 blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
-    await blogsService.deleteAll();
+    const promises = collections.map(c => c.deleteMany())
+    await Promise.all(promises)
+
     res.sendStatus(204);
     return;
 });
@@ -69,23 +72,20 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
 
     const foundBlog: BlogsTypes | null = await blogsService.getBlogById(req.params.blogId);
 
-    if(foundBlog)
-    {
+    if (foundBlog) {
         const pagination = getPaginationFromQueryPosts(req.query);
         const postsForBlog = await blogsService.getPostsForBlog(pagination, foundBlog.id);
 
         res.status(200).send(postsForBlog);
         return;
-    }
-    else
-    {
+    } else {
         res.sendStatus(404);
         return
     }
 });
 
 //create new post for specific blog
-blogsRouter.post('/:blogId/posts', adminStatusAuth , createPostForBlog, inputValidationMiddleware, async (req: Request, res: Response) => {
+blogsRouter.post('/:blogId/posts', adminStatusAuth, createPostForBlog, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const foundBlog: BlogsTypes | null = await blogsService.getBlogById(req.params.blogId);
 

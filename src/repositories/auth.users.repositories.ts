@@ -1,6 +1,6 @@
 import {LoginType} from "../types/auth.users.types";
 import * as bcrypt from 'bcrypt'
-import {refreshTokenCollection, usersCollection, usersNotConfirmCollection} from "../dataBase/db.posts.and.blogs";
+import {refreshTokenBlackListCollection, usersCollection, usersNotConfirmCollection} from "../dataBase/db.posts.and.blogs";
 import {jwtService} from "../application/jwtService";
 import {InputUserType, UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import nodemailer from 'nodemailer'
@@ -44,7 +44,7 @@ export const authUsersRepositories = {
     async checkRefreshToken(refreshToken: string): Promise<boolean> {
 
        try{
-           const isToken = await refreshTokenCollection.findOne({token: refreshToken})
+           const isToken = await refreshTokenBlackListCollection.findOne({token: refreshToken})
 
            if(isToken == null)
            {

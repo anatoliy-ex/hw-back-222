@@ -10,12 +10,16 @@ const mongoUri = settings.MONGO_URI
 export const client = new MongoClient(mongoUri)
 
 export const db = client.db ("it-incubator-blog");
+
 export const blogsCollection = db.collection<BlogsTypes>("blogs");
 export const postsCollection = db.collection<PostsTypes>("posts");
 export const usersCollection = db.collection<UserConfirmTypes>("users")
 export const commentsCollection = db.collection<TypeViewCommentModel<TypeCommentatorInfo>>("comments")
 export const usersNotConfirmCollection = db.collection<UserIsNotConfirmTypes>("notConfirmUser")
-export const refreshTokenCollection = db.collection<RefreshTokenTypes>('refreshToken')
+export const refreshTokenBlackListCollection = db.collection<RefreshTokenTypes>('refreshToken')
+
+export const collections = [blogsCollection, postsCollection, usersCollection,
+    commentsCollection, usersNotConfirmCollection, refreshTokenBlackListCollection]
 
 export async function runDb()
 {
