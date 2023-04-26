@@ -43,8 +43,21 @@ export const authUsersRepositories = {
 
     async checkRefreshToken(refreshToken: string): Promise<boolean> {
 
-       const isToken = await refreshTokenCollection.findOne({token: refreshToken})
-        return !!isToken;
+       try{
+           const isToken = await refreshTokenCollection.findOne({token: refreshToken})
+
+           if(isToken == null)
+           {
+               return false
+           }
+           else
+           {
+               return true
+           }
+       }
+       catch (e) {
+           return false;
+       }
     },
 
     ////confirm registration-2
