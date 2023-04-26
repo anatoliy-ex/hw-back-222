@@ -48,7 +48,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 //generate new refresh Token and access Token
 authUsersRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
-    const refreshTokenAndAccess = authUsersRepositories.checkRefreshToken(req.cookies.refreshToken)
+    const refreshTokenAndAccess = await authUsersRepositories.checkRefreshToken(req.cookies.refreshToken)
 
     if(!refreshTokenAndAccess)
     {
