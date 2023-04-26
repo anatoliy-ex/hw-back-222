@@ -10,7 +10,6 @@ import {codeValidator,
     inputValidationMiddleware
 } from "../middlewares/middleware.validators";
 import {refreshTokenBlackListCollection} from "../dataBase/db.posts.and.blogs";
-import {RefreshTokenTypes} from "../types/refresh.token.types";
 export const authUsersRouter = Router({});
 
 //login user
@@ -22,8 +21,6 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
     {
         const token = await jwtService.createJWT(userId);
         const refreshToken = await jwtService.createRefreshToken(userId)
-
-
 
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
         res.status(200).send({accessToken: token});
@@ -44,14 +41,13 @@ authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Reques
         const userId = req.user!.id
         const token = await jwtService.createJWT(userId);
         const refreshToken = await jwtService.createRefreshToken(userId);
-
         const oldRefreshToken = req.cookies.refreshToken
+
         await refreshTokenBlackListCollection.insertOne({refreshToken: oldRefreshToken})
 
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
         res.status(200).send({accessToken: token})
-
-})
+});
 
 //confirm registration-2
 authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, async (req: Request, res: Response) =>{
@@ -97,13 +93,14 @@ authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotCon
     {
         res.status(400);
     }
-
 });
 
 //logout if bad refresh token
 authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res: Response) => {
-    const {refreshToken} = req.cookies
+
+    const refreshToken = req.cookies
     await refreshTokenBlackListCollection.insertOne({refreshToken})
+
     res.cookie('refreshToken', '', {httpOnly: true, secure: true}).status(204).send()
 });
 

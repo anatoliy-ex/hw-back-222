@@ -1,12 +1,9 @@
 import {NextFunction, Request, Response} from "express";
 import {jwtService} from "../../application/jwtService";
-import {usersService} from "../../domain/users.service";
 import jwt from "jsonwebtoken";
 import {commentsCollection, refreshTokenBlackListCollection, usersCollection} from "../../dataBase/db.posts.and.blogs";
-import {usersRepositories} from "../../repositories/users.repositories";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
 import {commentRepositories} from "../../repositories/comment.repositories";
-import {postsRepositories} from "../../repositories/posts.repositories";
 import {settings} from "../../../.env/settings";
 
 //super admin check
