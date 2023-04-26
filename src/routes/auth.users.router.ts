@@ -99,7 +99,7 @@ authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotCon
 authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
     const refreshToken = req.cookies
-    await refreshTokenBlackListCollection.insertOne({refreshToken})
+    await refreshTokenBlackListCollection.insertOne(refreshToken)
 
     res.cookie('refreshToken', '', {httpOnly: true, secure: true}).status(204).send()
 });
