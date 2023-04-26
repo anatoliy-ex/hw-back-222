@@ -125,7 +125,7 @@ authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotCon
 });
 
 //logout if bad refresh token
-authUsersRouter.post('/logout', async (req: Request, res: Response) => {
+authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
     const refreshTokenAndAccess = authUsersRepositories.checkRefreshToken(req.cookies.refreshToken)
 
