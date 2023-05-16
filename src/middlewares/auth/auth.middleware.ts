@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {jwtService} from "../../application/jwtService";
 import jwt from "jsonwebtoken";
-import {commentsCollection, refreshTokenBlackListCollection, usersCollection} from "../../dataBase/db.posts.and.blogs";
+import {commentsCollection, refreshTokenSessionCollection, usersCollection} from "../../dataBase/db.posts.and.blogs";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
 import {commentRepositories} from "../../repositories/comment.repositories";
 import {settings} from "../../../.env/settings";
@@ -65,7 +65,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
 
         if(IsDecode)
         {
-            const isBlocked = await refreshTokenBlackListCollection.findOne({refreshToken})
+            const isBlocked = await refreshTokenSessionCollection.findOne({refreshToken})
             if (isBlocked) return res.sendStatus(401)
 
             const user = await authUsersRepositories.getUserWithRefreshToken(refreshToken)

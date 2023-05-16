@@ -7,8 +7,8 @@ export const jwtService = {
         return jwt.sign({userId : userId}, settings.JWT_SECRET, {expiresIn: '10s'});
     },
 
-    async createRefreshToken(userId: any){
-        return  jwt.sign({userId : userId}, settings.REFRESH_TOKEN_SECRET, {expiresIn: '20s'});
+    async createRefreshToken(userId: any, deviceId: any){
+        return  jwt.sign({userId : deviceId, deviceId: userId}, settings.REFRESH_TOKEN_SECRET, {expiresIn: '20s'});
 
     },
 

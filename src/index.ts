@@ -4,6 +4,7 @@ import {blogsRouter} from "./routes/blogs.router";
 import {usersRouter} from "./routes/users.router";
 import {authUsersRouter} from "./routes/auth.users.router";
 import {commentRouter} from "./routes/comment.router";
+import {securityDeviceRouter} from "./routes/security.device.router";
 import cookieParser from "cookie-parser";
 
 const express = require('express');
@@ -19,6 +20,7 @@ app.use('/testing', blogsRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authUsersRouter)
 app.use('/comments', commentRouter)
+app.use('/security', securityDeviceRouter)
 
 
 

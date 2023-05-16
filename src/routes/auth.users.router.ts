@@ -9,26 +9,45 @@ import {codeValidator,
     existEmailValidator,
     inputValidationMiddleware
 } from "../middlewares/middleware.validators";
-import {refreshTokenBlackListCollection} from "../dataBase/db.posts.and.blogs";
+import {refreshTokenSessionCollection} from "../dataBase/db.posts.and.blogs";
+import * as os from "os";
+import jwt from "jsonwebtoken";
+import {settings} from "../../.env/settings";
+import {RefreshTokenSessions} from "../types/refreshTokenSessions";
 export const authUsersRouter = Router({});
 
 //login user
 authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 
     const userId = await authUsersService.loginUser(req.body);
+    const userIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || ' ';
+    const deviceId = `${Date.now()}`;
+    const deviceName = req.headers["user-agent"] || "Other Device"
+    const now = new Date();
+
 
     if(userId)
     {
         const token = await jwtService.createJWT(userId);
-        const refreshToken = await jwtService.createRefreshToken(userId)
+        const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
 
-        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
+        const newSessions: RefreshTokenSessions = {
+            deviceId: deviceId,
+            ip: userIp,//device IP(user IP)
+            title: deviceName,//device name
+            lastActiveDate: now.toISOString(),
+            userId: userId
+        };
+
+        await refreshTokenSessionCollection.insertOne({...newSessions});
+
+        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,});
         res.status(200).send({accessToken: token});
         return;
     }
     else
     {
-        res.sendStatus(401)
+        res.sendStatus(401);
         return;
     }
 });
@@ -38,15 +57,33 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 //generate new refresh Token and access Token
 authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
-        const userId = req.user!.id
-        const token = await jwtService.createJWT(userId);
-        const refreshToken = await jwtService.createRefreshToken(userId);
-        const oldRefreshToken = req.cookies.refreshToken
+    const userId = req.user!.id
 
-        await refreshTokenBlackListCollection.insertOne({refreshToken: oldRefreshToken})
+    const oldRefreshToken = req.cookies.refreshToken
+    const result : any = jwt.verify(oldRefreshToken, settings.REFRESH_TOKEN_SECRET)
+    const deviceId =  result.deviceId
 
-        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
-        res.status(200).send({accessToken: token})
+    const token = await jwtService.createJWT(userId);
+    const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
+    const sessions = await refreshTokenSessionCollection.findOne({deviceId: deviceId})
+
+    if(sessions != null)
+    {
+        const now = new Date();
+
+        const updateSessions : RefreshTokenSessions= {
+            deviceId: sessions.deviceId,
+            ip: sessions.ip,//device IP(user IP)
+            title: sessions.title,//device name
+            lastActiveDate: now.toISOString(),
+            userId: userId
+        }
+        await refreshTokenSessionCollection.deleteOne({deviceId: deviceId})
+        await refreshTokenSessionCollection.insertOne({...updateSessions})
+    }
+
+    res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
+    res.status(200).send({accessToken: token})
 });
 
 //confirm registration-2
@@ -99,7 +136,11 @@ authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotCon
 authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
     const refreshToken = req.cookies
-    await refreshTokenBlackListCollection.insertOne(refreshToken)
+    await refreshTokenSessionCollection.insertOne(refreshToken)
+
+    const result : any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
+    const deviceId =  result.deviceId
+    await refreshTokenSessionCollection.deleteOne({deviceId: deviceId})
 
     res.cookie('refreshToken', '', {httpOnly: true, secure: true}).status(204).send()
 });
