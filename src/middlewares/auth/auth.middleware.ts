@@ -70,7 +70,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
 
             const user = await authUsersRepositories.getUserWithRefreshToken(refreshToken)
 
-            if(user === null)
+            if(user == null)
             {
                 res.sendStatus(402)
                 return

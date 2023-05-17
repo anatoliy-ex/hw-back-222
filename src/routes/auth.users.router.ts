@@ -30,6 +30,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
     {
         const token = await jwtService.createJWT(userId);
         const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
+        console.log(refreshToken)
 
         const newSessions: RefreshTokenSessions = {
             deviceId: deviceId,
