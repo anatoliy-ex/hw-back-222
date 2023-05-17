@@ -29,7 +29,6 @@ export const jwtService = {
         try
         {
             const result : any = jwt.verify(token, settings.REFRESH_TOKEN_SECRET)
-
             return result.userId
         }
         catch(error){

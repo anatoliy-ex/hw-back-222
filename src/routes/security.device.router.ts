@@ -7,28 +7,13 @@ import {refreshTokenSessionCollection} from "../dataBase/db.posts.and.blogs";
 export const securityDeviceRouter = Router({});
 
 //get information  about all sessions
-securityDeviceRouter.get('/devices', async (req: Request, res: Response) =>{
+securityDeviceRouter.get('/devices', refreshAuthMiddleware, async (req: Request, res: Response) =>{
 
-    const refreshToken = req.cookies.refreshToken
+    const deviceId =  req.cookies.deviceId
+    const userId = req.user!.id
+    let allSessions = await securityDevicesRepositories.getInformationAboutAllSessions(deviceId, userId);
+    res.status(200).send(allSessions)
 
-    if(!refreshToken)
-    {
-        res.sendStatus(401)
-    }
-
-    const result : any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
-
-    if(result)
-    {
-        const deviceId =  result.deviceId
-        const userId = req.user!.id
-        let allSessions = await securityDevicesRepositories.getInformationAboutAllSessions(deviceId, userId);
-        res.status(200).send(allSessions)
-    }
-    else
-    {
-        res.sendStatus(401)
-    }
 });
 
 //logout on all sessions(expect current)
