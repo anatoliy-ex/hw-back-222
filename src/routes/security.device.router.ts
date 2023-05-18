@@ -12,6 +12,7 @@ securityDeviceRouter.get('/devices', refreshAuthMiddleware, async (req: Request,
     const deviceId =  req.cookies.deviceId
     const userId = req.user!.id
     let allSessions = await securityDevicesRepositories.getInformationAboutAllSessions(deviceId, userId);
+    console.log(allSessions)
     res.status(200).send(allSessions)
 
 });
