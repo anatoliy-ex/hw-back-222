@@ -61,10 +61,9 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
 
     try{
         const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
-
-        if(!IsDecode)
+        if(IsDecode == undefined)
         {
-            res.sendStatus(401)
+            res.sendStatus(401);
             return;
         }
 
