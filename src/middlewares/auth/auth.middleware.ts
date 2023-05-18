@@ -24,7 +24,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
     try
     {
-        const IsDecode: any = jwt.verify(token, '34343434')
+        const IsDecode: any = jwt.verify(token, settings.JWT_SECRET)
 
         if(IsDecode)
         {
@@ -43,7 +43,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     }
    catch (e)
     {
-        res.sendStatus(401)
+        res.sendStatus(408)
         return;
     }
    next()
