@@ -65,6 +65,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
         if(!IsDecode)
         {
             res.sendStatus(401)
+            return;
         }
 
         if(IsDecode){
@@ -79,6 +80,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
             }else{
                 req.cookies = IsDecode
                 req.user = user
+                return;
             }
         }
     }
