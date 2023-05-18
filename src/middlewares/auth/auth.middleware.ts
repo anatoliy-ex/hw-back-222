@@ -62,6 +62,11 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
     try{
         const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
 
+        if(!IsDecode)
+        {
+            res.sendStatus(401)
+        }
+
         if(IsDecode){
             // const isBlocked = await refreshTokenSessionCollection.findOne({refreshToken})
             // if (isBlocked) return res.sendStatus(401)
