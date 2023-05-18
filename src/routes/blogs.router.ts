@@ -40,7 +40,6 @@ blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
     await Promise.all(promises)
 
     res.sendStatus(204);
-    return;
 });
 
 
