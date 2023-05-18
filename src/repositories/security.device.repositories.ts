@@ -12,7 +12,7 @@ export const securityDevicesRepositories = {
         if(countOfSessions > 1)
         {
             const allSessions: RefreshTokenSessions[] = await refreshTokenSessionCollection
-                .find({userId: userId}, {projection: {userId: 0}})
+                .find({userId: userId}, {projection: {userId: 0, _id: 0}})
                 .toArray();
             return allSessions;
         }
