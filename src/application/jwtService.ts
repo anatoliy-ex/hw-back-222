@@ -4,11 +4,11 @@ import {settings} from "../../.env/settings";
 export const jwtService = {
     //create jwt
     async createJWT(userId: any) {
-        return jwt.sign({userId : userId}, settings.JWT_SECRET, {expiresIn: '10s'});
+        return jwt.sign({userId : userId}, settings.JWT_SECRET, {expiresIn: '90s'});
     },
 
     async createRefreshToken(userId: any, deviceId: any){
-        return  jwt.sign({userId : deviceId, deviceId: userId}, settings.REFRESH_TOKEN_SECRET, {expiresIn: '20s'});
+        return  jwt.sign({userId : userId, deviceId: deviceId}, settings.REFRESH_TOKEN_SECRET, {expiresIn: '95s'});
 
     },
 

@@ -53,8 +53,8 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
 {
     if(!req.cookies.refreshToken)
     {
-        console.log(req.cookies.refreshToken)
-        console.log("1")
+        // console.log(req.cookies.refreshToken)
+        // console.log("1")
         res.sendStatus(401)
         return
     }
@@ -82,8 +82,8 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
     }
     catch (e)
     {
-        console.log(e)
-        console.log("2")
+        // console.log(e)
+        // console.log("2")
         res.sendStatus(401)
         return;
     }

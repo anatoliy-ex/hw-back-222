@@ -1,6 +1,10 @@
 import {LoginType} from "../types/auth.users.types";
 import * as bcrypt from 'bcrypt'
-import {refreshTokenSessionCollection, usersCollection, usersNotConfirmCollection} from "../dataBase/db.posts.and.blogs";
+import {
+    refreshTokenSessionCollection,
+    usersCollection,
+    usersNotConfirmCollection
+} from "../dataBase/db.posts.and.blogs";
 import {jwtService} from "../application/jwtService";
 import {InputUserType, UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import nodemailer from 'nodemailer'
@@ -212,6 +216,7 @@ export const authUsersRepositories = {
 
         if(userId != null) {
             return await usersCollection.findOne({id: userId})
+
         }
         else
         {
