@@ -4,7 +4,7 @@ import {PostsTypes} from "../types/posts.types";
 import {UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import {TypeCommentatorInfo, TypeViewCommentModel} from "../types/comments.types";
 import {settings} from "../../.env/settings";
-import {RefreshTokenSessions} from "../types/refreshTokenSessions";
+import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 
 const mongoUri = settings.MONGO_URI
 export const client = new MongoClient(mongoUri)
@@ -16,7 +16,7 @@ export const postsCollection = db.collection<PostsTypes>("posts");
 export const usersCollection = db.collection<UserConfirmTypes>("users")
 export const commentsCollection = db.collection<TypeViewCommentModel<TypeCommentatorInfo>>("comments")
 export const usersNotConfirmCollection = db.collection<UserIsNotConfirmTypes>("notConfirmUser")
-export const refreshTokenSessionCollection = db.collection<RefreshTokenSessions>('refreshToken')
+export const refreshTokenSessionCollection = db.collection<RefreshTokenSessionsTypes>('refreshToken')
 
 export const collections = [blogsCollection, postsCollection, usersCollection,
     commentsCollection, usersNotConfirmCollection, refreshTokenSessionCollection]

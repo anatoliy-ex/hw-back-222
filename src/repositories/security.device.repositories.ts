@@ -1,5 +1,5 @@
 import { refreshTokenSessionCollection} from "../dataBase/db.posts.and.blogs";
-import {RefreshTokenSessions} from "../types/refreshTokenSessions";
+import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 
 export const securityDevicesRepositories = {
 
@@ -11,7 +11,7 @@ export const securityDevicesRepositories = {
 
         if(countOfSessions > 1)
         {
-            const allSessions: RefreshTokenSessions[] = await refreshTokenSessionCollection
+            const allSessions: RefreshTokenSessionsTypes[] = await refreshTokenSessionCollection
                 .find({userId: userId}, {projection: {userId: 0, _id: 0}})
                 .toArray();
             return allSessions;

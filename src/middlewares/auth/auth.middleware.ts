@@ -53,8 +53,6 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
 {
     if(!req.cookies.refreshToken)
     {
-        // console.log(req.cookies.refreshToken)
-        // console.log("1")
         res.sendStatus(401)
         return
     }
@@ -65,11 +63,10 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
         const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
 
         if(IsDecode){
-            const isBlocked = await refreshTokenSessionCollection.findOne({refreshToken})
-            if (isBlocked) return res.sendStatus(401)
+            // const isBlocked = await refreshTokenSessionCollection.findOne({refreshToken})
+            // if (isBlocked) return res.sendStatus(401)
 
             const user = await authUsersRepositories.getUserWithRefreshToken(refreshToken)
-
 
             if(user == null){
                 res.sendStatus(402)
@@ -82,8 +79,6 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
     }
     catch (e)
     {
-        // console.log(e)
-        // console.log("2")
         res.sendStatus(401)
         return;
     }

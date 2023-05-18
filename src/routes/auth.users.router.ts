@@ -13,7 +13,7 @@ import {refreshTokenSessionCollection} from "../dataBase/db.posts.and.blogs";
 import * as os from "os";
 import jwt from "jsonwebtoken";
 import {settings} from "../../.env/settings";
-import {RefreshTokenSessions} from "../types/refreshTokenSessions";
+import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 export const authUsersRouter = Router({});
 
 //login user
@@ -32,7 +32,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
         const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
         console.log(refreshToken)
 
-        const newSessions: RefreshTokenSessions = {
+        const newSessions: RefreshTokenSessionsTypes = {
             deviceId: deviceId,
             ip: userIp,//device IP(user IP)
             title: deviceName,//device name
@@ -72,7 +72,7 @@ authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Reques
     {
         const now = new Date();
 
-        const updateSessions : RefreshTokenSessions= {
+        const updateSessions : RefreshTokenSessionsTypes= {
             deviceId: sessions.deviceId,
             ip: sessions.ip,//device IP(user IP)
             title: sessions.title,//device name
