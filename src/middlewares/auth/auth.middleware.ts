@@ -80,7 +80,6 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
             }else{
                 req.cookies = IsDecode
                 req.user = user
-                return;
             }
         }
     }
