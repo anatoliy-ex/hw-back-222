@@ -51,33 +51,30 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
 export const refreshAuthMiddleware = async (req: Request, res: Response, next: NextFunction) =>
 {
-    const refreshToken = req.cookies.refreshToken
-
-    if(!refreshToken)
+    if(!req.cookies.refreshToken)
     {
+        console.log(req.cookies.refreshToken)
+        console.log("1")
         res.sendStatus(401)
         return
     }
+    console.log(req.cookies.refreshToken);
+    const refreshToken = req.cookies.refreshToken
 
-    try
-    {
+    try{
         const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
 
-        if(IsDecode)
-        {
+        if(IsDecode){
             const isBlocked = await refreshTokenSessionCollection.findOne({refreshToken})
             if (isBlocked) return res.sendStatus(401)
 
             const user = await authUsersRepositories.getUserWithRefreshToken(refreshToken)
 
 
-            if(user == null)
-            {
-                res.sendStatus(407)
+            if(user == null){
+                res.sendStatus(402)
                 return
-            }
-            else
-            {
+            }else{
                 req.cookies = IsDecode
                 req.user = user
             }
@@ -85,12 +82,13 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
     }
     catch (e)
     {
+        console.log(e)
+        console.log("2")
         res.sendStatus(401)
         return;
     }
     next()
 }
-
 //check if try edit the comment that
 export const checkForUser = async (req: Request, res: Response, next: NextFunction) => {
 
