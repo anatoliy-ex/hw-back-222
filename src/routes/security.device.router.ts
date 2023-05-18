@@ -1,5 +1,5 @@
 import  {Request, Response, Router} from "express"
-import {refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
+import {authMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {securityDevicesRepositories} from "../repositories/security.device.repositories";
 import jwt from "jsonwebtoken";
 import {settings} from "../../.env/settings";
@@ -33,7 +33,7 @@ securityDeviceRouter.delete('/devices', refreshAuthMiddleware, async (req: Reque
 });
 
 //logout in specific session
-securityDeviceRouter.delete('/devices/:deviceId', refreshAuthMiddleware,  async (req: Request, res: Response) =>{
+securityDeviceRouter.delete('/devices/:deviceId', authMiddleware,  async (req: Request, res: Response) =>{
 
     const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId})
 
