@@ -15,17 +15,14 @@ export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
 //check token
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) =>
 {
-    if(req.headers == undefined)
-    {
-        res.sendStatus(401);
-    }
-    const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId})
 
-    if(!sessionsFind)
-    {
-        res.sendStatus(404);
-        return;
-    }
+    // const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId})
+    //
+    // if(!sessionsFind)
+    // {
+    //     res.sendStatus(404);
+    //     return;
+    // }
 
     if(!req.headers.authorization)
     {
