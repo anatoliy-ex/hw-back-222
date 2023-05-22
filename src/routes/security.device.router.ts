@@ -35,15 +35,15 @@ securityDeviceRouter.delete('/devices', refreshAuthMiddleware, async (req: Reque
 //logout in specific session
 securityDeviceRouter.delete('/devices/:deviceId',async (req: Request, res: Response) =>{
 
-    const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId});
 
-    if(!req.headers)
+    if(req.headers == undefined)
     {
         res.sendStatus(401);
         return;
     }
     else
     {
+        const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId});
 
         if(!sessionsFind)
         {
