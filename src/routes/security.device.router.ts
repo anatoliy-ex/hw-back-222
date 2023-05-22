@@ -37,7 +37,7 @@ securityDeviceRouter.delete('/devices/:deviceId',async (req: Request, res: Respo
 
     const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId});
 
-    if(!req.headers.authorization)
+    if(!req.headers)
     {
         res.sendStatus(401);
         return;
