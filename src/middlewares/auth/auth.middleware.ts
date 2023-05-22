@@ -18,15 +18,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
     if(!req.headers.authorization)
     {
-        res.sendStatus(408)
-        return;
-    }
-
-    const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId})
-
-    if(!sessionsFind)
-    {
-        res.sendStatus(404);
+        res.sendStatus(401)
         return;
     }
 

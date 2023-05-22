@@ -33,16 +33,32 @@ securityDeviceRouter.delete('/devices', refreshAuthMiddleware, async (req: Reque
 });
 
 //logout in specific session
-securityDeviceRouter.delete('/devices/:deviceId', authMiddleware, async (req: Request, res: Response) =>{
+securityDeviceRouter.delete('/devices/:deviceId',async (req: Request, res: Response) =>{
 
-    const userId = req.user!.id
-    const isDeleted  = await securityDevicesRepositories.deleteSessionById(req.body.deviceId,userId);
-    if(isDeleted)
+    const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId})
+
+    if(!sessionsFind)
     {
-        res.sendStatus(204);
+        res.sendStatus(404);
+        return;
     }
     else
     {
-        res.sendStatus(403);
+        if(!req.headers.authorization)
+        {
+            res.sendStatus(401)
+            return;
+        }
+
+        const userId = req.user!.id
+        const isDeleted  = await securityDevicesRepositories.deleteSessionById(req.body.deviceId,userId);
+        if(isDeleted)
+        {
+            res.sendStatus(204);
+        }
+        else
+        {
+            res.sendStatus(403);
+        }
     }
 });
