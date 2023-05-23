@@ -25,6 +25,8 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
     const deviceName = req.headers["user-agent"] || "Other Device"
     const now = new Date();
 
+    console.log(deviceName + "name")
+
 
     if(userId)
     {
@@ -136,7 +138,7 @@ authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotCon
 //logout if bad refresh token
 authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
-    const refreshToken = req.cookies
+    const refreshToken = req.cookies.refreshToken
     await refreshTokenSessionCollection.insertOne(refreshToken)
 
     const result : any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
