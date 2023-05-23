@@ -39,18 +39,11 @@ securityDeviceRouter.delete('/devices/:deviceId', refreshAuthMiddleware,async (r
     const userId = req.user!.id
     const title = req.headers["user-agent"]
     const result = await refreshTokenSessionCollection.findOne({title: title, userId : userId})
-    const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId});
-
-    if(!sessionsFind)
-    {
-        res.sendStatus(404);
-        return;
-    }
 
     if(result)
     {
         const userId = req.user!.id;
-        const isDeleted  = await securityDevicesRepositories.deleteSessionById(req.body.deviceId,userId);
+        const isDeleted  = await securityDevicesRepositories.deleteSessionById(req.body.deviceId, userId);
         if(isDeleted)
         {
             res.sendStatus(204);
