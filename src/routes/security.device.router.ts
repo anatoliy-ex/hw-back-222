@@ -45,8 +45,8 @@ securityDeviceRouter.delete('/devices', refreshAuthMiddleware, async (req: Reque
 //logout in specific session
 securityDeviceRouter.delete('/devices/:deviceId', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
-    const refreshToken = req.cookies.refreshToken!
-    const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken)
+    // const refreshToken = req.cookies.refreshToken!
+    // const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken)
 
     const userId = req.user!.id
     const deviceId = req.params.deviceId
@@ -55,7 +55,7 @@ securityDeviceRouter.delete('/devices/:deviceId', refreshAuthMiddleware, async (
 
     if (!device) return res.sendStatus(404);
 
-    if (device.lastActiveDate !== lastActiveDate) return res.sendStatus(401)
+    // if (device.lastActiveDate !== lastActiveDate) return res.sendStatus(401)
     if (device.userId !== userId) return res.sendStatus(403);
     await securityDevicesRepositories.deleteSessionById(deviceId, userId);
     return res.sendStatus(204)
