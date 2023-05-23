@@ -11,105 +11,81 @@ const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
 
 
-
 //check token
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) =>
-{
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
-    if(!req.headers.authorization)
-    {
+    if (!req.headers.authorization) {
         res.sendStatus(401)
         return;
     }
 
     const token = req.headers.authorization.split(' ')[1];
 
-    try
-    {
+    try {
         const IsDecode: any = jwt.verify(token, settings.JWT_SECRET)
 
-        if(IsDecode)
-        {
+        if (IsDecode) {
             const user = await authUsersRepositories.getUserWithAccessToken(token)
 
-            if(user === null)
-            {
+            if (user === null) {
                 res.sendStatus(402)
                 return
-            }
-            else
-            {
+            } else {
                 req.user = user
             }
         }
-    }
-   catch (e)
-    {
+    } catch (e) {
         res.sendStatus(401)
         return;
     }
-   next()
+    next()
 }
 
-export const refreshAuthMiddleware = async (req: Request, res: Response, next: NextFunction) =>
-{
+export const refreshAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
     console.log(refreshToken)
-    if(!req.cookies.refreshToken)
-    {
+    if (!refreshToken) {
         console.log("111")
         res.sendStatus(401);
         return;
     }
     console.log(req.cookies.refreshToken);
 
-    try{
+    try {
         const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
-        console.log(IsDecode)
-        if(IsDecode == undefined)
-        {
-            console.log("222")
-            res.sendStatus(401);
-            return;
-        }
 
-        if(IsDecode){
+        if (IsDecode) {
 
-            const user = usersCollection.findOne({id: IsDecode.userId})
+            const user = await usersCollection.findOne({id: IsDecode.userId})
 
-            if(user == null){
-                res.sendStatus(402)
+            if (user == null) {
+                res.sendStatus(401)
                 return
-            }else{
-                req.user = await user
+            } else {
+                req.user = user
+                req.deviceId = IsDecode.deviceId
             }
         }
-    }
-    catch (e)
-    {
+    } catch (e) {
         console.log("333")
         res.sendStatus(401)
         return;
     }
-    next()
+    return next()
 }
 //check if try edit the comment that
 export const checkForUser = async (req: Request, res: Response, next: NextFunction) => {
 
-    const token : string = req.headers.authorization!.split(" ")[1]
+    const token: string = req.headers.authorization!.split(" ")[1]
 
     const userId = await jwtService.getUserIdByToken(token)
     const comment = await commentRepositories.getComment(req.params.commentId)
 
     if (!comment) {
         res.sendStatus(404)
-    }
-    else if (comment.commentatorInfo.userId === userId)
-    {
+    } else if (comment.commentatorInfo.userId === userId) {
         next()
-    }
-    else
-    {
+    } else {
         res.sendStatus(403)
     }
 }

@@ -3,7 +3,8 @@ import {authUsersService} from "../domain/auth.users.service";
 import {authMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
-import {codeValidator,
+import {
+    codeValidator,
     createUsersValidator,
     emailAlreadyExistButNotConfirmedValidator,
     existEmailValidator,
@@ -14,31 +15,30 @@ import * as os from "os";
 import jwt from "jsonwebtoken";
 import {settings} from "../../.env/settings";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
+import {randomUUID} from "crypto";
+
 export const authUsersRouter = Router({});
 
 //login user
-authUsersRouter.post('/login', async (req: Request, res: Response) =>{
+authUsersRouter.post('/login', async (req: Request, res: Response) => {
 
     const userId = await authUsersService.loginUser(req.body);
-    const userIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || ' ';
-    const deviceId = `${Date.now()}`;
+    const userIp = req.ip
+    const deviceId = randomUUID();
     const deviceName = req.headers["user-agent"] || "Other Device"
-    const now = new Date();
-
-    console.log(deviceName + "name")
 
 
-    if(userId)
-    {
+    if (userId) {
         const token = await jwtService.createJWT(userId);
         const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
+        const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken)
         console.log(refreshToken)
 
         const newSessions: RefreshTokenSessionsTypes = {
             deviceId: deviceId,
             ip: userIp,//device IP(user IP)
             title: deviceName,//device name
-            lastActiveDate: now.toISOString(),
+            lastActiveDate,
             userId: userId
         };
 
@@ -47,9 +47,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,});
         res.status(200).send({accessToken: token});
         return;
-    }
-    else
-    {
+    } else {
         res.sendStatus(401);
         return;
     }
@@ -60,77 +58,72 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 //generate new refresh Token and access Token
 authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
-    const userId = req.user!.id
-
     const oldRefreshToken = req.cookies.refreshToken
-    const result : any = jwt.verify(oldRefreshToken, settings.REFRESH_TOKEN_SECRET)
-    const deviceId =  result.deviceId
+
+    const userId = req.user!.id
+    const deviceId = req.deviceId!
+    const oldLastActiveDate = await jwtService.getLastActiveDateFromToken(oldRefreshToken)
+
+    const sessions = await refreshTokenSessionCollection.findOne({deviceId: deviceId})
+
+    if (!sessions || sessions.lastActiveDate !== oldLastActiveDate) {
+        return res.sendStatus(401)
+    }
+
+    if (sessions.userId !== userId) {
+        return res.sendStatus(403)
+    }
 
     const token = await jwtService.createJWT(userId);
     const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
-    const sessions = await refreshTokenSessionCollection.findOne({deviceId: deviceId})
+    const lastActiveDate =  await jwtService.getLastActiveDateFromToken(refreshToken)
 
-    if(sessions != null)
-    {
-        const now = new Date();
-
-        const updateSessions : RefreshTokenSessionsTypes= {
-            deviceId: sessions.deviceId,
-            ip: sessions.ip,//device IP(user IP)
-            title: sessions.title,//device name
-            lastActiveDate: now.toISOString(),
-            userId: userId
-        }
-        await refreshTokenSessionCollection.deleteOne({deviceId: deviceId})
-        await refreshTokenSessionCollection.insertOne({...updateSessions})
+    const updateSessions: RefreshTokenSessionsTypes = {
+        deviceId: sessions.deviceId,
+        ip: req.ip,//device IP(user IP)
+        title: sessions.title,//device name
+        lastActiveDate,
+        userId: userId
     }
+    await refreshTokenSessionCollection.updateOne({deviceId, userId}, {$set: updateSessions})
 
     res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
     res.status(200).send({accessToken: token})
 });
 
 //confirm registration-2
-authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, async (req: Request, res: Response) =>{
+authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const confirmationWithCode = await authUsersRepositories.confirmEmailByUser(req.body.code);
 
-    if(confirmationWithCode)
-    {
+    if (confirmationWithCode) {
         res.sendStatus(204);
-    }
-    else
-    {
+    } else {
         res.sendStatus(400);
     }
 
 });
 
 //first registration in system => send to email code for verification-1
-authUsersRouter.post('/registration', createUsersValidator, existEmailValidator, inputValidationMiddleware,  async (req: Request, res: Response) =>{
+authUsersRouter.post('/registration', createUsersValidator, existEmailValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
-    const firstRegistration : boolean = await authUsersRepositories.firstRegistrationInSystem(req.body);
+    const firstRegistration: boolean = await authUsersRepositories.firstRegistrationInSystem(req.body);
 
-    if(firstRegistration)
-    {
+    if (firstRegistration) {
         res.sendStatus(204);
-    }
-    else
-    {
+    } else {
         res.sendStatus(400);
     }
 });
 
 //registration in system-3
-authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotConfirmedValidator, inputValidationMiddleware, async (req: Request, res: Response) =>{
+authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotConfirmedValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const isResending = await authUsersRepositories.registrationWithSendingEmail(req.body.email);
 
-    if(isResending)
-    {
+    if (isResending) {
         res.sendStatus(204);
-    }
-    else
-    {
+    } else {
         res.status(400);
     }
 });
@@ -141,8 +134,8 @@ authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res:
     const refreshToken = req.cookies.refreshToken
     await refreshTokenSessionCollection.insertOne(refreshToken)
 
-    const result : any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
-    const deviceId =  result.deviceId
+    const result: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
+    const deviceId = result.deviceId
     await refreshTokenSessionCollection.deleteOne({deviceId: deviceId})
 
     res.cookie('refreshToken', '', {httpOnly: true, secure: true}).status(204).send()

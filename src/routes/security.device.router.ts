@@ -1,58 +1,63 @@
-import  {Request, Response, Router} from "express"
+import {Request, Response, Router} from "express"
 import {authMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {securityDevicesRepositories} from "../repositories/security.device.repositories";
 import jwt from "jsonwebtoken";
 import {settings} from "../../.env/settings";
 import {refreshTokenSessionCollection} from "../dataBase/db.posts.and.blogs";
+import {jwtService} from "../application/jwtService";
+
 export const securityDeviceRouter = Router({});
 
 //get information  about all sessions
-securityDeviceRouter.get('/devices', refreshAuthMiddleware, async (req: Request, res: Response) =>{
+securityDeviceRouter.get('/devices', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
-    const deviceId =  req.cookies.deviceId
+    const refreshToken = req.cookies.refreshToken!
+
+    const deviceId = req.deviceId!
     const userId = req.user!.id
-    let allSessions = await securityDevicesRepositories.getInformationAboutAllSessions(deviceId, userId);
+
+    const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken)
+
+    const device = await securityDevicesRepositories.getDeviceByDeviceIdAndLastActiveDate(deviceId, lastActiveDate)
+
+    if(!device) return res.sendStatus(401)
+    let allSessions = await securityDevicesRepositories.getInformationAboutAllSessions(userId);
     console.log(allSessions)
     res.status(200).send(allSessions)
 
 });
 
 //logout on all sessions(expect current)
-securityDeviceRouter.delete('/devices', refreshAuthMiddleware, async (req: Request, res: Response) =>{
+securityDeviceRouter.delete('/devices', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
-    const refreshToken = req.cookies.refreshToken
-    const result : any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
-    const deviceId =  result.deviceId
     const userId = req.user!.id
+    const deviceId = req.deviceId!
+
     const isDeletedAll = await securityDevicesRepositories.deleteAllSessions(deviceId, userId)
 
-    if(isDeletedAll)
-    {
+    if (isDeletedAll) {
         res.sendStatus(204);
+    } else {
+        res.sendStatus(401)
     }
 });
 
 //logout in specific session
-securityDeviceRouter.delete('/devices/:deviceId', refreshAuthMiddleware,async (req: Request, res: Response) =>{
+securityDeviceRouter.delete('/devices/:deviceId', refreshAuthMiddleware, async (req: Request, res: Response) => {
+
+    const refreshToken = req.cookies.refreshToken!
+    const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken)
 
     const userId = req.user!.id
-    const title = req.headers["user-agent"]
-    const result = await refreshTokenSessionCollection.findOne({title: title, userId : userId})
+    const deviceId = req.params.deviceId
 
-    if(result)
-    {
-        const isDeleted  = await securityDevicesRepositories.deleteSessionById(req.body.deviceId, userId);
-        if(isDeleted)
-        {
-            res.sendStatus(204);
-        }
-        else
-        {
-            res.sendStatus(404);
-        }
-    }
-    else
-    {
-        res.sendStatus(403)
-    }
+    const device = await refreshTokenSessionCollection.findOne({deviceId})
+
+    if (!device) return res.sendStatus(404);
+
+    if (device.lastActiveDate !== lastActiveDate) return res.sendStatus(401)
+    if (device.userId !== userId) return res.sendStatus(403);
+    await securityDevicesRepositories.deleteSessionById(deviceId, userId);
+    return res.sendStatus(204)
+
 });

@@ -4,35 +4,37 @@ import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 export const securityDevicesRepositories = {
 
     //get information  about all sessions
-    async getInformationAboutAllSessions(deviceId: string, userId: string) {
-
-        const session = await refreshTokenSessionCollection.find({deviceId: deviceId})
-        const countOfSessions = await refreshTokenSessionCollection.countDocuments({userId: userId});
-
-        if(countOfSessions > 1)
-        {
-            const allSessions: RefreshTokenSessionsTypes[] = await refreshTokenSessionCollection
-                .find({userId: userId}, {projection: {userId: 0, _id: 0}})
-                .toArray();
-            return allSessions;
-        }
-        else
-        {
-            return session;
-        }
+    async getInformationAboutAllSessions( userId: string) {
+        return refreshTokenSessionCollection.find({userId}).toArray()
+        // const session = await refreshTokenSessionCollection.find({deviceId: deviceId})
+        // const countOfSessions = await refreshTokenSessionCollection.countDocuments({userId: userId});
+        //
+        // if(countOfSessions > 1)
+        // {
+        //     const allSessions: RefreshTokenSessionsTypes[] = await refreshTokenSessionCollection
+        //         .find({userId: userId}, {projection: {userId: 0, _id: 0}})
+        //         .toArray();
+        //     return allSessions;
+        // }
+        // else
+        // {
+        //     return session;
+        // }
     },
 
     //logout on all sessions(expect current)
     async deleteAllSessions (deviceId: string, userId: string) {
 
-        const nowSession = await refreshTokenSessionCollection.findOne({deviceId: deviceId});
+        // const nowSession = await refreshTokenSessionCollection.findOne({deviceId: deviceId});
+        //
+        // if(nowSession != null)
+        // {
+        //     await refreshTokenSessionCollection.deleteMany({userId: userId});
+        //     await refreshTokenSessionCollection.insertOne(nowSession);
+        //     return true;
+        //  }
 
-        if(nowSession != null)
-        {
-            await refreshTokenSessionCollection.deleteMany({userId: userId});
-            await refreshTokenSessionCollection.insertOne(nowSession);
-            return true;
-         }
+        return refreshTokenSessionCollection.deleteMany({userId, deviceId: {$ne: deviceId}})
     },
 
     //logout in specific session
@@ -57,4 +59,8 @@ export const securityDevicesRepositories = {
             return false;
         }
     },
+
+    async getDeviceByDeviceIdAndLastActiveDate(deviceId: string, lastActiveDate: string) {
+        return refreshTokenSessionCollection.findOne({deviceId, lastActiveDate})
+    }
 }

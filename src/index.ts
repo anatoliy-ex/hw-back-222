@@ -14,6 +14,8 @@ const parserMiddleware = express.json()
 
 app.use(cookieParser())
 app.use(parserMiddleware);
+app.set('trust proxy', true)
+
 app.use('/posts', postsRouter);
 app.use('/blogs', blogsRouter);
 app.use('/testing', blogsRouter);

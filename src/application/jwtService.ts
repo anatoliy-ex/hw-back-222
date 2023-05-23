@@ -35,4 +35,8 @@ export const jwtService = {
             return null
         }
     },
+    async getLastActiveDateFromToken(refreshToken: string) {
+        const payload: any = jwt.decode(refreshToken)
+        return new Date(payload.iat * 1000).toISOString()
+    }
 };
