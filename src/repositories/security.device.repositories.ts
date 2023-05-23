@@ -5,7 +5,7 @@ export const securityDevicesRepositories = {
 
     //get information  about all sessions
     async getInformationAboutAllSessions( userId: string) {
-        return refreshTokenSessionCollection.find({userId}).toArray()
+        return refreshTokenSessionCollection.find({userId}, {projection: {userId: 0, _id: 0}}).toArray()
         // const session = await refreshTokenSessionCollection.find({deviceId: deviceId})
         // const countOfSessions = await refreshTokenSessionCollection.countDocuments({userId: userId});
         //
