@@ -39,25 +39,26 @@ export const securityDevicesRepositories = {
 
     //logout in specific session
     async deleteSessionById(deviceId: string, userId: string): Promise<boolean> {
-
-        const goodSession = await refreshTokenSessionCollection.findOne({userId: userId})
-
-        if(goodSession)
-        {
-            if(goodSession.deviceId == deviceId)
-            {
-                await refreshTokenSessionCollection.deleteOne({deviceId: deviceId})
-                return true
-            }
-            else
-            {
-                return false
-            }
-        }
-        else
-        {
-            return false;
-        }
+        const res = await refreshTokenSessionCollection.deleteOne({deviceId, userId})
+        return res.deletedCount === 1
+        // const goodSession = await refreshTokenSessionCollection.findOne({userId: userId})
+        //
+        // if(goodSession)
+        // {
+        //     if(goodSession.deviceId == deviceId)
+        //     {
+        //         await refreshTokenSessionCollection.deleteOne({deviceId: deviceId})
+        //         return true
+        //     }
+        //     else
+        //     {
+        //         return false
+        //     }
+        // }
+        // else
+        // {
+        //     return false;
+        // }
     },
 
     async getDeviceByDeviceIdAndLastActiveDate(deviceId: string, lastActiveDate: string) {
