@@ -32,7 +32,7 @@ export const securityDevicesRepositories = {
             await refreshTokenSessionCollection.deleteMany({userId: userId});
             await refreshTokenSessionCollection.insertOne(nowSession);
             return true;
-        }
+         }
     },
 
     //logout in specific session

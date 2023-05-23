@@ -56,7 +56,7 @@ authUsersRouter.post('/login', async (req: Request, res: Response) =>{
 
 // TODO: cron job for delete old tokens (scheduler)
 //generate new refresh Token and access Token
-authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/refresh-token',  async (req: Request, res: Response) => {
 
     const userId = req.user!.id
 
