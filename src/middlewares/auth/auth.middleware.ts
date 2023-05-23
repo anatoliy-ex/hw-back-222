@@ -53,18 +53,22 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
 export const refreshAuthMiddleware = async (req: Request, res: Response, next: NextFunction) =>
 {
+    const refreshToken = req.cookies.refreshToken
+    console.log(refreshToken)
     if(!req.cookies.refreshToken)
     {
-        res.sendStatus(401)
-        return
+        console.log("111")
+        res.sendStatus(401);
+        return;
     }
     console.log(req.cookies.refreshToken);
-    const refreshToken = req.cookies.refreshToken
 
     try{
         const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
+        console.log(IsDecode)
         if(IsDecode == undefined)
         {
+            console.log("222")
             res.sendStatus(401);
             return;
         }
@@ -79,13 +83,13 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
                 res.sendStatus(402)
                 return
             }else{
-                req.cookies = IsDecode
                 req.user = user
             }
         }
     }
     catch (e)
     {
+        console.log("333")
         res.sendStatus(401)
         return;
     }
