@@ -35,13 +35,6 @@ securityDeviceRouter.delete('/devices', refreshAuthMiddleware, async (req: Reque
 //logout in specific session
 securityDeviceRouter.delete('/devices/:deviceId', refreshAuthMiddleware,async (req: Request, res: Response) =>{
 
-    const goodSession = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId})
-
-    if(!goodSession)
-    {
-        res.sendStatus(404);
-    }
-
     const userId = req.user!.id
     const title = req.headers["user-agent"]
     const result = await refreshTokenSessionCollection.findOne({title: title, userId : userId})
