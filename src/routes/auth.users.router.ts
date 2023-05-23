@@ -131,12 +131,9 @@ authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotCon
 //logout if bad refresh token
 authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
-    const refreshToken = req.cookies.refreshToken
-    await refreshTokenSessionCollection.insertOne(refreshToken)
-
-    const result: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
-    const deviceId = result.deviceId
-    await refreshTokenSessionCollection.deleteOne({deviceId: deviceId})
+    const userId = req.user!.id
+    const deviceId = req.deviceId!
+    await refreshTokenSessionCollection.deleteOne({userId, deviceId: deviceId})
 
     res.cookie('refreshToken', '', {httpOnly: true, secure: true}).status(204).send()
 });
