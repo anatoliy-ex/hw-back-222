@@ -35,24 +35,34 @@ securityDeviceRouter.delete('/devices', refreshAuthMiddleware, async (req: Reque
 //logout in specific session
 securityDeviceRouter.delete('/devices/:deviceId', refreshAuthMiddleware,async (req: Request, res: Response) =>{
 
-    const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId});
 
+    const userId = req.user!.id
+    const title = req.headers["user-agent"]
+    const result = await refreshTokenSessionCollection.findOne({title: title, userId : userId})
 
-
-    if(!sessionsFind)
+    if(result)
     {
-        res.sendStatus(404);
-        return;
-    }
+        const sessionsFind = await refreshTokenSessionCollection.findOne({deviceId: req.body.deviceId});
 
-    const userId = req.user!.id;
-    const isDeleted  = await securityDevicesRepositories.deleteSessionById(req.body.deviceId,userId);
-    if(isDeleted)
-    {
-        res.sendStatus(204);
+        if(!sessionsFind)
+        {
+            res.sendStatus(404);
+            return;
+        }
+
+        const userId = req.user!.id;
+        const isDeleted  = await securityDevicesRepositories.deleteSessionById(req.body.deviceId,userId);
+        if(isDeleted)
+        {
+            res.sendStatus(204);
+        }
+        else
+        {
+            res.sendStatus(404);
+        }
     }
     else
     {
-        res.sendStatus(404);
+        res.sendStatus(403)
     }
 });
