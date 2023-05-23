@@ -74,16 +74,14 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
         }
 
         if(IsDecode){
-            // const isBlocked = await refreshTokenSessionCollection.findOne({refreshToken})
-            // if (isBlocked) return res.sendStatus(401)
 
-            const user = await authUsersRepositories.getUserWithRefreshToken(refreshToken)
+            const user = usersCollection.findOne({id: IsDecode.userId})
 
             if(user == null){
                 res.sendStatus(402)
                 return
             }else{
-                req.user = user
+                req.user = await user
             }
         }
     }
