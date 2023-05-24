@@ -1,10 +1,12 @@
 import {NextFunction, Request, Response} from "express";
+import { IRateLimiterOptions, RateLimiterMemory } from 'rate-limiter-flexible';
 import {jwtService} from "../../application/jwtService";
 import jwt from "jsonwebtoken";
 import {commentsCollection, refreshTokenSessionCollection, usersCollection} from "../../dataBase/db.posts.and.blogs";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
 import {commentRepositories} from "../../repositories/comment.repositories";
 import {settings} from "../../../.env/settings";
+
 
 //super admin check
 const expressBasicAuth = require('express-basic-auth');
@@ -89,3 +91,26 @@ export const checkForUser = async (req: Request, res: Response, next: NextFuncti
         res.sendStatus(403)
     }
 }
+
+//rate limited
+const MAX_REQUEST_LIMIT = 10;
+const MAX_REQUEST_WINDOW = (60 / 1000); // Per 15 minutes by IP
+const TOO_MANY_REQUESTS_MESSAGE = 'Too many requests';
+
+const options: IRateLimiterOptions = {
+    duration: MAX_REQUEST_WINDOW,
+    points: MAX_REQUEST_LIMIT,
+};
+
+const rateLimiter = new RateLimiterMemory(options);
+
+export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    rateLimiter
+        .consume(req.ip)
+        .then(() => {
+            next();
+        })
+        .catch(() => {
+            res.status(429).json({ message: TOO_MANY_REQUESTS_MESSAGE });
+        });
+};

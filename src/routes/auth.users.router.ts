@@ -1,6 +1,6 @@
 import e, {Request, Response, Router} from "express"
 import {authUsersService} from "../domain/auth.users.service";
-import {authMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
+import {authMiddleware, rateLimiterMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
 import {
@@ -20,7 +20,7 @@ import {randomUUID} from "crypto";
 export const authUsersRouter = Router({});
 
 //login user
-authUsersRouter.post('/login', async (req: Request, res: Response) => {
+authUsersRouter.post('/login', rateLimiterMiddleware, async (req: Request, res: Response) => {
 
     const userId = await authUsersService.loginUser(req.body);
     const userIp = req.ip
@@ -92,7 +92,7 @@ authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Reques
 });
 
 //confirm registration-2
-authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, rateLimiterMiddleware, async (req: Request, res: Response) => {
 
     const confirmationWithCode = await authUsersRepositories.confirmEmailByUser(req.body.code);
 
@@ -105,7 +105,7 @@ authUsersRouter.post('/registration-confirmation', codeValidator, inputValidatio
 });
 
 //first registration in system => send to email code for verification-1
-authUsersRouter.post('/registration', createUsersValidator, existEmailValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/registration', createUsersValidator, existEmailValidator, inputValidationMiddleware, rateLimiterMiddleware, async (req: Request, res: Response) => {
 
     const firstRegistration: boolean = await authUsersRepositories.firstRegistrationInSystem(req.body);
 
@@ -117,7 +117,7 @@ authUsersRouter.post('/registration', createUsersValidator, existEmailValidator,
 });
 
 //registration in system-3
-authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotConfirmedValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotConfirmedValidator, inputValidationMiddleware, rateLimiterMiddleware, async (req: Request, res: Response) => {
 
     const isResending = await authUsersRepositories.registrationWithSendingEmail(req.body.email);
 
