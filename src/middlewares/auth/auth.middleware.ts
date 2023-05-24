@@ -94,7 +94,7 @@ export const checkForUser = async (req: Request, res: Response, next: NextFuncti
 
 //rate limited
 const MAX_REQUEST_LIMIT = 10;
-const MAX_REQUEST_WINDOW = (60 / 10); // Per 15 minutes by IP
+const MAX_REQUEST_WINDOW = 10; // Per 15 minutes by IP
 const TOO_MANY_REQUESTS_MESSAGE = 'Too many requests';
 
 const options: IRateLimiterOptions = {
