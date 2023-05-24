@@ -114,30 +114,3 @@ export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFun
             res.status(429).json({ message: TOO_MANY_REQUESTS_MESSAGE });
         });
 };
-
-//rl v2
-const MAX_REQUESTS = 5;
-const TIME_FRAME_IN_MS = 1000;
-
-const requestCounts = new Map();
-
-export const RateLimitMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const { ip } = req;
-    const now = Date.now();
-
-    const requestTimesWithinTimeFrame = (requestCounts.get(ip) ?? []).filter(
-        (requestTime: any) => requestTime > now - TIME_FRAME_IN_MS
-    );
-
-    if (requestTimesWithinTimeFrame.length >= MAX_REQUESTS) {
-        const resetTimeInSeconds = Math.ceil(
-            (requestTimesWithinTimeFrame[0] + TIME_FRAME_IN_MS - now) / 1000
-        );
-
-        res.setHeader('Retry-After', resetTimeInSeconds);
-        return res.status(429).json({ error: 'Too many requests' });
-    }
-
-    requestCounts.set(ip, [...requestTimesWithinTimeFrame, now]);
-    return next();
-};
