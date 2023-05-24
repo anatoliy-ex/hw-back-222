@@ -94,7 +94,7 @@ export const checkForUser = async (req: Request, res: Response, next: NextFuncti
 
 //rate limited
 const MAX_REQUEST_LIMIT = 5;
-const MAX_REQUEST_WINDOW = 8; // Per 15 minutes by IP
+const MAX_REQUEST_WINDOW = 10; // Per 15 minutes by IP
 const TOO_MANY_REQUESTS_MESSAGE = 'Too many requests';
 
 const options: IRateLimiterOptions = {
@@ -113,4 +113,41 @@ export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFun
         .catch(() => {
             res.status(429).json({ message: TOO_MANY_REQUESTS_MESSAGE });
         });
+};
+
+export const rateLimitMiddleware = (req: Request, res: Response, next: NextFunction) => {
+
+    const requestLimit = 5;
+    const timeLimit = 10;
+
+    for(let a = 0; a <= 10; a++)
+    {
+
+    }
+}
+
+const MAX_REQUESTS = 5;
+const TIME_FRAME_IN_MS = 10000;
+
+const requestCounts = new Map();
+
+export const RateLimitMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const { ip } = req;
+    const now = Date.now();
+
+    const requestTimesWithinTimeFrame = (requestCounts.get(ip) ?? []).filter(
+        (requestTime: any) => requestTime > now - TIME_FRAME_IN_MS
+    );
+
+    if (requestTimesWithinTimeFrame.length >= MAX_REQUESTS) {
+        const resetTimeInSeconds = Math.ceil(
+            (requestTimesWithinTimeFrame[0] + TIME_FRAME_IN_MS - now) / 1000
+        );
+
+        res.setHeader('Retry-After', resetTimeInSeconds);
+        return res.status(429).json({ error: 'Too many requests' });
+    }
+
+    requestCounts.set(ip, [...requestTimesWithinTimeFrame, now]);
+    return next();
 };

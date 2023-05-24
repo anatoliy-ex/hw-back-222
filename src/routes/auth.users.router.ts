@@ -1,6 +1,11 @@
 import e, {Request, Response, Router} from "express"
 import {authUsersService} from "../domain/auth.users.service";
-import {authMiddleware, rateLimiterMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
+import {
+    authMiddleware,
+    rateLimiterMiddleware,
+    RateLimitMiddleware,
+    //refreshAuthMiddleware
+} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
 import {
@@ -56,7 +61,7 @@ authUsersRouter.post('/login', rateLimiterMiddleware, async (req: Request, res: 
 
 // TODO: cron job for delete old tokens (scheduler)
 //generate new refresh Token and access Token
-authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/refresh-token', RateLimitMiddleware, async (req: Request, res: Response) => {
 
     const oldRefreshToken = req.cookies.refreshToken
 
@@ -92,7 +97,7 @@ authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Reques
 });
 
 //confirm registration-2
-authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, rateLimiterMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, RateLimitMiddleware, async (req: Request, res: Response) => {
 
     const confirmationWithCode = await authUsersRepositories.confirmEmailByUser(req.body.code);
 
@@ -105,7 +110,7 @@ authUsersRouter.post('/registration-confirmation', codeValidator, inputValidatio
 });
 
 //first registration in system => send to email code for verification-1
-authUsersRouter.post('/registration', createUsersValidator, existEmailValidator, inputValidationMiddleware, rateLimiterMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/registration', createUsersValidator, existEmailValidator, inputValidationMiddleware, RateLimitMiddleware, async (req: Request, res: Response) => {
 
     const firstRegistration: boolean = await authUsersRepositories.firstRegistrationInSystem(req.body);
 
@@ -129,7 +134,7 @@ authUsersRouter.post('/registration-email-resending', emailAlreadyExistButNotCon
 });
 
 //logout if bad refresh token
-authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/logout', RateLimitMiddleware, async (req: Request, res: Response) => {
 
     const userId = req.user!.id
     const deviceId = req.deviceId!
