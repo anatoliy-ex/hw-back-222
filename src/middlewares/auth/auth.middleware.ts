@@ -115,19 +115,9 @@ export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFun
         });
 };
 
-export const rateLimitMiddleware = (req: Request, res: Response, next: NextFunction) => {
-
-    const requestLimit = 5;
-    const timeLimit = 10;
-
-    for(let a = 0; a <= 10; a++)
-    {
-
-    }
-}
-
+//rl v2
 const MAX_REQUESTS = 5;
-const TIME_FRAME_IN_MS = 10000;
+const TIME_FRAME_IN_MS = 1000;
 
 const requestCounts = new Map();
 
