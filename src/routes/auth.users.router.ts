@@ -96,7 +96,7 @@ authUsersRouter.post('/refresh-token', rateLimiterMiddleware, async (req: Reques
 });
 
 //confirm registration-2
-authUsersRouter.post('/registration-confirmation', codeValidator, inputValidationMiddleware, rateLimiterMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/registration-confirmation', rateLimiterMiddleware, codeValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const confirmationWithCode = await authUsersRepositories.confirmEmailByUser(req.body.code);
 
@@ -109,7 +109,7 @@ authUsersRouter.post('/registration-confirmation', codeValidator, inputValidatio
 });
 
 //first registration in system => send to email code for verification-1
-authUsersRouter.post('/registration', createUsersValidator, existEmailValidator, inputValidationMiddleware, rateLimiterMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/registration', rateLimiterMiddleware, createUsersValidator, existEmailValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const firstRegistration: boolean = await authUsersRepositories.firstRegistrationInSystem(req.body);
 
