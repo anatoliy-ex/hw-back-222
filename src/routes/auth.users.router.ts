@@ -1,6 +1,6 @@
 import  {Request, Response, Router} from "express"
 import {authUsersService} from "../domain/auth.users.service";
-import {authMiddleware, rateLimiterMiddleware} from "../middlewares/auth/auth.middleware";
+import {authMiddleware, rateLimiterMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
 import {
@@ -54,7 +54,7 @@ authUsersRouter.post('/login', rateLimiterMiddleware, async (req: Request, res: 
 
 // TODO: cron job for delete old tokens (scheduler)
 //generate new refresh Token and access Token
-authUsersRouter.post('/refresh-token', async (req: Request, res: Response) => {
+authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
     const oldRefreshToken = req.cookies.refreshToken
 
@@ -95,6 +95,7 @@ authUsersRouter.post('/refresh-token', async (req: Request, res: Response) => {
 authUsersRouter.post('/registration-confirmation', rateLimiterMiddleware, codeValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const confirmationWithCode = await authUsersRepositories.confirmEmailByUser(req.body.code);
+    console.log(confirmationWithCode)
 
     if (confirmationWithCode) {
         res.sendStatus(204);

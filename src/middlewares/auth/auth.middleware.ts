@@ -51,7 +51,6 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
         res.sendStatus(401);
         return;
     }
-    console.log(req.cookies.refreshToken);
 
     try {
         const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
@@ -59,6 +58,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
         if (IsDecode) {
 
             const user = await usersCollection.findOne({id: IsDecode.userId})
+            console.log(user)
 
             if (user == null) {
                 res.sendStatus(401)
