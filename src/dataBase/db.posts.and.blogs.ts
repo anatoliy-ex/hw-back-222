@@ -21,7 +21,7 @@ export const refreshTokenSessionCollection = db.collection<RefreshTokenSessionsT
 export const rateLimitedCollection = db.collection("rateLimitedMeta")
 
 export const collections = [blogsCollection, postsCollection, usersCollection,
-    commentsCollection, usersNotConfirmCollection, refreshTokenSessionCollection]
+    commentsCollection, usersNotConfirmCollection, refreshTokenSessionCollection, rateLimitedCollection]
 
 export async function runDb()
 {

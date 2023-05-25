@@ -11,6 +11,7 @@ import {
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
 import {commentRepositories} from "../../repositories/comment.repositories";
 import {settings} from "../../../.env/settings";
+import {RateLimitedTypes} from "../../types/rate.limited.types";
 
 
 //super admin check
@@ -124,30 +125,35 @@ export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFun
 export const rateLimitedMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
     const date = new Date
-    const rateLimitedMeta = {
+    console.log(date)
+
+    //console.log(req.ip)
+
+    const dateReq = date.setSeconds(date.getSeconds())
+    const rateLimitedMeta : RateLimitedTypes= {
         ip: req.ip,
         url: req.baseUrl || req.originalUrl,
-        date: date,
+        dates: dateReq,
+        a: true
     }
 
     await rateLimitedCollection.insertOne({...rateLimitedMeta})
 
+    const filter = { a: rateLimitedMeta.dates >= date.setSeconds(date.getSeconds() - 10)}
+    const count: number = await rateLimitedCollection.countDocuments(filter);
 
-    const timeNow = new Date();
-    timeNow.setSeconds(timeNow.getSeconds() - 10);
-
-    const filter = {ip: req.ip,
-        url: req.baseUrl || req.originalUrl,
-        date: rateLimitedMeta.date.getSeconds() >= timeNow.setSeconds(timeNow.getSeconds() - 10)};
-
-    const count: number = await rateLimitedCollection.countDocuments({filter});
+    console.log(count + " - count")
+    console.log(rateLimitedMeta.dates)
 
     if(count > 5)
     {
-        res.status(429);
+        res.sendStatus(429);
     }
     else
     {
         next();
     }
 };
+
+//date: rateLimitedMeta.date.getSeconds() >= timeNow.setSeconds(timeNow.getSeconds() - 10)
+//{ip: req.ip, url: req.baseUrl}
