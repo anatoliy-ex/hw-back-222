@@ -114,3 +114,8 @@ export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFun
             res.status(429).json({ message: TOO_MANY_REQUESTS_MESSAGE });
         });
 };
+
+export const rateLimiterMiddleware2 = (req: Request, res: Response, next: NextFunction) => {
+
+
+}
