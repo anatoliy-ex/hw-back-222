@@ -65,7 +65,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
                 return
             } else {
                 req.user = user
-                req.deviceId = IsDecode.deviceId
+                // req.deviceId = IsDecode.deviceId
             }
         }
     } catch (e) {

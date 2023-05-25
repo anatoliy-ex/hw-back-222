@@ -1,8 +1,6 @@
-import e, {Request, Response, Router} from "express"
+import  {Request, Response, Router} from "express"
 import {authUsersService} from "../domain/auth.users.service";
-import {
-    authMiddleware, rateLimiterMiddleware,
-} from "../middlewares/auth/auth.middleware";
+import {authMiddleware, rateLimiterMiddleware} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
 import {
@@ -10,11 +8,12 @@ import {
     createUsersValidator,
     emailAlreadyExistButNotConfirmedValidator,
     existEmailValidator,
-    inputValidationMiddleware
-} from "../middlewares/middleware.validators";
+    inputValidationMiddleware} from "../middlewares/middleware.validators";
 import {refreshTokenSessionCollection} from "../dataBase/db.posts.and.blogs";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {randomUUID} from "crypto";
+import jwt from "jsonwebtoken";
+import {settings} from "../../.env/settings";
 
 export const authUsersRouter = Router({});
 
@@ -60,7 +59,9 @@ authUsersRouter.post('/refresh-token', async (req: Request, res: Response) => {
     const oldRefreshToken = req.cookies.refreshToken
 
     const userId = req.user!.id
-    const deviceId = req.deviceId!
+    // const deviceId = req.deviceId!
+    const IsDecode: any = jwt.verify(oldRefreshToken, settings.REFRESH_TOKEN_SECRET)
+    const deviceId = IsDecode.deviceId
     const oldLastActiveDate = await jwtService.getLastActiveDateFromToken(oldRefreshToken)
 
     const sessions = await refreshTokenSessionCollection.findOne({deviceId: deviceId})
@@ -130,8 +131,10 @@ authUsersRouter.post('/registration-email-resending', rateLimiterMiddleware, ema
 //logout if bad refresh token
 authUsersRouter.post('/logout',async (req: Request, res: Response) => {
 
+    const refreshToken = req.cookies.refreshToken
     const userId = req.user!.id
-    const deviceId = req.deviceId!
+    const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
+    const deviceId = IsDecode.deviceId;
     await refreshTokenSessionCollection.deleteOne({userId, deviceId: deviceId})
 
     res.cookie('refreshToken', '', {httpOnly: true, secure: true}).status(204).send()
