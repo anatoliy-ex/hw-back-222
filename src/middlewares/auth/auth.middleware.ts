@@ -54,6 +54,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
 
     try {
         const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
+        console.log(IsDecode + '77777')
 
         if (IsDecode) {
 
@@ -69,7 +70,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
             }
         }
     } catch (e) {
-        console.log("333")
+        console.log(e)
         res.sendStatus(401)
         return;
     }
