@@ -2,7 +2,12 @@ import {NextFunction, Request, Response} from "express";
 import { IRateLimiterOptions, RateLimiterMemory } from 'rate-limiter-flexible';
 import {jwtService} from "../../application/jwtService";
 import jwt from "jsonwebtoken";
-import {commentsCollection, refreshTokenSessionCollection, usersCollection} from "../../dataBase/db.posts.and.blogs";
+import {
+    commentsCollection,
+    rateLimitedCollection,
+    refreshTokenSessionCollection,
+    usersCollection
+} from "../../dataBase/db.posts.and.blogs";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
 import {commentRepositories} from "../../repositories/comment.repositories";
 import {settings} from "../../../.env/settings";
@@ -107,7 +112,7 @@ const rateLimiter = new RateLimiterMemory(options);
 
 export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) => {
     rateLimiter
-        .consume(req.ip)
+        .consume(req.ip, 1)
         .then(() => {
             next();
         })
@@ -116,8 +121,33 @@ export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFun
         });
 };
 
-export const rateLimiterMiddleware2 = (req: Request, res: Response, next: NextFunction) => {
+export const rateLimitedMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+
+    const date = new Date
+    const rateLimitedMeta = {
+        ip: req.ip,
+        url: req.baseUrl || req.originalUrl,
+        date: date,
+    }
+
+    await rateLimitedCollection.insertOne({...rateLimitedMeta})
 
 
+    const timeNow = new Date();
+    timeNow.setSeconds(timeNow.getSeconds() - 10);
 
-}
+    const filter = {ip: req.ip,
+        url: req.baseUrl || req.originalUrl,
+        date: rateLimitedMeta.date.getSeconds() >= timeNow.setSeconds(timeNow.getSeconds() - 10)};
+
+    const count: number = await rateLimitedCollection.countDocuments({filter});
+
+    if(count > 5)
+    {
+        res.status(429);
+    }
+    else
+    {
+        next();
+    }
+};
