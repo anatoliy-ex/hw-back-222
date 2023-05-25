@@ -127,7 +127,7 @@ authUsersRouter.post('/registration-email-resending', rateLimiterMiddleware, ema
 });
 
 //logout if bad refresh token
-authUsersRouter.post('/logout',async (req: Request, res: Response) => {
+authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res: Response) => {
 
     const refreshToken = req.cookies.refreshToken
     const userId = req.user!.id
