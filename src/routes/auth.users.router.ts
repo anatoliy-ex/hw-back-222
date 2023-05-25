@@ -59,11 +59,8 @@ authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Reques
     const oldRefreshToken = req.cookies.refreshToken
 
     const userId = req.user!.id
-    // const deviceId = req.deviceId!
-    const IsDecode: any = jwt.verify(oldRefreshToken, settings.REFRESH_TOKEN_SECRET)
-    const deviceId = IsDecode.deviceId
+    const deviceId = req.deviceId!
     const oldLastActiveDate = await jwtService.getLastActiveDateFromToken(oldRefreshToken)
-
     const sessions = await refreshTokenSessionCollection.findOne({deviceId: deviceId})
 
     if (!sessions || sessions.lastActiveDate !== oldLastActiveDate) {
@@ -134,8 +131,7 @@ authUsersRouter.post('/logout',async (req: Request, res: Response) => {
 
     const refreshToken = req.cookies.refreshToken
     const userId = req.user!.id
-    const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
-    const deviceId = IsDecode.deviceId;
+    const deviceId = req.deviceId!
     await refreshTokenSessionCollection.deleteOne({userId, deviceId: deviceId})
 
     res.cookie('refreshToken', '', {httpOnly: true, secure: true}).status(204).send()
