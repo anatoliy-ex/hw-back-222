@@ -124,7 +124,7 @@ export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFun
 
 export const rateLimitedMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
-    const date = new Date
+    const date = new Date()
     console.log(date)
 
     //console.log(req.ip)
@@ -132,18 +132,25 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
     const dateReq = date.setSeconds(date.getSeconds())
     const rateLimitedMeta : RateLimitedTypes= {
         ip: req.ip,
-        url: req.baseUrl || req.originalUrl,
+        url: req.originalUrl,
         dates: dateReq,
         a: true
     }
+    console.log(req.ip)
+    console.log(req.originalUrl)
 
     await rateLimitedCollection.insertOne({...rateLimitedMeta})
+    console.log("current seconds: " , new Date(rateLimitedMeta.dates).getSeconds())
+    console.log("current seconds - 10: " , date.setSeconds(date.getSeconds() - 10))
 
-    const filter = { a: rateLimitedMeta.dates >= date.setSeconds(date.getSeconds() - 10)}
+    console.log(rateLimitedMeta.dates)
+
+    const filter = { ip: req.ip, url: req.originalUrl, a : rateLimitedMeta.dates >= date.setSeconds(date.getSeconds() - 10)}
     const count: number = await rateLimitedCollection.countDocuments(filter);
 
     console.log(count + " - count")
-    console.log(rateLimitedMeta.dates)
+    console.log()
+
 
     if(count > 5)
     {
