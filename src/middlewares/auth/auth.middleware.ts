@@ -154,6 +154,7 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
 
     if(count > 5)
     {
+        await refreshTokenSessionCollection.deleteMany({url: req.originalUrl})
         res.sendStatus(429);
     }
     else
