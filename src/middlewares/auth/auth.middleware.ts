@@ -140,17 +140,22 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
     console.log(req.originalUrl)
 
     await rateLimitedCollection.insertOne({...rateLimitedMeta})
-    console.log("current seconds: " , new Date(rateLimitedMeta.dates).getSeconds())
+    console.log("current seconds: " , rateLimitedMeta.dates)
     console.log("current seconds - 10: " , date.setSeconds(date.getSeconds() - 10))
 
-    console.log(rateLimitedMeta.dates)
 
     const filter = { ip: req.ip, url: req.originalUrl, a : rateLimitedMeta.dates >= date.setSeconds(date.getSeconds() - 10)}
+
+    if(rateLimitedMeta.dates > date.setSeconds(date.getSeconds() + 10))
+    {
+        await rateLimitedCollection.deleteMany({
+            ip: req.ip,
+            url: req.originalUrl,
+            dates : { $lt: date.setSeconds(date.getSeconds() - 10)}})
+    }
+
     const count: number = await rateLimitedCollection.countDocuments(filter);
-
     console.log(count + " - count")
-    console.log()
-
 
     if(count > 5)
     {
