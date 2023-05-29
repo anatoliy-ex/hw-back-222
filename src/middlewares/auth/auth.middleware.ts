@@ -141,14 +141,15 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
     console.log("current seconds - 10: " , date.setSeconds(date.getSeconds() - 10))
 
 
-    const filter = { ip: req.ip, url: req.originalUrl, a : rateLimitedMeta.dates >= date.setSeconds(date.getSeconds() - 10)}
+    const filter = { ip: req.ip, url: req.originalUrl, dates : {$gte : date.setSeconds(date.getSeconds() - 10)}}
+    const filter2 = { ip: 'curent_up', url: 'url', a: true }
 
     if(rateLimitedMeta.dates > date.setSeconds(date.getSeconds() + 10))
     {
         await rateLimitedCollection.deleteMany({
             ip: req.ip,
             url: req.originalUrl,
-            dates : { $lt: date.setSeconds(date.getSeconds() - 10)}})
+            dates : { $lt : date.setSeconds(date.getSeconds() - 10)}})
     }
 
     const count: number = await rateLimitedCollection.countDocuments(filter);
