@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import { IRateLimiterOptions, RateLimiterMemory } from 'rate-limiter-flexible';
+import {IRateLimiterOptions, RateLimiterMemory} from 'rate-limiter-flexible';
 import {jwtService} from "../../application/jwtService";
 import jwt from "jsonwebtoken";
 import {
@@ -12,6 +12,7 @@ import {authUsersRepositories} from "../../repositories/auth.users.repositories"
 import {commentRepositories} from "../../repositories/comment.repositories";
 import {settings} from "../../../.env/settings";
 import {RateLimitedTypes} from "../../types/rate.limited.types";
+import {addSeconds} from "date-fns";
 
 
 //super admin check
@@ -118,51 +119,26 @@ export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFun
             next();
         })
         .catch(() => {
-            res.status(429).json({ message: TOO_MANY_REQUESTS_MESSAGE });
+            res.status(429).json({message: TOO_MANY_REQUESTS_MESSAGE});
         });
 };
 
 export const rateLimitedMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
-    const date = new Date()
-    console.log(date)
-
-    const rateLimitedMeta : RateLimitedTypes= {
+    const rateLimitedMeta: RateLimitedTypes = {
         ip: req.ip,
         url: req.originalUrl,
-        dates: date.setSeconds(date.getSeconds()),
-        a: true
+        connectionDate: new Date()
     }
-    console.log(req.ip)
-    console.log(req.originalUrl)
+    const blockInterval = addSeconds(rateLimitedMeta.connectionDate, -10)
 
-    await rateLimitedCollection.insertOne({...rateLimitedMeta})
-    console.log("current seconds: " , rateLimitedMeta.dates)
-    console.log("current seconds - 10: " , date.setSeconds(date.getSeconds() - 10))
+    const filter = {ip: rateLimitedMeta.ip, url: rateLimitedMeta.url, connectionDate: {$gte: blockInterval}}
+    const connectionCount: number = await rateLimitedCollection.countDocuments(filter);
 
+    if (connectionCount + 1 > 5) return res.sendStatus(429)
+    await rateLimitedCollection.insertOne(rateLimitedMeta)
+    return next()
 
-    const filter = { ip: req.ip, url: req.originalUrl, dates : {$gte : date.setSeconds(date.getSeconds() - 10)}}
-    const filter2 = { ip: 'curent_up', url: 'url', a: true }
-
-    if(rateLimitedMeta.dates > date.setSeconds(date.getSeconds() + 10))
-    {
-        await rateLimitedCollection.deleteMany({
-            ip: req.ip,
-            url: req.originalUrl,
-            dates : { $lt : date.setSeconds(date.getSeconds() - 10)}})
-    }
-
-    const count: number = await rateLimitedCollection.countDocuments(filter);
-    console.log(count + " - count")
-
-    if(count > 5)
-    {
-        res.sendStatus(429);
-    }
-    else
-    {
-        next();
-    }
 };
 
 //date: rateLimitedMeta.date.getSeconds() >= timeNow.setSeconds(timeNow.getSeconds() - 10)
