@@ -127,13 +127,10 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
     const date = new Date()
     console.log(date)
 
-    //console.log(req.ip)
-
-    const dateReq = date.setSeconds(date.getSeconds())
     const rateLimitedMeta : RateLimitedTypes= {
         ip: req.ip,
         url: req.originalUrl,
-        dates: dateReq,
+        dates: date.setSeconds(date.getSeconds()),
         a: true
     }
     console.log(req.ip)
@@ -159,7 +156,6 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
 
     if(count > 5)
     {
-        await refreshTokenSessionCollection.deleteMany({url: req.originalUrl})
         res.sendStatus(429);
     }
     else
