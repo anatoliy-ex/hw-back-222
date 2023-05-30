@@ -99,6 +99,9 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
     }
 };
 
+//for login
+export const loginOrEmailValidator = body('loginOrEmail').isString().trim().notEmpty()
+
 //for blogs
 const nameValidator = body('name').trim().isLength({min: 1, max: 15}).isString();
 const descriptionValidator = body('description').trim().isLength({min: 1, max: 500}).isString();
@@ -116,7 +119,7 @@ const blogIdValidator = body('blogId').trim().notEmpty().custom(findBlogId);
 
 //for user
 const loginValidator = body('login').isString().trim().isLength({min: 3, max: 10}).matches(/^[a-zA-Z0-9_-]*$/).custom(loginAlreadyExist)
-const passwordValidator = body('password').isString().trim().isLength({min: 6, max: 20});
+export const passwordValidator = body('password').isString().trim().isLength({min: 6, max: 20});
 const emailValidator = body ('email').trim().isLength({min: 1, max: 100}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString();
 
 export const codeValidator = body('code').trim().isString().custom(codeAlreadyExist);

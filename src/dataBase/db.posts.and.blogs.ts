@@ -6,6 +6,7 @@ import {TypeCommentatorInfo, TypeViewCommentModel} from "../types/comments.types
 import {settings} from "../../.env/settings";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import exp from "constants";
+import {RateLimitedTypes} from "../types/rate.limited.types";
 
 const mongoUri = settings.MONGO_URI
 export const client = new MongoClient(mongoUri)
@@ -18,7 +19,7 @@ export const usersCollection = db.collection<UserConfirmTypes>("users")
 export const commentsCollection = db.collection<TypeViewCommentModel<TypeCommentatorInfo>>("comments")
 export const usersNotConfirmCollection = db.collection<UserIsNotConfirmTypes>("notConfirmUser")
 export const refreshTokenSessionCollection = db.collection<RefreshTokenSessionsTypes>('refreshToken')
-export const rateLimitedCollection = db.collection("rateLimitedMeta")
+export const rateLimitedCollection = db.collection<RateLimitedTypes>("rateLimitedMeta")
 
 export const collections = [blogsCollection, postsCollection, usersCollection,
     commentsCollection, usersNotConfirmCollection, refreshTokenSessionCollection, rateLimitedCollection]

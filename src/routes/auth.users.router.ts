@@ -1,4 +1,4 @@
-import  {Request, Response, Router} from "express"
+import {Request, Response, Router} from "express"
 import {authUsersService} from "../domain/auth.users.service";
 import {authMiddleware, rateLimitedMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
@@ -8,17 +8,19 @@ import {
     createUsersValidator,
     emailAlreadyExistButNotConfirmedValidator,
     existEmailValidator,
-    inputValidationMiddleware} from "../middlewares/middleware.validators";
+    inputValidationMiddleware, loginOrEmailValidator, passwordValidator
+} from "../middlewares/middleware.validators";
 import {refreshTokenSessionCollection} from "../dataBase/db.posts.and.blogs";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {randomUUID} from "crypto";
 import jwt from "jsonwebtoken";
 import {settings} from "../../.env/settings";
+import {body} from "express-validator";
 
 export const authUsersRouter = Router({});
 
 //login user
-authUsersRouter.post('/login', rateLimitedMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/login', rateLimitedMiddleware, loginOrEmailValidator, passwordValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const userId = await authUsersService.loginUser(req.body);
     const userIp = req.ip
@@ -73,7 +75,7 @@ authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Reques
 
     const token = await jwtService.createJWT(userId);
     const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
-    const lastActiveDate =  await jwtService.getLastActiveDateFromToken(refreshToken)
+    const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken)
 
     const updateSessions: RefreshTokenSessionsTypes = {
         deviceId: sessions.deviceId,

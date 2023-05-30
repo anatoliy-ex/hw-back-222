@@ -1,13 +1,7 @@
 import {NextFunction, Request, Response} from "express";
-import {IRateLimiterOptions, RateLimiterMemory} from 'rate-limiter-flexible';
 import {jwtService} from "../../application/jwtService";
 import jwt from "jsonwebtoken";
-import {
-    commentsCollection,
-    rateLimitedCollection,
-    refreshTokenSessionCollection,
-    usersCollection
-} from "../../dataBase/db.posts.and.blogs";
+import {rateLimitedCollection, usersCollection} from "../../dataBase/db.posts.and.blogs";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
 import {commentRepositories} from "../../repositories/comment.repositories";
 import {settings} from "../../../.env/settings";
@@ -101,28 +95,6 @@ export const checkForUser = async (req: Request, res: Response, next: NextFuncti
 }
 
 //rate limited
-const MAX_REQUEST_LIMIT = 5;
-const MAX_REQUEST_WINDOW = 10; // Per 15 minutes by IP
-const TOO_MANY_REQUESTS_MESSAGE = 'Too many requests';
-
-const options: IRateLimiterOptions = {
-    duration: MAX_REQUEST_WINDOW,
-    points: MAX_REQUEST_LIMIT,
-};
-
-const rateLimiter = new RateLimiterMemory(options);
-
-export const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    rateLimiter
-        .consume(req.ip, 1)
-        .then(() => {
-            next();
-        })
-        .catch(() => {
-            res.status(429).json({message: TOO_MANY_REQUESTS_MESSAGE});
-        });
-};
-
 export const rateLimitedMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
     const rateLimitedMeta: RateLimitedTypes = {
@@ -130,16 +102,19 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
         url: req.originalUrl,
         connectionDate: new Date()
     }
-    const blockInterval = addSeconds(rateLimitedMeta.connectionDate, -10)
+    const blockInterval = addSeconds(rateLimitedMeta.connectionDate, -10);
 
-    const filter = {ip: rateLimitedMeta.ip, url: rateLimitedMeta.url, connectionDate: {$gte: blockInterval}}
-    const connectionCount: number = await rateLimitedCollection.countDocuments(filter);
+    const blockFilter = {ip: rateLimitedMeta.ip, url: rateLimitedMeta.url, connectionDate: {$gte: blockInterval}};
+    const deleteFilter = {ip: rateLimitedMeta.ip, url: rateLimitedMeta.url, connectionDate: {$lt: blockInterval}};
 
-    if (connectionCount + 1 > 5) return res.sendStatus(429)
-    await rateLimitedCollection.insertOne(rateLimitedMeta)
-    return next()
+    const connectionCount: number = await rateLimitedCollection.countDocuments(blockFilter);
+    await rateLimitedCollection.deleteMany(deleteFilter);
 
+    if (connectionCount + 1 > 5) {
+        return res.sendStatus(429);
+    }
+    else{
+        await rateLimitedCollection.insertOne(rateLimitedMeta);
+        return next();
+    }
 };
-
-//date: rateLimitedMeta.date.getSeconds() >= timeNow.setSeconds(timeNow.getSeconds() - 10)
-//{ip: req.ip, url: req.baseUrl}
