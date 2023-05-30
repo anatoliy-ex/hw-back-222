@@ -103,6 +103,7 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
         connectionDate: new Date()
     }
     const blockInterval = addSeconds(rateLimitedMeta.connectionDate, -10);
+    const deleteInterval = addSeconds(rateLimitedMeta.connectionDate, -10);
 
     const blockFilter = {ip: rateLimitedMeta.ip,
         url: rateLimitedMeta.url,
@@ -110,7 +111,7 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
 
     const deleteFilter = {ip: rateLimitedMeta.ip,
         url: rateLimitedMeta.url,
-        connectionDate: {$lt:  addSeconds(rateLimitedMeta.connectionDate, -10)}};
+        connectionDate: {$lt:  deleteInterval}};
 
     const connectionCount: number = await rateLimitedCollection.countDocuments(blockFilter);
     console.log(req.ip)
