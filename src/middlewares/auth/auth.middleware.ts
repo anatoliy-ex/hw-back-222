@@ -113,9 +113,13 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
         connectionDate: {$lt:  addSeconds(rateLimitedMeta.connectionDate, -15)}};
 
     const connectionCount: number = await rateLimitedCollection.countDocuments(blockFilter);
-    await rateLimitedCollection.deleteMany(deleteFilter);
+    console.log(req.ip)
+    console.log(req.originalUrl)
+    console.log(rateLimitedMeta.connectionDate)
+    console.log(connectionCount)
 
     if (connectionCount + 1 > 5) {
+        await rateLimitedCollection.deleteMany(deleteFilter);
         return res.sendStatus(429);
     }
     else{
