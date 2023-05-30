@@ -104,11 +104,16 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
     }
     const blockInterval = addSeconds(rateLimitedMeta.connectionDate, -10);
 
-    const blockFilter = {ip: rateLimitedMeta.ip, url: rateLimitedMeta.url, connectionDate: {$gte: blockInterval}};
-    const deleteFilter = {ip: rateLimitedMeta.ip, url: rateLimitedMeta.url, connectionDate: {$lt: blockInterval}};
+    const blockFilter = {ip: rateLimitedMeta.ip,
+        url: rateLimitedMeta.url,
+        connectionDate: {$gte: blockInterval}};
+
+    const deleteFilter = {ip: rateLimitedMeta.ip,
+        url: rateLimitedMeta.url,
+        connectionDate: {$lt:  addSeconds(rateLimitedMeta.connectionDate, -15)}};
 
     const connectionCount: number = await rateLimitedCollection.countDocuments(blockFilter);
-    //await rateLimitedCollection.deleteMany(deleteFilter);
+    await rateLimitedCollection.deleteMany(deleteFilter);
 
     if (connectionCount + 1 > 5) {
         return res.sendStatus(429);
