@@ -110,7 +110,7 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
 
     const deleteFilter = {ip: rateLimitedMeta.ip,
         url: rateLimitedMeta.url,
-        connectionDate: {$lt:  addSeconds(rateLimitedMeta.connectionDate, -30)}};
+        connectionDate: {$lt:  addSeconds(rateLimitedMeta.connectionDate, -10)}};
 
     const connectionCount: number = await rateLimitedCollection.countDocuments(blockFilter);
     console.log(req.ip)
