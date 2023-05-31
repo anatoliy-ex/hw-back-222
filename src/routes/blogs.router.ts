@@ -46,13 +46,13 @@ export const getPaginationFromQueryBlogs = (query: any): PaginationQueryTypeForB
 blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
     // const promises = collections.map(c => c.deleteMany())
     // await Promise.all(promises)
-    BlogModel.deleteMany({})
-    PostModel.deleteMany({})
-    UserModel.deleteMany({})
-    CommentModel.deleteMany()
-    userNotConfirmationModel.deleteMany({})
-    RefreshTokenSessionModel.deleteMany({})
-    RateLimitedModel.deleteMany({})
+    await BlogModel.deleteMany()
+    await PostModel.deleteMany()
+    await UserModel.deleteMany()
+    await CommentModel.deleteMany()
+    await userNotConfirmationModel.deleteMany()
+    await RefreshTokenSessionModel.deleteMany()
+    await RateLimitedModel.deleteMany()
 
     res.sendStatus(204);
 });
