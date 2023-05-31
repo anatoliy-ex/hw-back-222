@@ -91,8 +91,8 @@ export const authUsersRepositories = {
             ]
         };
 
-        const checkUserInSystem = await UserModel.findOne(filter)
-        const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
+        const checkUserInSystem = await UserModel.find(filter)
+        const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
 
         if(checkUserInSystem != null )
         {
