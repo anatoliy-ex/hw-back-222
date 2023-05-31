@@ -21,14 +21,14 @@ const emailAlreadyExist : CustomValidator = async value =>
 {
     const filter = {email: value};
 
-    const checkUserInSystem = await UserModel.findOne(filter)
-    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
+    const checkUserInSystem = await UserModel.find(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
 
-    if(checkUserInSystem != null)
+    if(checkUserInSystem.length != 0)
     {
         throw new Error('email is exist');
     }
-    else if(checkUserIsNotConfirmInSystem != null)
+    else if(checkUserIsNotConfirmInSystem.length != 0)
     {
         throw new Error('email is exist');
     }
@@ -38,14 +38,14 @@ const emailAlreadyExist : CustomValidator = async value =>
 const emailAlreadyExistButNotConfirmed : CustomValidator = async value =>
 {
     const filter = {email: value};
-    const checkUserInSystem = await UserModel.findOne(filter)
-    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
+    const checkUserInSystem = await UserModel.find(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
 
-    if(checkUserInSystem != null)
+    if(checkUserInSystem.length != 0)
     {
         throw new Error('email is exist');
     }
-    else if(checkUserIsNotConfirmInSystem == null)
+    else if(checkUserIsNotConfirmInSystem.length == 0)
     {
         throw new Error('email is exist');
     }
@@ -55,14 +55,14 @@ const loginAlreadyExist : CustomValidator = async value =>
 {
     const filter = {login: value};
 
-    const checkUserInSystem = await UserModel.findOne(filter)
-    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
+    const checkUserInSystem = await UserModel.find(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
 
-    if(checkUserInSystem != null)
+    if(checkUserInSystem.length != 0)
     {
         throw new Error('login is exist');
     }
-    else if(checkUserIsNotConfirmInSystem != null)
+    else if(checkUserIsNotConfirmInSystem.length != 0)
     {
         throw new Error('login is exist');
     }
@@ -72,9 +72,9 @@ const loginAlreadyExist : CustomValidator = async value =>
 const codeAlreadyExist : CustomValidator = async value =>
 {
     const filter = {confirmationCode: value};
-    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
 
-    if(checkUserIsNotConfirmInSystem == null)
+    if(checkUserIsNotConfirmInSystem.length == 0)
     {
         throw new Error('code is exist');
     }

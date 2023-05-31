@@ -48,14 +48,12 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
     const refreshToken = req.cookies.refreshToken
     console.log(refreshToken)
     if (!refreshToken) {
-        console.log("111")
         res.sendStatus(401);
         return;
     }
 
     try {
         const IsDecode: any = jwt.verify(refreshToken, settings.REFRESH_TOKEN_SECRET)
-        console.log(IsDecode + '77777')
 
         if (IsDecode) {
 
