@@ -1,4 +1,4 @@
-import {runDb, usersCollection} from "./dataBase/db.posts.and.blogs";
+import {runDb, UserModel} from "./dataBase/db";
 import {postsRouter} from "./routes/posts.router";
 import {blogsRouter} from "./routes/blogs.router";
 import {usersRouter} from "./routes/users.router";
@@ -25,14 +25,11 @@ app.use('/comments', commentRouter)
 app.use('/security', securityDeviceRouter)
 
 
-
-const startApp = async () =>
-{
-    await runDb();
-    app.listen(port, () =>
-    {
-        console.log(`Example app listening on port ${port}`);
+const startApp = async () => {
+    await runDb()
+    app.listen(port, () => {
+        console.log(`Example app listening on port ${port}`)
     })
 }
 
-startApp();
+startApp()

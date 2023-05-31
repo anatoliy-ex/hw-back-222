@@ -1,3 +1,4 @@
+
 export type BlogsTypes = {
     id: string,
     name: string,
@@ -6,4 +7,3 @@ export type BlogsTypes = {
     createdAt: string,
     isMembership: boolean,
 };
-

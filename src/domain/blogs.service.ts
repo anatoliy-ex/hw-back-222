@@ -1,9 +1,8 @@
 import {
-    blogsCollection,
-    postsCollection,
-    usersCollection,
-    usersNotConfirmCollection
-} from "../dataBase/db.posts.and.blogs";
+    BlogModel,
+    PostModel,
+    UserModel, userNotConfirmationModel,
+} from "../dataBase/db";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
@@ -13,15 +12,6 @@ import {blogsRepositories} from "../repositories/blogs.repositories";
 
 export const blogsService =
     {
-        //delete all
-        async deleteAll(): Promise<[]> {
-            await postsCollection.deleteMany({});
-            await blogsCollection.deleteMany({});
-            await usersCollection.deleteMany({});
-            await usersNotConfirmCollection.deleteMany({})
-            return [];
-        },
-
         //return all blogs+++
         async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<BlogsTypes[]>> {
 
@@ -49,7 +39,7 @@ export const blogsService =
         async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<OutputType<PostsTypes[]>> {
 
             const posts = await blogsRepositories.getPostsForBlog(pagination, blogId)
-            const countOfPosts = await postsCollection.countDocuments({blogId});
+            const countOfPosts = await PostModel.countDocuments({blogId});
             const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
 
             return {

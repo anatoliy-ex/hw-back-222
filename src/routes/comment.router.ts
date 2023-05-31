@@ -3,7 +3,7 @@ import {commentRepositories} from "../repositories/comment.repositories";
 import {authMiddleware, checkForUser} from "../middlewares/auth/auth.middleware";
 import {contentCommentValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
-import {commentsCollection} from "../dataBase/db.posts.and.blogs";
+import {CommentModel} from "../dataBase/db";
 export const commentRouter = Router({});
 
 

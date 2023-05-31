@@ -3,7 +3,7 @@ import {InputUserType, UserConfirmTypes, UserViewType} from "../types/userConfir
 import {PaginationQueryTypeForUsers} from "../routes/users.router";
 import * as bcrypt from "bcrypt";
 import {usersRepositories} from "../repositories/users.repositories";
-import {usersCollection} from "../dataBase/db.posts.and.blogs";
+import {UserModel} from "../dataBase/db";
 
 export const usersService = {
 
@@ -40,7 +40,7 @@ export const usersService = {
 
     //get user bu ID
     async findUserById(id: string){
-        const user =   await usersCollection.findOne({id}, {projection: {_id:0, hash:0, createdAt:0, isConfirm:0}})
+        const user =   await UserModel.findOne({id}, {projection: {_id:0, hash:0, createdAt:0, isConfirm:0}})
 
         if(!user)
         {

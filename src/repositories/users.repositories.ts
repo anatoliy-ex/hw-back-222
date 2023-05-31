@@ -1,6 +1,6 @@
 import {OutputType} from "../types/output.type";
 import {InputUserType, UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
-import {usersCollection} from "../dataBase/db.posts.and.blogs";
+import {UserModel} from "../dataBase/db";
 import {PaginationQueryTypeForUsers} from "../routes/users.router";
 
 export const usersRepositories = {
@@ -14,15 +14,15 @@ export const usersRepositories = {
             ]
         };
 
-        const users: UserConfirmTypes[] = await usersCollection
+        const users: UserConfirmTypes[] = await UserModel
             .find(filter, {projection: {_id: 0, hash: 0}})
             .sort({[paginationUsers.sortBy]: paginationUsers.sortDirection})
             .skip((paginationUsers.pageNumber - 1) * paginationUsers.pageSize)
             .limit(paginationUsers.pageSize)
-            .toArray()
+            .lean()
 
 
-        const countOfUsers = await usersCollection.countDocuments(filter);
+        const countOfUsers = await UserModel.countDocuments(filter);
         const pagesCount = Math.ceil(countOfUsers / paginationUsers.pageSize);
         console.log(countOfUsers)
 
@@ -38,7 +38,7 @@ export const usersRepositories = {
     //create user
     async createNewUser(newUser: UserConfirmTypes): Promise<UserViewType> {
 
-        await usersCollection.insertOne({...newUser});
+        await UserModel.insertMany([newUser]);
 
         return {
             id: newUser.id,
@@ -50,7 +50,7 @@ export const usersRepositories = {
 
     //delete user bu ID
     async deleteUserById(id: string): Promise<boolean> {
-        const isDeleted = await usersCollection.deleteOne({id: id})
+        const isDeleted = await UserModel.deleteOne({id: id})
         return isDeleted.deletedCount === 1;
     },
 };

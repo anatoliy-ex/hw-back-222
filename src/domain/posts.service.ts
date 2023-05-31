@@ -1,4 +1,4 @@
-import {postsCollection} from "../dataBase/db.posts.and.blogs";
+import {PostModel} from "../dataBase/db";
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {PaginationQueryTypeForPosts} from "../routes/posts.router";

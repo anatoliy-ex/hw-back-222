@@ -1,10 +1,9 @@
 import {LoginType} from "../types/auth.users.types";
 import * as bcrypt from 'bcrypt'
 import {
-    refreshTokenSessionCollection,
-    usersCollection,
-    usersNotConfirmCollection
-} from "../dataBase/db.posts.and.blogs";
+    RefreshTokenSessionModel,
+    UserModel, userNotConfirmationModel,
+} from "../dataBase/db";
 import {jwtService} from "../application/jwtService";
 import {InputUserType, UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import nodemailer from 'nodemailer'
@@ -23,7 +22,7 @@ export const authUsersRepositories = {
            ]
        };
 
-       const user = await usersCollection.findOne(filter)
+       const user = await UserModel.findOne(filter)
 
        if(user)
        {
@@ -48,16 +47,8 @@ export const authUsersRepositories = {
     async checkRefreshToken(refreshToken: string): Promise<boolean> {
 
        try{
-           const isToken = await refreshTokenSessionCollection.findOne({refreshToken: refreshToken})
-
-           if(isToken == null)
-           {
-               return false
-           }
-           else
-           {
-               return true
-           }
+           const isToken = await RefreshTokenSessionModel.findOne({refreshToken: refreshToken})
+           return isToken != null;
        }
        catch (e) {
            return false;
@@ -67,7 +58,7 @@ export const authUsersRepositories = {
     ////confirm registration-2
     async confirmEmailByUser(code: string) : Promise<boolean> {
 
-      let confirmationUser = await usersNotConfirmCollection.findOne({confirmationCode: code});
+      let confirmationUser = await userNotConfirmationModel.findOne({confirmationCode: code});
 
       if(confirmationUser && confirmationUser.expirationDate > new Date())
       {
@@ -80,8 +71,8 @@ export const authUsersRepositories = {
               isConfirm: true,
           }
 
-          await usersNotConfirmCollection.deleteOne({confirmationCode: code});
-          await usersCollection.insertOne({...updateUser});
+          await userNotConfirmationModel.deleteOne({confirmationCode: code});
+          await UserModel.insertMany([updateUser]);
           return true
       }
       else
@@ -100,8 +91,8 @@ export const authUsersRepositories = {
             ]
         };
 
-        const checkUserInSystem = await usersCollection.findOne(filter)
-        const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
+        const checkUserInSystem = await UserModel.findOne(filter)
+        const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
 
         if(checkUserInSystem != null )
         {
@@ -150,7 +141,7 @@ export const authUsersRepositories = {
       </p>`
             });
 
-            await usersNotConfirmCollection.insertOne({...newUser});
+            await userNotConfirmationModel.insertMany([newUser]);
             return true;
         }
     },
@@ -158,13 +149,13 @@ export const authUsersRepositories = {
     //registration in system-3
     async registrationWithSendingEmail(email: string){
 
-        const user = await usersNotConfirmCollection.findOne({email: email})
+        const user = await userNotConfirmationModel.findOne({email: email})
 
         if(user && !user.isConfirm)
         {
             const newCode = uuidv4()
-            await usersNotConfirmCollection.updateOne( {email: email}, {$set: {'confirmationCode': newCode}})
-            const updatedUser = await usersNotConfirmCollection.findOne({'email': email})
+            await userNotConfirmationModel.updateOne( {email: email}, {$set: {'confirmationCode': newCode}})
+            const updatedUser = await userNotConfirmationModel.findOne({'email': email})
 
             let transporter = nodemailer.createTransport({
                 service: "gmail",
@@ -200,7 +191,7 @@ export const authUsersRepositories = {
         const userId = await  jwtService.getUserIdByToken(token);
 
         if(userId != null) {
-            return await usersCollection.findOne({id: userId})
+            return UserModel.findOne({id: userId})
         }
         else
         {
@@ -215,7 +206,7 @@ export const authUsersRepositories = {
         const userId = await  jwtService.getUserIdByRefreshToken(token);
 
         if(userId != null) {
-            return await usersCollection.findOne({id: userId})
+            return UserModel.findOne({id: userId})
 
         }
         else
@@ -240,7 +231,7 @@ export const authUsersRepositories = {
             ]
         };
 
-        const user = await usersCollection.findOne(filter)
+        const user = await UserModel.findOne(filter)
 
         if(user)
         {

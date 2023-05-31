@@ -1,6 +1,6 @@
 import request from 'supertest'
 import {app} from "../../src";
-import {runDb} from "../../src/dataBase/db.posts.and.blogs";
+import {runDb} from "../../src/dataBase/db";
 
 describe('/blogs', () =>
 {
@@ -14,9 +14,9 @@ describe('/blogs', () =>
 
     it('should return 429 status code at 6 connection', async () => {
         for (let i = 0; i < 5; i++){
-            await request(app).post('/auth/login').send().expect(400)
+            await request(app).post('/auth/registration').send().expect(400)
         }
-        await request(app).post('/auth/login').send().expect(429)
+        await request(app).post('/auth/registration').send().expect(429)
     });
 
     // it('return 200 with empty array', async () => {

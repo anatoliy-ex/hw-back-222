@@ -3,7 +3,7 @@ import {CustomValidator} from "express-validator";
 import { Response, Request } from "express";
 import {  body,  validationResult } from 'express-validator';
 import {NextFunction} from "express";
-import {db, usersCollection, usersNotConfirmCollection} from "../dataBase/db.posts.and.blogs";
+import {db, UserModel, userNotConfirmModel} from "../dataBase/db";
 
 const findBlogId : CustomValidator = async value =>
 {
@@ -21,8 +21,8 @@ const emailAlreadyExist : CustomValidator = async value =>
 {
     const filter = {email: value};
 
-    const checkUserInSystem = await usersCollection.findOne(filter)
-    const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
+    const checkUserInSystem = await UserModel.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmModel.findOne(filter)
 
     if(checkUserInSystem != null)
     {
@@ -38,8 +38,8 @@ const emailAlreadyExist : CustomValidator = async value =>
 const emailAlreadyExistButNotConfirmed : CustomValidator = async value =>
 {
     const filter = {email: value};
-    const checkUserInSystem = await usersCollection.findOne(filter)
-    const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
+    const checkUserInSystem = await UserModel.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmModel.findOne(filter)
 
     if(checkUserInSystem != null)
     {
@@ -55,8 +55,8 @@ const loginAlreadyExist : CustomValidator = async value =>
 {
     const filter = {login: value};
 
-    const checkUserInSystem = await usersCollection.findOne(filter)
-    const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
+    const checkUserInSystem = await UserModel.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmModel.findOne(filter)
 
     if(checkUserInSystem != null)
     {
@@ -72,7 +72,7 @@ const loginAlreadyExist : CustomValidator = async value =>
 const codeAlreadyExist : CustomValidator = async value =>
 {
     const filter = {confirmationCode: value};
-    const checkUserIsNotConfirmInSystem = await usersNotConfirmCollection.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmModel.findOne(filter)
 
     if(checkUserIsNotConfirmInSystem == null)
     {

@@ -1,4 +1,4 @@
-import {blogsCollection, commentsCollection, postsCollection} from "../dataBase/db.posts.and.blogs";
+import {BlogModel, CommentModel, PostModel} from "../dataBase/db";
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {PaginationQueryTypeForComments, PaginationQueryTypeForPosts} from "../routes/posts.router";
@@ -15,16 +15,16 @@ export const postsRepositories =
         const filter = {postId: postId}
         console.log(postId)
 
-        const comments: TypeGetCommentModel<TypeCommentatorInfo>[] = await commentsCollection
+        const comments: TypeGetCommentModel<TypeCommentatorInfo>[] = await CommentModel
             .find(filter, {projection: {_id: 0, postId: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
-            .toArray()
+            .lean()
 
         console.log(comments)
 
-        const countOfComments = await commentsCollection.countDocuments(filter);
+        const countOfComments = await CommentModel.countDocuments(filter);
         const pagesCount =  Math.ceil(countOfComments/pagination.pageSize);
 
 
@@ -54,21 +54,21 @@ export const postsRepositories =
             postId: postId,
         };
 
-        await commentsCollection.insertOne({...newComment});
+        await CommentModel.insertMany([newComment]);
         return newComment;
     },
 
     //return all posts
     async allPosts(pagination: PaginationQueryTypeForPosts) : Promise<OutputType<PostsTypes[]>>
     {
-        const posts: PostsTypes[] = await postsCollection
+        const posts: PostsTypes[] = await PostModel
             .find({}, {projection: {_id: 0}})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
-            .toArray();
+            .lean()
 
-        const countOfPosts = await postsCollection.countDocuments();
+        const countOfPosts = await PostModel.countDocuments();
         const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
 
         return {
@@ -84,20 +84,20 @@ export const postsRepositories =
     async createNewPost(newPost: PostsTypes) : Promise<PostsTypes>
     {
 
-        await postsCollection.insertOne({...newPost});
+        await PostModel.insertMany([newPost]);
         return newPost;
     },
 
     //get post by ID
     async getPostById(id: string) : Promise<PostsTypes | null>
     {
-        return await postsCollection.findOne({id: id}, {projection :{_id: 0}});
+        return PostModel.findOne({id: id}, {projection :{_id: 0}});
     },
 
     //update post by ID
     async updatePost(newPost : PostsTypes, id: string) : Promise<boolean>
     {
-        const result = await postsCollection.updateOne({id: id}, {
+        const result = await PostModel.updateOne({id: id}, {
             $set:
             {
                 title: newPost.title,
@@ -112,7 +112,7 @@ export const postsRepositories =
     //delete post by ID
     async deletePostsById(id: string) : Promise<boolean>
     {
-        const isDeleted = await postsCollection.deleteOne({id: id});
+        const isDeleted = await PostModel.deleteOne({id: id});
         return isDeleted.deletedCount === 1;
     },
 };

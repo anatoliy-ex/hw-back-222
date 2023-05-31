@@ -7,7 +7,15 @@ import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from 
 import {getPaginationFromQueryPosts} from "./posts.router";
 import {blogsService} from "../domain/blogs.service";
 import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
-import {collections} from "../dataBase/db.posts.and.blogs";
+import {
+    BlogModel,
+    collections,
+    CommentModel,
+    PostModel, RateLimitedModel,
+    RefreshTokenSessionModel,
+    UserModel,
+    userNotConfirmationModel
+} from "../dataBase/db";
 
 
 export type PaginationQueryTypeForBlogs = {
@@ -36,8 +44,15 @@ export const getPaginationFromQueryBlogs = (query: any): PaginationQueryTypeForB
 
 //delete all
 blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
-    const promises = collections.map(c => c.deleteMany())
-    await Promise.all(promises)
+    // const promises = collections.map(c => c.deleteMany())
+    // await Promise.all(promises)
+    BlogModel.deleteMany()
+    PostModel.deleteMany()
+    UserModel.deleteMany()
+    CommentModel.deleteMany()
+    userNotConfirmationModel.deleteMany()
+    RefreshTokenSessionModel.deleteMany()
+    RateLimitedModel.deleteMany()
 
     res.sendStatus(204);
 });

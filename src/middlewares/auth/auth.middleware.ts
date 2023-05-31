@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {jwtService} from "../../application/jwtService";
 import jwt from "jsonwebtoken";
-import {rateLimitedCollection, usersCollection} from "../../dataBase/db.posts.and.blogs";
+import {RateLimitedModel, UserModel} from "../../dataBase/db";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
 import {commentRepositories} from "../../repositories/comment.repositories";
 import {settings} from "../../../.env/settings";
@@ -59,7 +59,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
 
         if (IsDecode) {
 
-            const user = await usersCollection.findOne({id: IsDecode.userId})
+            const user = await UserModel.findOne({id: IsDecode.userId})
             console.log(user)
 
             if (user == null) {
@@ -102,8 +102,8 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
         url: req.originalUrl,
         connectionDate: new Date()
     }
+
     const blockInterval = addSeconds(rateLimitedMeta.connectionDate, -10);
-    const deleteInterval = addSeconds(rateLimitedMeta.connectionDate, -10);
 
     const blockFilter = {ip: rateLimitedMeta.ip,
         url: rateLimitedMeta.url,
@@ -111,20 +111,16 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
 
     const deleteFilter = {ip: rateLimitedMeta.ip,
         url: rateLimitedMeta.url,
-        connectionDate: {$lt:  deleteInterval}};
+        connectionDate: {$lt:  blockInterval}};
 
-    const connectionCount: number = await rateLimitedCollection.countDocuments(blockFilter);
-    console.log(req.ip)
-    console.log(req.originalUrl)
-    console.log(rateLimitedMeta.connectionDate)
-    console.log(connectionCount + 1)
+    const connectionCount: number = await RateLimitedModel.countDocuments(blockFilter);
 
     if (connectionCount + 1 > 5) {
-        await rateLimitedCollection.deleteMany(deleteFilter);
+        await RateLimitedModel.deleteMany(deleteFilter);
         return res.sendStatus(429);
     }
     else{
-        await rateLimitedCollection.insertOne(rateLimitedMeta);
+        await RateLimitedModel.insertOne(rateLimitedMeta);
         return next();
     }
 };

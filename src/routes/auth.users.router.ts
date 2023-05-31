@@ -10,7 +10,7 @@ import {
     existEmailValidator,
     inputValidationMiddleware, loginOrEmailValidator, passwordValidator
 } from "../middlewares/middleware.validators";
-import {refreshTokenSessionCollection} from "../dataBase/db.posts.and.blogs";
+import {RefreshTokenSessionModel} from "../dataBase/db";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {randomUUID} from "crypto";
 import jwt from "jsonwebtoken";
@@ -42,7 +42,7 @@ authUsersRouter.post('/login', rateLimitedMiddleware, loginOrEmailValidator, pas
             userId: userId
         };
 
-        await refreshTokenSessionCollection.insertOne({...newSessions});
+        await RefreshTokenSessionModel.insertMany([newSessions]);
 
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,});
         res.status(200).send({accessToken: token});
@@ -63,7 +63,7 @@ authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Reques
     const userId = req.user!.id
     const deviceId = req.deviceId!
     const oldLastActiveDate = await jwtService.getLastActiveDateFromToken(oldRefreshToken)
-    const sessions = await refreshTokenSessionCollection.findOne({deviceId: deviceId})
+    const sessions = await RefreshTokenSessionModel.findOne({deviceId: deviceId})
 
     if (!sessions || sessions.lastActiveDate !== oldLastActiveDate) {
         return res.sendStatus(401)
@@ -84,7 +84,7 @@ authUsersRouter.post('/refresh-token', refreshAuthMiddleware, async (req: Reques
         lastActiveDate,
         userId: userId
     }
-    await refreshTokenSessionCollection.updateOne({deviceId, userId}, {$set: updateSessions})
+    await RefreshTokenSessionModel.updateOne({deviceId, userId}, {$set: updateSessions})
 
     res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
     res.status(200).send({accessToken: token})
@@ -134,7 +134,7 @@ authUsersRouter.post('/logout', refreshAuthMiddleware, async (req: Request, res:
     const userId = req.user!.id
     const deviceId = req.deviceId!
 
-    await refreshTokenSessionCollection.deleteOne({userId, deviceId: deviceId})
+    await RefreshTokenSessionModel.deleteOne({userId, deviceId: deviceId})
 
     res.cookie('refreshToken', '', {httpOnly: true, secure: true}).status(204).send()
 });

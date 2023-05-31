@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express"
 import {refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {securityDevicesRepositories} from "../repositories/security.device.repositories";
-import {refreshTokenSessionCollection} from "../dataBase/db.posts.and.blogs";
+import {RefreshTokenSessionModel} from "../dataBase/db";
 import {jwtService} from "../application/jwtService";
 
 export const securityDeviceRouter = Router({});
@@ -45,7 +45,7 @@ securityDeviceRouter.delete('/devices/:deviceId', refreshAuthMiddleware, async (
     const userId = req.user!.id
     const deviceId = req.params.deviceId
 
-    const device = await refreshTokenSessionCollection.findOne({deviceId})
+    const device = await RefreshTokenSessionModel.findOne({deviceId})
 
     if (!device) return res.sendStatus(404);
     if (device.userId !== userId) return res.sendStatus(403);
