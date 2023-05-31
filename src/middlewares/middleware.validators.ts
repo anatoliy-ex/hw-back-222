@@ -3,7 +3,7 @@ import {CustomValidator} from "express-validator";
 import { Response, Request } from "express";
 import {  body,  validationResult } from 'express-validator';
 import {NextFunction} from "express";
-import {db, UserModel, userNotConfirmModel} from "../dataBase/db";
+import {UserModel, userNotConfirmationModel} from "../dataBase/db";
 
 const findBlogId : CustomValidator = async value =>
 {
@@ -22,7 +22,7 @@ const emailAlreadyExist : CustomValidator = async value =>
     const filter = {email: value};
 
     const checkUserInSystem = await UserModel.findOne(filter)
-    const checkUserIsNotConfirmInSystem = await userNotConfirmModel.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
 
     if(checkUserInSystem != null)
     {
@@ -39,7 +39,7 @@ const emailAlreadyExistButNotConfirmed : CustomValidator = async value =>
 {
     const filter = {email: value};
     const checkUserInSystem = await UserModel.findOne(filter)
-    const checkUserIsNotConfirmInSystem = await userNotConfirmModel.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
 
     if(checkUserInSystem != null)
     {
@@ -56,7 +56,7 @@ const loginAlreadyExist : CustomValidator = async value =>
     const filter = {login: value};
 
     const checkUserInSystem = await UserModel.findOne(filter)
-    const checkUserIsNotConfirmInSystem = await userNotConfirmModel.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
 
     if(checkUserInSystem != null)
     {
@@ -72,7 +72,7 @@ const loginAlreadyExist : CustomValidator = async value =>
 const codeAlreadyExist : CustomValidator = async value =>
 {
     const filter = {confirmationCode: value};
-    const checkUserIsNotConfirmInSystem = await userNotConfirmModel.findOne(filter)
+    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.findOne(filter)
 
     if(checkUserIsNotConfirmInSystem == null)
     {

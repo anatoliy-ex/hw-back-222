@@ -120,7 +120,7 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
         return res.sendStatus(429);
     }
     else{
-        await RateLimitedModel.insertOne(rateLimitedMeta);
+        await RateLimitedModel.create(rateLimitedMeta);
         return next();
     }
 };

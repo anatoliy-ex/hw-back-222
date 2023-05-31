@@ -38,7 +38,7 @@ export const usersRepositories = {
     //create user
     async createNewUser(newUser: UserConfirmTypes): Promise<UserViewType> {
 
-        await UserModel.insertMany(newUser);
+        await UserModel.insertMany([newUser]);
 
         return {
             id: newUser.id,
