@@ -44,17 +44,6 @@ export const authUsersRepositories = {
        }
    },
 
-    async checkRefreshToken(refreshToken: string): Promise<boolean> {
-
-       try{
-           const isToken = await RefreshTokenSessionModel.findOne({refreshToken: refreshToken})
-           return isToken != null;
-       }
-       catch (e) {
-           return false;
-       }
-    },
-
     ////confirm registration-2
     async confirmEmailByUser(code: string) : Promise<boolean> {
 
@@ -70,9 +59,10 @@ export const authUsersRepositories = {
               createdAt: confirmationUser.createdAt,
               isConfirm: true,
           }
+          const filter = {confirmationCode: code}
 
-          await userNotConfirmationModel.deleteOne({confirmationCode: code});
-          await UserModel.insertMany([updateUser]);
+          await userNotConfirmationModel.deleteOne(filter);
+          await UserModel.create(updateUser);
           return true
       }
       else
