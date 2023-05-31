@@ -112,7 +112,7 @@ authUsersRouter.post('/registration', rateLimitedMiddleware, createUsersValidato
     if (firstRegistration) {
         res.sendStatus(204);
     } else {
-        res.sendStatus(400);
+        res.status(400).send('tuta')
     }
 });
 

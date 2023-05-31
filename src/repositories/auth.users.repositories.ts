@@ -94,12 +94,12 @@ export const authUsersRepositories = {
         const checkUserInSystem = await UserModel.find(filter)
         const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
 
-        if(checkUserInSystem != null )
-        {
+        if(checkUserInSystem.length != 0) {
+            console.log(checkUserInSystem)
             return false;
         }
-        else if(checkUserIsNotConfirmInSystem != null)
-        {
+        else if(checkUserInSystem.length != 0) {
+            console.log("2")
             return false;
         }
         else
