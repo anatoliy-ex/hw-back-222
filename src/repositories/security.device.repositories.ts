@@ -6,7 +6,8 @@ export const securityDevicesRepositories = {
     async getInformationAboutAllSessions(userId: string) {
 
         return RefreshTokenSessionModel
-            .find({userId: userId}, {projection: {userId: 0, _id: 0, __v: 0}})
+            .find({userId: userId})
+            .select('deviceId ip lastActiveDate title -_id')
             .lean()
     },
 

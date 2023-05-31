@@ -199,29 +199,6 @@ export const authUsersRepositories = {
         }
     },
 
-
-    //get information about user
-    async getUserWithRefreshToken(token: string)
-    {
-        const userId = await  jwtService.getUserIdByRefreshToken(token);
-
-        if(userId != null) {
-            return UserModel.findOne({id: userId})
-
-        }
-        else
-        {
-            return null
-        }
-    },
-
-
-
-    //logout if bad refresh token
-    async logoutIfRefreshTokenBad(){
-
-    },
-
     //get user id by login or email
     async getUserIdByLoginOrEmail(authUser: LoginType){
         const filter = {

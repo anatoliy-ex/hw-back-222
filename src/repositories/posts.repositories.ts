@@ -62,7 +62,8 @@ export const postsRepositories =
     async allPosts(pagination: PaginationQueryTypeForPosts) : Promise<OutputType<PostsTypes[]>>
     {
         const posts: PostsTypes[] = await PostModel
-            .find({}, {projection: {_id: 0}})
+            .find({})
+            .select('-_id')
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)

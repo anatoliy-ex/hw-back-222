@@ -21,7 +21,8 @@ export const blogsRepositories =
             const filter = {name: {$regex: pagination.searchNameTerm, $options: 'i'}}
 
             const blogs : BlogsTypes[] =  await BlogModel
-                .find(filter, {projection: {_id: 0}})
+                .find(filter)
+                .select('-_id')
                 .sort({[pagination.sortBy]: pagination.sortDirection})
                 .skip((pagination.pageNumber - 1) * pagination.pageSize)
                 .limit(pagination.pageSize)

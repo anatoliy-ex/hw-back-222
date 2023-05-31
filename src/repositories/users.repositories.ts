@@ -15,7 +15,8 @@ export const usersRepositories = {
         };
 
         const users: UserConfirmTypes[] = await UserModel
-            .find(filter, {projection: {_id: 0, hash: 0}})
+            .find(filter)
+            .select('-_id -hash')
             .sort({[paginationUsers.sortBy]: paginationUsers.sortDirection})
             .skip((paginationUsers.pageNumber - 1) * paginationUsers.pageSize)
             .limit(paginationUsers.pageSize)

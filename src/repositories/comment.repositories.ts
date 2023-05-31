@@ -23,6 +23,8 @@ export const commentRepositories = {
 
     //get comment by ID
     async getComment(id: string): Promise<TypeViewCommentModel<TypeCommentatorInfo> | null>{
-        return CommentModel.findOne({id: id}, {projection: {_id: 0, postId: 0}});
+        return CommentModel
+            .findOne({id: id})
+            .select('-_id -postId ');
     },
 };
