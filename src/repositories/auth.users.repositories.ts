@@ -181,8 +181,6 @@ export const authUsersRepositories = {
         {
             return false;
         }
-
-
     },
 
     //get information about user
