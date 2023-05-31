@@ -3,10 +3,10 @@ import { RefreshTokenSessionModel} from "../dataBase/db";
 export const securityDevicesRepositories = {
 
     //get information  about all sessions
-    async getInformationAboutAllSessions( userId: string) {
+    async getInformationAboutAllSessions(userId: string) {
 
         return RefreshTokenSessionModel
-            .find({userId}, {projection: {userId: 0, _id: 0}})
+            .find({userId: userId}, {projection: {userId: 0, _id: 0}})
             .lean()
     },
 
@@ -26,6 +26,6 @@ export const securityDevicesRepositories = {
 
     async getDeviceByDeviceIdAndLastActiveDate(deviceId: string, lastActiveDate: string) {
 
-        return RefreshTokenSessionModel.findOne({deviceId, lastActiveDate})
+        return RefreshTokenSessionModel.findOne({deviceId: deviceId, lastActiveDate: lastActiveDate})
     },
 }
