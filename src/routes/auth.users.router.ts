@@ -63,8 +63,7 @@ authUsersRouter.post('/login', rateLimitedMiddleware, loginOrEmailValidator, pas
 authUsersRouter.post('/password-recovery', rateLimitedMiddleware, recoveryEmailValidator,  inputValidationMiddleware, async (req: Request, res: Response) => {
 
 
-    const email = "useremail@company.com"
-    await authUsersRepositories.recoveryPasswordWithSendEmail(email);
+    await authUsersRepositories.recoveryPasswordWithSendEmail(req.body.email);
     res.sendStatus(204);
 });
 

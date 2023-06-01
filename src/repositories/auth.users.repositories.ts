@@ -49,37 +49,30 @@ export const authUsersRepositories = {
     ////password recovery via email
     async recoveryPasswordWithSendEmail(email: string) : Promise<boolean> {
 
-        const user = await UserNotConfirmationModel.findOne({email: email})
-        console.log(user)
+        const date = new Date()
+        const recoveryCode = uuidv4()
+        await PasswordRecoveryModel.create({confirmCode: recoveryCode, email: email, dateAt: date})
+        console.log(email)
 
-        if(user)
-        {
-            const date = new Date()
-            const recoveryCode = uuidv4()
-            await PasswordRecoveryModel.create({confirmCode: recoveryCode, email: email, dateAt: date})
-            console.log(email)
+        let transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "incubator.blogs.platform@gmail.com", // generated ethereal user
+                pass: "snfsapqqywlznyjj", // generated ethereal password
+            },
+        });
 
-            let transporter = nodemailer.createTransport({
-                service: "gmail",
-                auth: {
-                    user: "incubator.blogs.platform@gmail.com", // generated ethereal user
-                    pass: "snfsapqqywlznyjj", // generated ethereal password
-                },
-            });
-
-            let info = await transporter.sendMail({
-                from: 'IT-INCUBATOR Blogs Platform <incubator.blogs.platform@gmail.com>', // sender address
-                to: email, // list of receivers
-                subject: "Hello ✔", // Subject line
-                text: "Hello world?", // plain text body
-                html:  `<h1>Thank for your registration</h1>
+        let info = await transporter.sendMail({
+            from: 'IT-INCUBATOR Blogs Platform <incubator.blogs.platform@gmail.com>', // sender address
+            to: email, // list of receivers
+            subject: "Hello ✔", // Subject line
+            text: "Hello world?", // plain text body
+            html:  `<h1>Thank for your registration</h1>
        <p>To finish registration please follow the link below:
           <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode}'>recovery password</a>
       </p>`
-            });
+        });
 
-            return true;
-        }
         return true;
     },
 
