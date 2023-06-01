@@ -124,7 +124,7 @@ export const emailValidator = body ('email').trim().isLength({min: 1, max: 100})
 
 //for recovery password
 export const recoveryPasswordValidator = body('newPassword').isString().trim().isLength({min: 6, max: 20});
-export const recoveryCodeValidator = body('code').trim().isString()
+export const recoveryCodeValidator = body('code').trim().notEmpty().isString()
 export const recoveryEmailValidator = body ('email').trim().isLength({min: 1, max: 1000}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString();
 
 export const codeValidator = body('code').trim().isString().custom(codeAlreadyExist);
