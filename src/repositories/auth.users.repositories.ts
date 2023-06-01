@@ -80,21 +80,20 @@ export const authUsersRepositories = {
     async confirmNewPasswordWithCode(newPassword: string, userConfirmCode: string) : Promise<boolean> {
 
         const nowDate = new Date();
-        const user = await PasswordRecoveryModel.findOne({confirmCode: userConfirmCode})
 
-        if(user == null) {
-            return false
+
+        try {
+            const user = await PasswordRecoveryModel.findOne({confirmCode: userConfirmCode})
+            // if(addSeconds(user!.dateAt, +10 * 100) > nowDate) {
+            //     return false
+            // }
+            const passwordHash = await bcrypt.hash(newPassword, 10);
+            await UserModel.updateOne({email: user!.email}, {hash: passwordHash});
+            await PasswordRecoveryModel.deleteOne({confirmCode: userConfirmCode})
+            return true;
+        }catch  {
+            return false;
         }
-        // if(addSeconds(user!.dateAt, +10 * 100) > nowDate) {
-        //     return false
-        // }
-
-        const passwordHash = await bcrypt.hash(newPassword, 10);
-
-        await UserModel.updateOne({email: user.email}, {hash: passwordHash});
-        await PasswordRecoveryModel.deleteOne({confirmCode: userConfirmCode})
-
-        return true;
     },
 
     //confirm registration-2

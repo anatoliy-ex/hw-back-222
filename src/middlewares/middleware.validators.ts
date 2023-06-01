@@ -91,7 +91,6 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
                 field: e.param
             }
         })
-        console.log("4444444")
         res.status(400).json({errorsMessages: errorsOccurred});
     }
     else
