@@ -50,12 +50,14 @@ export const authUsersRepositories = {
     async recoveryPasswordWithSendEmail(email: string) : Promise<boolean> {
 
         const user = await UserNotConfirmationModel.findOne({email: email})
+        console.log(user)
 
         if(user)
         {
             const date = new Date()
             const recoveryCode = uuidv4()
             await PasswordRecoveryModel.create({confirmCode: recoveryCode, email: email, dateAt: date})
+            console.log(email)
 
             let transporter = nodemailer.createTransport({
                 service: "gmail",

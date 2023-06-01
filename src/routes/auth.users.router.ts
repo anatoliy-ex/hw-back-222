@@ -6,9 +6,15 @@ import {authUsersRepositories} from "../repositories/auth.users.repositories";
 import {
     codeValidator,
     createUsersValidator,
-    emailAlreadyExistButNotConfirmedValidator, emailValidator,
+    emailAlreadyExistButNotConfirmedValidator,
+    emailValidator,
     existEmailValidator,
-    inputValidationMiddleware, loginOrEmailValidator, recoveryPasswordValidator, passwordValidator, recoveryCodeValidator
+    inputValidationMiddleware,
+    loginOrEmailValidator,
+    recoveryPasswordValidator,
+    passwordValidator,
+    recoveryCodeValidator,
+    recoveryEmailValidator
 } from "../middlewares/middleware.validators";
 import {RefreshTokenSessionModel} from "../dataBase/db";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
@@ -54,9 +60,11 @@ authUsersRouter.post('/login', rateLimitedMiddleware, loginOrEmailValidator, pas
 });
 
 //password recovery via email
-authUsersRouter.post('/password-recovery', rateLimitedMiddleware, emailValidator,  inputValidationMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/password-recovery', rateLimitedMiddleware, recoveryEmailValidator,  inputValidationMiddleware, async (req: Request, res: Response) => {
 
-    await authUsersRepositories.recoveryPasswordWithSendEmail(req.body.email);
+
+    const email = "useremail@company.com"
+    await authUsersRepositories.recoveryPasswordWithSendEmail(email);
     res.sendStatus(204);
 });
 

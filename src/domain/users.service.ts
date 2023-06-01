@@ -29,6 +29,8 @@ export const usersService = {
             isConfirm: true
         }
 
+        console.log(user.email)
+
         return usersRepositories.createNewUser(newUser)
     },
 
