@@ -82,10 +82,10 @@ export const authUsersRepositories = {
         const nowDate = new Date();
         const user = await PasswordRecoveryModel.findOne({confirmCode: userConfirmCode})
 
-        if(user!.dateAt == null) {
+        if(user == null) {
             return false
         }
-        if(addSeconds(user!.dateAt, +10 * 10) > nowDate) {
+        if(addSeconds(user!.dateAt, +10 * 100) > nowDate) {
             return false
         }
 
