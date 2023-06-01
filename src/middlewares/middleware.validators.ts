@@ -81,17 +81,6 @@ const codeAlreadyExist : CustomValidator = async value =>
 
 };
 
-const recoveryCodeIsIncorrect : CustomValidator = async value =>
-{
-    const user = await PasswordRecoveryModel.findOne({confirmCode: value})
-
-    if(user == null) {
-
-        throw new Error('code is exist');
-    }
-
-};
-
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
 
@@ -136,7 +125,7 @@ export const emailValidator = body ('email').trim().isLength({min: 1, max: 100})
 
 //for recovery password
 export const recoveryPasswordValidator = body('newPassword').isString().trim().isLength({min: 6, max: 20});
-export const recoveryCodeValidator = body('code').trim().isString().custom(recoveryCodeIsIncorrect)
+export const recoveryCodeValidator = body('code').trim().isString()
 export const recoveryEmailValidator = body ('email').trim().isLength({min: 1, max: 1000}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString();
 
 export const codeValidator = body('code').trim().isString().custom(codeAlreadyExist);
