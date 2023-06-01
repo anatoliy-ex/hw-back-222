@@ -54,8 +54,8 @@ export const authUsersRepositories = {
         if(user)
         {
             const date = new Date()
-            const confirmationCode = uuidv4()
-            await PasswordRecoveryModel.create({confirmCode: confirmationCode, email: email, dateAt: date})
+            const recoveryCode = uuidv4()
+            await PasswordRecoveryModel.create({confirmCode: recoveryCode, email: email, dateAt: date})
 
             let transporter = nodemailer.createTransport({
                 service: "gmail",
@@ -72,7 +72,7 @@ export const authUsersRepositories = {
                 text: "Hello world?", // plain text body
                 html:  `<h1>Thank for your registration</h1>
        <p>To finish registration please follow the link below:
-          <a href='https://somesite.com/confirm-email?code=${confirmationCode}'>complete registration</a>
+          <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode}'>recovery password</a>
       </p>`
             });
 
