@@ -85,14 +85,14 @@ export const authUsersRepositories = {
         if(user == null) {
             return false
         }
-        if(addSeconds(user!.dateAt, +10 * 100) > nowDate) {
-            return false
-        }
+        // if(addSeconds(user!.dateAt, +10 * 100) > nowDate) {
+        //     return false
+        // }
 
         const passwordHash = await bcrypt.hash(newPassword, 10);
 
+        await UserModel.updateOne({email: user.email}, {hash: passwordHash});
         await PasswordRecoveryModel.deleteOne({confirmCode: userConfirmCode})
-        await UserModel.updateOne({hash: passwordHash});
 
         return true;
     },
