@@ -61,7 +61,7 @@ authUsersRouter.post('/password-recovery', rateLimitedMiddleware, emailValidator
 });
 
 //confirm new password with recovery code
-authUsersRouter.post('/new-recovery', rateLimitedMiddleware, recoveryPasswordValidator, recoveryCodeValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
+authUsersRouter.post('/new-password', rateLimitedMiddleware, recoveryPasswordValidator, recoveryCodeValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
 
     const isConfirmation = await authUsersRepositories.confirmNewPasswordWithCode(req.body.newPassword, req.body.recoveryCode);
 
