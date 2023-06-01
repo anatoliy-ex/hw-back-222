@@ -6,9 +6,9 @@ import {authUsersRepositories} from "../repositories/auth.users.repositories";
 import {
     codeValidator,
     createUsersValidator,
-    emailAlreadyExistButNotConfirmedValidator,
+    emailAlreadyExistButNotConfirmedValidator, emailValidator,
     existEmailValidator,
-    inputValidationMiddleware, loginOrEmailValidator, passwordValidator
+    inputValidationMiddleware, loginOrEmailValidator, recoveryPasswordValidator, passwordValidator, recoveryCodeValidator
 } from "../middlewares/middleware.validators";
 import {RefreshTokenSessionModel} from "../dataBase/db";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
@@ -53,6 +53,26 @@ authUsersRouter.post('/login', rateLimitedMiddleware, loginOrEmailValidator, pas
     }
 });
 
+//password recovery via email
+authUsersRouter.post('/password-recovery', rateLimitedMiddleware, emailValidator,  inputValidationMiddleware, async (req: Request, res: Response) => {
+
+    await authUsersRepositories.recoveryPasswordWithSendEmail(req.body.email);
+    res.sendStatus(204);
+});
+
+//confirm new password with recovery code
+authUsersRouter.post('/new-recovery', rateLimitedMiddleware, recoveryPasswordValidator, recoveryCodeValidator, inputValidationMiddleware, async (req: Request, res: Response) => {
+
+    const isConfirmation = await authUsersRepositories.confirmNewPasswordWithCode(req.body.newPassword, req.body.recoveryCode);
+
+    if(isConfirmation) {
+        res.sendStatus(204);
+    }
+    else {
+        res.sendStatus(400);
+    }
+
+});
 
 // TODO: cron job for delete old tokens (scheduler)
 //generate new refresh Token and access Token

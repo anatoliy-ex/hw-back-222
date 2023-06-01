@@ -1,7 +1,7 @@
 import {
     BlogModel,
     PostModel,
-    UserModel, userNotConfirmationModel,
+    UserModel, UserNotConfirmationModel,
 } from "../dataBase/db";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";

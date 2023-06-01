@@ -2,13 +2,14 @@
 import {settings} from "../../.env/settings";
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import {userNotConfirmationSchema} from "../models/user.not.confirmation.db.shame";
-import {blogSchema} from "../models/blog.db.shame";
-import {postSchema} from "../models/post.db.shame";
-import {userSchema} from "../models/user.db.shame";
-import {refreshTokenSchema} from "../models/refresh.token.session.db.shame";
-import {rateLimitedSchema} from "../models/rate.limit.db.shame";
-import {commentSchema} from "../models/comment.db.shame";
+import {userNotConfirmationSchema} from "../scheme/user.not.confirmation.db.shame";
+import {blogSchema} from "../scheme/blog.db.shame";
+import {postSchema} from "../scheme/post.db.shame";
+import {userSchema} from "../scheme/user.db.shame";
+import {refreshTokenSchema} from "../scheme/refresh.token.session.db.shame";
+import {rateLimitedSchema} from "../scheme/rate.limit.db.shame";
+import {commentSchema} from "../scheme/comment.db.shame";
+import {passwordRecoveryShame} from "../scheme/password.recovery.shame";
 dotenv.config()
 
 const dbName = 'it-incubator-blog'
@@ -18,16 +19,17 @@ export const BlogModel = mongoose.model('blogs', blogSchema)
 export const PostModel = mongoose.model('posts', postSchema)
 export const UserModel = mongoose.model('users', userSchema)
 export const CommentModel = mongoose.model('comments', commentSchema)
-export const userNotConfirmationModel = mongoose.model('userNotConfirmation', userNotConfirmationSchema)
+export const UserNotConfirmationModel = mongoose.model('userNotConfirmation', userNotConfirmationSchema)
 export const RefreshTokenSessionModel = mongoose.model('refreshTokenSession', refreshTokenSchema)
 export const RateLimitedModel = mongoose.model('rateLimited', rateLimitedSchema)
+export const PasswordRecoveryModel = mongoose.model('passwordRecovery', passwordRecoveryShame)
 
 export const collections = [
     BlogModel,
     PostModel,
     UserModel,
     CommentModel,
-    userNotConfirmationModel,
+    UserNotConfirmationModel,
     RefreshTokenSessionModel,
     RateLimitedModel,]
 

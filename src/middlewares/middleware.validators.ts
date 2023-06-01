@@ -3,7 +3,7 @@ import {CustomValidator} from "express-validator";
 import { Response, Request } from "express";
 import {  body,  validationResult } from 'express-validator';
 import {NextFunction} from "express";
-import {UserModel, userNotConfirmationModel} from "../dataBase/db";
+import {UserModel, UserNotConfirmationModel} from "../dataBase/db";
 
 const findBlogId : CustomValidator = async value =>
 {
@@ -22,7 +22,7 @@ const emailAlreadyExist : CustomValidator = async value =>
     const filter = {email: value};
 
     const checkUserInSystem = await UserModel.find(filter)
-    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
+    const checkUserIsNotConfirmInSystem = await UserNotConfirmationModel.find(filter)
 
     if(checkUserInSystem.length != 0)
     {
@@ -39,7 +39,7 @@ const emailAlreadyExistButNotConfirmed : CustomValidator = async value =>
 {
     const filter = {email: value};
     const checkUserInSystem = await UserModel.find(filter)
-    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
+    const checkUserIsNotConfirmInSystem = await UserNotConfirmationModel.find(filter)
 
     if(checkUserInSystem.length != 0)
     {
@@ -56,7 +56,7 @@ const loginAlreadyExist : CustomValidator = async value =>
     const filter = {login: value};
 
     const checkUserInSystem = await UserModel.find(filter)
-    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
+    const checkUserIsNotConfirmInSystem = await UserNotConfirmationModel.find(filter)
 
     if(checkUserInSystem.length != 0)
     {
@@ -72,7 +72,7 @@ const loginAlreadyExist : CustomValidator = async value =>
 const codeAlreadyExist : CustomValidator = async value =>
 {
     const filter = {confirmationCode: value};
-    const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
+    const checkUserIsNotConfirmInSystem = await UserNotConfirmationModel.find(filter)
 
     if(checkUserIsNotConfirmInSystem.length == 0)
     {
@@ -120,7 +120,11 @@ const blogIdValidator = body('blogId').trim().notEmpty().custom(findBlogId);
 //for user
 const loginValidator = body('login').isString().trim().isLength({min: 3, max: 10}).matches(/^[a-zA-Z0-9_-]*$/).custom(loginAlreadyExist)
 export const passwordValidator = body('password').isString().trim().isLength({min: 6, max: 20});
-const emailValidator = body ('email').trim().isLength({min: 1, max: 100}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString();
+export const emailValidator = body ('email').trim().isLength({min: 1, max: 100}).matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).isString();
+
+//for recovery password
+export const recoveryPasswordValidator = body('newPassword').isString().trim().isLength({min: 6, max: 20});
+export const recoveryCodeValidator = body('code').trim().isString()
 
 export const codeValidator = body('code').trim().isString().custom(codeAlreadyExist);
 

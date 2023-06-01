@@ -1,14 +1,16 @@
 import {LoginType} from "../types/auth.users.types";
 import * as bcrypt from 'bcrypt'
 import {
+    PasswordRecoveryModel,
     RefreshTokenSessionModel,
-    UserModel, userNotConfirmationModel,
+    UserModel, UserNotConfirmationModel,
 } from "../dataBase/db";
 import {jwtService} from "../application/jwtService";
 import {InputUserType, UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import nodemailer from 'nodemailer'
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
+import {addSeconds} from "date-fns";
 
 
 export const authUsersRepositories = {
@@ -44,10 +46,66 @@ export const authUsersRepositories = {
        }
    },
 
-    ////confirm registration-2
+    ////password recovery via email
+    async recoveryPasswordWithSendEmail(email: string) : Promise<boolean> {
+
+        const user = await UserNotConfirmationModel.findOne({email: email})
+
+        if(user)
+        {
+            const date = new Date()
+            const confirmationCode = uuidv4()
+            await PasswordRecoveryModel.create({confirmCode: confirmationCode, email: email, dateAt: date})
+
+            let transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: "incubator.blogs.platform@gmail.com", // generated ethereal user
+                    pass: "snfsapqqywlznyjj", // generated ethereal password
+                },
+            });
+
+            let info = await transporter.sendMail({
+                from: 'IT-INCUBATOR Blogs Platform <incubator.blogs.platform@gmail.com>', // sender address
+                to: email, // list of receivers
+                subject: "Hello ✔", // Subject line
+                text: "Hello world?", // plain text body
+                html:  `<h1>Thank for your registration</h1>
+       <p>To finish registration please follow the link below:
+          <a href='https://somesite.com/confirm-email?code=${confirmationCode}'>complete registration</a>
+      </p>`
+            });
+
+            return true;
+        }
+        return true;
+    },
+
+    //confirm new password with recovery code
+    async confirmNewPasswordWithCode(newPassword: string, userConfirmCode: string) : Promise<boolean> {
+
+        const nowDate = new Date();
+        const user = await PasswordRecoveryModel.findOne({confirmCode: userConfirmCode})
+
+        if(user!.dateAt == null) {
+            return false
+        }
+        if(addSeconds(user!.dateAt, +10 * 10) > nowDate) {
+            return false
+        }
+
+        const passwordHash = await bcrypt.hash(newPassword, 10);
+
+        await PasswordRecoveryModel.deleteOne({confirmCode: userConfirmCode})
+        await UserModel.updateOne({hash: passwordHash});
+
+        return true;
+    },
+
+    //confirm registration-2
     async confirmEmailByUser(code: string) : Promise<boolean> {
 
-      let confirmationUser = await userNotConfirmationModel.findOne({confirmationCode: code});
+      let confirmationUser = await UserNotConfirmationModel.findOne({confirmationCode: code});
 
       if(confirmationUser && confirmationUser.expirationDate > new Date())
       {
@@ -61,7 +119,7 @@ export const authUsersRepositories = {
           }
           const filter = {confirmationCode: code}
 
-          await userNotConfirmationModel.deleteOne(filter);
+          await UserNotConfirmationModel.deleteOne(filter);
           await UserModel.create(updateUser);
           return true
       }
@@ -71,7 +129,7 @@ export const authUsersRepositories = {
       }
     },
 
-    ////first registration in system => send to email code for verification-1
+    //first registration in system => send to email code for verification-1
     async firstRegistrationInSystem(user: InputUserType) : Promise<boolean> {
 
         const filter = {
@@ -82,7 +140,7 @@ export const authUsersRepositories = {
         };
 
         const checkUserInSystem = await UserModel.find(filter)
-        const checkUserIsNotConfirmInSystem = await userNotConfirmationModel.find(filter)
+        const checkUserIsNotConfirmInSystem = await UserNotConfirmationModel.find(filter)
 
         if(checkUserInSystem.length != 0)
         {
@@ -133,7 +191,7 @@ export const authUsersRepositories = {
       </p>`
             });
 
-            await userNotConfirmationModel.insertMany([newUser]);
+            await UserNotConfirmationModel.insertMany([newUser]);
             return true;
         }
     },
@@ -141,13 +199,13 @@ export const authUsersRepositories = {
     //registration in system-3
     async registrationWithSendingEmail(email: string){
 
-        const user = await userNotConfirmationModel.findOne({email: email})
+        const user = await UserNotConfirmationModel.findOne({email: email})
 
         if(user && !user.isConfirm)
         {
             const newCode = uuidv4()
-            await userNotConfirmationModel.updateOne( {email: email}, {$set: {'confirmationCode': newCode}})
-            const updatedUser = await userNotConfirmationModel.findOne({'email': email})
+            await UserNotConfirmationModel.updateOne( {email: email}, {$set: {'confirmationCode': newCode}})
+            const updatedUser = await UserNotConfirmationModel.findOne({'email': email})
 
             let transporter = nodemailer.createTransport({
                 service: "gmail",

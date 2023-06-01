@@ -14,7 +14,7 @@ import {
     PostModel, RateLimitedModel,
     RefreshTokenSessionModel,
     UserModel,
-    userNotConfirmationModel
+    UserNotConfirmationModel
 } from "../dataBase/db";
 
 
@@ -50,7 +50,7 @@ blogsRouter.delete('/all-data', async (req: Request, res: Response) => {
     await PostModel.deleteMany()
     await UserModel.deleteMany()
     await CommentModel.deleteMany()
-    await userNotConfirmationModel.deleteMany()
+    await UserNotConfirmationModel.deleteMany()
     await RefreshTokenSessionModel.deleteMany()
     await RateLimitedModel.deleteMany()
 
