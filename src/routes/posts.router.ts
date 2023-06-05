@@ -20,7 +20,7 @@ export type PaginationQueryTypeForPosts = {
     pageSize: number,
 }
 
-export const getPaginationFromQueryPosts = (query: any): PaginationQueryTypeForPosts => {
+export const getPaginationFromQueryPostsAndComments = (query: any): PaginationQueryTypeForPosts => {
 
     const pageNumber = parseInt(query.pageNumber, 10);
     const pageSize = parseInt(query.pageSize, 10);
@@ -41,137 +41,126 @@ export type PaginationQueryTypeForComments = {
     pageSize: number,
 }
 
-export const getPaginationFromQueryComments = (query: any): PaginationQueryTypeForPosts => {
+class PostsController {
 
-    const pageNumber = parseInt(query.pageNumber, 10);
-    const pageSize = parseInt(query.pageSize, 10);
-    const sortDirection = query.sortDirection === 'asc' ? 'asc' : 'desc';
+    async GetCommentsForPost (req: Request, res: Response) {
 
-    return {
-        sortBy: query.sortBy ?? 'createdAt',
-        sortDirection,
-        pageNumber: isNaN(pageNumber) ? 1 : pageNumber,
-        pageSize: isNaN(pageSize) ? 10 : pageSize,
-    };
-}
+        const post = await postsRepositories.getPostById(req.params.postId);
 
-//get comment for post
-postsRouter.get('/:postId/comments', async (req: Request, res: Response) =>
-{
-    const post = await postsRepositories.getPostById(req.params.postId);
-
-    if(post)
-    {
-        const paginationComments = getPaginationFromQueryComments(req.query)
-        const commentsForPost = await postsRepositories.getCommentsForPost(paginationComments, req.params.postId);
-        res.status(200).send(commentsForPost);
-    }
-    else
-    {
-        res.sendStatus(404);
-    }
-});
-
-//create new comment
-postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, inputValidationMiddleware, async (req: Request, res: Response)=>
-{
-    const post = await postsRepositories.getPostById(req.params.postId);
-    const content =  req.body.content;
-
-    if(req.user != null)
-    {
-        if(post)
-        {
-            const newComment = await postsRepositories.createCommentForPost(req.params.postId, content, req.user);
-            const viewComment = await commentRepositories.getComment(newComment.id)
-            res.status(201).send(viewComment);
+        if(post) {
+            const paginationComments = getPaginationFromQueryPostsAndComments(req.query)
+            const commentsForPost = await postsRepositories.getCommentsForPost(paginationComments, req.params.postId);
+            res.status(200).send(commentsForPost);
         }
-        else
-        {
+        else {
+            res.sendStatus(404);
+        }
+
+    }
+
+    async CreateNewComment (req: Request, res: Response) {
+
+        const postForComment = await postsRepositories.getPostById(req.params.postId);
+        const content =  req.body.content;
+
+        if(req.user != null) {
+            if(postForComment) {
+                const newComment = await postsRepositories.createCommentForPost(req.params.postId, content, req.user);
+                const viewComment = await commentRepositories.getComment(newComment.id);
+                res.status(201).send(viewComment);
+            }
+            else {
+                res.sendStatus(404);
+            }
+        }
+        else {
             res.sendStatus(404);
         }
     }
-    else
-    {
-        res.sendStatus(404);
+
+    async GetAllPosts (req: Request, res: Response) {
+
+        const pagination = getPaginationFromQueryPostsAndComments(req.query);
+        const allPosts = await postsService.allPosts(pagination);
+        res.status(200).send(allPosts);
     }
-});
+
+    async CreateNewPost (req: Request, res: Response) {
+
+        const foundBlog : BlogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+
+        if(!foundBlog) {
+            res.sendStatus(404);
+        }
+        else {
+            const blogName = foundBlog.name;
+            const newPost : PostsTypes = await postsService.createNewPost(req.body, blogName);
+            res.status(201).send(newPost);
+        }
+    }
+
+    async GetPostById (req: Request, res: Response) {
+
+        const PostWithId : PostsTypes | null = await postsService.getPostById(req.params.id);
+
+        if(PostWithId) {
+            res.status(200).send(PostWithId);
+            return;
+        }
+        else {
+            res.sendStatus(404);
+            return;
+        }
+    }
+
+    async UpdatePostById (req: Request, res: Response) {
+
+        const findBlogWithID = await blogsRepositories.getBlogById(req.body.blogId);
+        const findPostWithID = await postsService.getPostById(req.params.id);
+
+        if(findBlogWithID && findPostWithID) {
+            await postsService.updatePost(req.body, req.params.id);
+            res.sendStatus(204);
+            return;
+        }
+        else {
+            res.sendStatus(404);
+            return;
+        }
+    }
+
+    async DeletePostById (req: Request, res: Response) {
+
+        const isDelete = await postsService.deletePostsById(req.params.id);
+
+        if(isDelete) {
+            res.sendStatus(204);
+            return;
+        }
+        else {
+            res.sendStatus(404);
+            return;
+        }
+    }
+}
+
+const postController = new PostsController()
+//get comment for post
+postsRouter.get('/:postId/comments', postController.GetCommentsForPost);
+//create new comment
+postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, inputValidationMiddleware, postController.CreateNewComment);
 
 //get all posts
-postsRouter.get('/', async (req:Request, res: Response) =>
-{
-    const pagination = getPaginationFromQueryPosts(req.query)
-    const allPosts = await postsService.allPosts(pagination);
-    res.status(200).send(allPosts);
-});
+postsRouter.get('/', postController.GetAllPosts);
 
 //create new post
-postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
-{
-    const foundBlog : BlogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
-
-    if(!foundBlog)
-    {
-        res.sendStatus(404);
-    }
-    else
-    {
-        const blogName = foundBlog.name;
-        const newPost : PostsTypes = await postsService.createNewPost(req.body, blogName);
-        res.status(201).send(newPost);
-    }
-});
+postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.CreateNewPost);
 
 //get post by ID
-postsRouter.get('/:id', async (req:Request, res: Response) =>
-{
-    const PostWithId : PostsTypes | null = await postsService.getPostById(req.params.id)
+postsRouter.get('/:id', postController.GetPostById);
 
-    if(PostWithId)
-    {
-        res.status(200).send(PostWithId);
-        return;
-    }
-    else
-    {
-        res.sendStatus(404);
-        return;
-    }
-});
-
-//update post
-postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, async (req:Request, res: Response) =>
-{
-
-    const findBlogWithID = await blogsRepositories.getBlogById(req.body.blogId);
-    const findPostWithID = await postsService.getPostById(req.params.id);
-
-    if(findBlogWithID && findPostWithID)
-    {
-        await postsService.updatePost(req.body, req.params.id);
-        res.sendStatus(204);
-        return;
-    }
-    else
-    {
-        res.sendStatus(404);
-        return;
-    }
-});
+//update post by ID
+postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.UpdatePostById);
 
 //delete post by ID
-postsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, async (req:Request, res: Response) =>
-{
-    const isDelete = await postsService.deletePostsById(req.params.id);
-
-    if(isDelete)
-    {
-        res.sendStatus(204);
-        return;
-    }
-    else
-    {
-        res.sendStatus(404);
-        return;
-    }
-});
+postsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, postController.DeletePostById);

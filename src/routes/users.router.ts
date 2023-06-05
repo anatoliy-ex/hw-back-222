@@ -12,6 +12,7 @@ export type PaginationQueryTypeForUsers = {
     pageNumber: number,
     pageSize: number,
 }
+
 export const getPaginationFromQueryUsers = (query: any): PaginationQueryTypeForUsers => {
 
     const pageNumber = parseInt(query.pageNumber, 10);
@@ -28,45 +29,57 @@ export const getPaginationFromQueryUsers = (query: any): PaginationQueryTypeForU
     };
 };
 
-//get all user
-usersRouter.get('/', async (req: Request, res: Response)=>
-{
-    const paginationUsers = getPaginationFromQueryUsers(req.query);
-    const allUsers = await usersService.allUsers(paginationUsers);
-    res.status(200).send(allUsers);
+class UsersController {
 
-});
+    //get all user
+    async getAllUsers (req: Request, res: Response) {
+
+        const paginationUsers = getPaginationFromQueryUsers(req.query);
+        const allUsers = await usersService.allUsers(paginationUsers);
+        res.status(200).send(allUsers);
+    }
+
+    async CreateUser (req: Request, res: Response) {
+
+        const newUser = await usersService.createNewUser(req.body)
+
+        if(newUser)
+        {
+            res.status(201).send(newUser)
+            return;
+        }
+        else
+        {
+            res.sendStatus(400);
+            return;
+        }
+    }
+
+    async DeleteUserById (req: Request, res: Response) {
+
+        const isDelete = await usersService.deleteUserById(req.params.id)
+
+        if(isDelete)
+        {
+            res.sendStatus(204);
+            return;
+        }
+        else
+        {
+            res.sendStatus(404);
+            return;
+        }
+    }
+}
+
+const userController = new UsersController()
+
+//get all user
+usersRouter.get('/', userController.getAllUsers);
 
 //post user
-usersRouter.post('/', adminStatusAuth, createUsersValidator, inputValidationMiddleware, async (req: Request, res: Response)=>
-{
-    const newUser = await usersService.createNewUser(req.body)
-
-    if(newUser)
-    {
-        res.status(201).send(newUser)
-        return;
-    }
-    else
-    {
-        res.sendStatus(400);
-        return;
-    }
-});
+usersRouter.post('/', adminStatusAuth, createUsersValidator, inputValidationMiddleware, userController.CreateUser);
 
 //delete user bu ID
-usersRouter.delete('/:id', adminStatusAuth, async (req: Request, res: Response)=>
-{
-    const isDelete = await usersService.deleteUserById(req.params.id)
+usersRouter.delete('/:id', adminStatusAuth, userController.DeleteUserById);
 
-    if(isDelete)
-    {
-        res.sendStatus(204);
-        return;
-    }
-    else
-    {
-        res.sendStatus(404);
-        return;
-    }
-});

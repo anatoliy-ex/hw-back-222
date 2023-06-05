@@ -4,7 +4,7 @@ export const blogsRouter = Router({});
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from "../middlewares/middleware.validators";
-import {getPaginationFromQueryPosts} from "./posts.router";
+import {getPaginationFromQueryPostsAndComments} from "./posts.router";
 import {blogsService} from "../domain/blogs.service";
 import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
 import {
@@ -87,7 +87,7 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
     const foundBlog: BlogsTypes | null = await blogsService.getBlogById(req.params.blogId);
 
     if (foundBlog) {
-        const pagination = getPaginationFromQueryPosts(req.query);
+        const pagination = getPaginationFromQueryPostsAndComments(req.query);
         const postsForBlog = await blogsService.getPostsForBlog(pagination, foundBlog.id);
 
         res.status(200).send(postsForBlog);
