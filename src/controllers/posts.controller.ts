@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express"
-export const postsRouter = Router({});
+export const postsController = Router({});
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
@@ -12,34 +12,8 @@ import {postsService} from "../domain/posts.service";
 import {adminStatusAuth, authMiddleware} from "../middlewares/auth/auth.middleware";
 import {postsRepositories} from "../repositories/posts.repositories";
 import {commentRepositories} from "../repositories/comment.repositories";
+import {getPaginationFromQueryPostsAndComments} from "../pagination.query/post.pagination";
 
-export type PaginationQueryTypeForPosts = {
-    sortBy: string,
-    sortDirection: 'asc' | 'desc',
-    pageNumber: number,
-    pageSize: number,
-}
-
-export const getPaginationFromQueryPostsAndComments = (query: any): PaginationQueryTypeForPosts => {
-
-    const pageNumber = parseInt(query.pageNumber, 10);
-    const pageSize = parseInt(query.pageSize, 10);
-    const sortDirection = query.sortDirection === 'asc' ? 'asc' : 'desc';
-
-    return {
-        sortBy: query.sortBy ?? 'createdAt',
-        sortDirection,
-        pageNumber: isNaN(pageNumber) ? 1 : pageNumber,
-        pageSize: isNaN(pageSize) ? 10 : pageSize,
-    };
-}
-
-export type PaginationQueryTypeForComments = {
-    sortBy: string,
-    sortDirection: 'asc' | 'desc',
-    pageNumber: number,
-    pageSize: number,
-}
 
 class PostsController {
 
@@ -146,21 +120,22 @@ class PostsController {
 
 const postController = new PostsController()
 //get comment for post
-postsRouter.get('/:postId/comments', postController.GetCommentsForPost);
+postsController.get('/:postId/comments', postController.GetCommentsForPost);
+
 //create new comment
-postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, inputValidationMiddleware, postController.CreateNewComment);
+postsController.post('/:postId/comments',authMiddleware, contentCommentValidator, inputValidationMiddleware, postController.CreateNewComment);
 
 //get all posts
-postsRouter.get('/', postController.GetAllPosts);
+postsController.get('/', postController.GetAllPosts);
 
 //create new post
-postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.CreateNewPost);
+postsController.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.CreateNewPost);
 
 //get post by ID
-postsRouter.get('/:id', postController.GetPostById);
+postsController.get('/:id', postController.GetPostById);
 
 //update post by ID
-postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.UpdatePostById);
+postsController.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.UpdatePostById);
 
 //delete post by ID
-postsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, postController.DeletePostById);
+postsController.delete('/:id', adminStatusAuth, inputValidationMiddleware, postController.DeletePostById);

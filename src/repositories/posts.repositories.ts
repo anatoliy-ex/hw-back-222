@@ -1,7 +1,7 @@
 import {BlogModel, CommentModel, PostModel} from "../dataBase/db";
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
-import {PaginationQueryTypeForComments, PaginationQueryTypeForPosts} from "../routes/posts.router";
+import {PaginationQueryTypeForComments, PaginationQueryTypeForPosts} from "../controllers/posts.controller";
 import {TypeCommentatorInfo, TypeGetCommentModel, TypeViewCommentModel} from "../types/comments.types";
 import {UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
 

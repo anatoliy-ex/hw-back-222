@@ -1,6 +1,6 @@
 import {OutputType} from "../types/output.type";
 import {InputUserType, UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
-import {PaginationQueryTypeForUsers} from "../routes/users.router";
+import {PaginationQueryTypeForUsers} from "../controllers/users.controller";
 import * as bcrypt from "bcrypt";
 import {usersRepositories} from "../repositories/users.repositories";
 import {UserModel} from "../dataBase/db";

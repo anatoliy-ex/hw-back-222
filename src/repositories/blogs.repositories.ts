@@ -1,8 +1,8 @@
 import {BlogModel, PostModel, UserModel} from "../dataBase/db";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
-import {PaginationQueryTypeForBlogs} from "../routes/blogs.router";
-import {PaginationQueryTypeForPosts} from "../routes/posts.router";
+import {PaginationQueryTypeForBlogs} from "../controllers/blogs.controller";
+import {PaginationQueryTypeForPosts} from "../controllers/posts.controller";
 import {OutputType} from "../types/output.type";
 
 export const blogsRepositories =
