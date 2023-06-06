@@ -24,31 +24,18 @@ class AuthUsersController {
 
     async LoginUser (req: Request, res: Response) {
 
-        const userId = await authUsersService.loginUser(req.body);
         const userIp = req.ip
         const deviceId = randomUUID();
         const deviceName = req.headers["user-agent"] || "Other Device"
+        const isLogin = await authUsersService.loginUser(req.body, userIp, deviceId, deviceName);
 
-        if (userId) {
-            const token = await jwtService.createJWT(userId);
-            const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
-            const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken)
-            console.log(refreshToken)
+        if (isLogin) {
 
-            const newSessions: RefreshTokenSessionsTypes = {
-                deviceId: deviceId,
-                ip: userIp,//device IP(user IP)
-                title: deviceName,//device name
-                lastActiveDate,
-                userId: userId
-            };
-
-            await RefreshTokenSessionModel.insertMany([newSessions]);
-
-            res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,});
-            res.status(200).send({accessToken: token});
+            res.cookie('refreshToken', isLogin.rToken, {httpOnly: true, secure: true,});
+            res.status(200).send({accessToken: isLogin.aTokes});
             return;
-        } else {
+        }
+        else {
             res.sendStatus(401);
             return;
         }

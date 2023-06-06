@@ -39,4 +39,5 @@ class UsersService {
         return usersRepositories.deleteUserById(id);
     }
 }
+
 export const usersService = new UsersService();

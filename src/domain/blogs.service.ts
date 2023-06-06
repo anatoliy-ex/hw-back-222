@@ -83,4 +83,5 @@ class BlogsService {
         return await blogsRepositories.deleteBlogById(id);
     }
 }
+
 export const blogsService = new BlogsService();
