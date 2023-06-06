@@ -13,10 +13,10 @@ class AuthUsersService {
 
         if (userId) {
 
-            const token = await jwtService.createJWT(userId);
-            const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
-            const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken)
-            console.log(refreshToken)
+            const newAccessTokes = await jwtService.createJWT(userId);
+            const newRefreshToken = await jwtService.createRefreshToken(userId, deviceId);
+            const lastActiveDate = await jwtService.getLastActiveDateFromToken(newRefreshToken)
+            console.log(newRefreshToken)
 
             const newSessions: RefreshTokenSessionsTypes = {
                 deviceId: deviceId,
@@ -27,12 +27,29 @@ class AuthUsersService {
             };
 
             await RefreshTokenSessionModel.insertMany([newSessions]);
-            return {rToken: refreshToken, aTokes: token}
+            return {refreshToken: newRefreshToken, accessTokes: newAccessTokes}
         }
         else
         {
             return false
         }
+    }
+
+    async GenerateRefreshAndAccessToken(userId: string, deviceId: string, sessions: any, deviceIp: string) {
+
+        const newAccessTokes = await jwtService.createJWT(userId);
+        const newRefreshToken = await jwtService.createRefreshToken(userId, deviceId);
+        const lastActiveDate = await jwtService.getLastActiveDateFromToken(newRefreshToken)
+
+        const updateSessions: RefreshTokenSessionsTypes = {
+            deviceId: sessions.deviceId,
+            ip: deviceIp,//device IP(user IP)
+            title: sessions.title,//device name
+            lastActiveDate,
+            userId: userId
+        }
+        await RefreshTokenSessionModel.updateOne({deviceId, userId}, {$set: updateSessions})
+        return {refreshToken: newRefreshToken, accessTokes: newAccessTokes}
     }
 }
 

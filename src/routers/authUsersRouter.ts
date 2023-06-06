@@ -31,8 +31,8 @@ class AuthUsersController {
 
         if (isLogin) {
 
-            res.cookie('refreshToken', isLogin.rToken, {httpOnly: true, secure: true,});
-            res.status(200).send({accessToken: isLogin.aTokes});
+            res.cookie('refreshToken', isLogin.refreshToken, {httpOnly: true, secure: true,});
+            res.status(200).send({accessToken: isLogin.accessTokes});
             return;
         }
         else {
@@ -62,9 +62,9 @@ class AuthUsersController {
     async GenerateRefreshAndAccessToken (req: Request, res: Response) {
 
         const oldRefreshToken = req.cookies.refreshToken
-
         const userId = req.user!.id
         const deviceId = req.deviceId!
+        const deviceIp = req.ip;
         const oldLastActiveDate = await jwtService.getLastActiveDateFromToken(oldRefreshToken)
         const sessions = await RefreshTokenSessionModel.findOne({deviceId: deviceId})
 
@@ -76,21 +76,10 @@ class AuthUsersController {
             return res.sendStatus(403)
         }
 
-        const token = await jwtService.createJWT(userId);
-        const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
-        const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken)
+        const isGenerate = await authUsersService.GenerateRefreshAndAccessToken(userId, deviceId, sessions, deviceIp)
 
-        const updateSessions: RefreshTokenSessionsTypes = {
-            deviceId: sessions.deviceId,
-            ip: req.ip,//device IP(user IP)
-            title: sessions.title,//device name
-            lastActiveDate,
-            userId: userId
-        }
-        await RefreshTokenSessionModel.updateOne({deviceId, userId}, {$set: updateSessions})
-
-        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true,})
-        res.status(200).send({accessToken: token})
+        res.cookie('refreshToken', isGenerate.refreshToken, {httpOnly: true, secure: true,})
+        res.status(200).send({accessToken: isGenerate.accessTokes})
     }
 
     async RegistrationAndConfirmation (req: Request, res: Response) {
