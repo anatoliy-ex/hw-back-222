@@ -1,9 +1,15 @@
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
-import {postsRepositories} from "../repositories/posts.repositories";
+import {PostsRepositories, postsRepositories} from "../repositories/posts.repositories";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
-class PostsService {
+export class PostsService {
+
+    private postsRepositories : PostsRepositories
+
+    constructor() {
+        this.postsRepositories = new PostsRepositories()
+    }
 
     //return all posts
     async allPosts(pagination: PaginationQueryTypeForPostsAndComments) : Promise<OutputType<PostsTypes[]>>
@@ -27,26 +33,26 @@ class PostsService {
                 createdAt: now.toISOString(),
             };
 
-        return postsRepositories.createNewPost(newPost);
+        return this.postsRepositories.createNewPost(newPost);
     }
 
     //get post by ID
     async getPostById(id: string) : Promise<PostsTypes | null>
     {
-        return await postsRepositories.getPostById(id)
+        return await this.postsRepositories.getPostById(id)
 
     }
 
     //update post by ID
     async updatePost(newPost : PostsTypes, id: string) : Promise<boolean>
     {
-        return await postsRepositories.updatePost(newPost, id)
+        return await this.postsRepositories.updatePost(newPost, id)
     }
 
     //delete post by ID
     async deletePostsById(id: string) : Promise<boolean>
     {
-        return await postsRepositories.deletePostsById(id)
+        return await this.postsRepositories.deletePostsById(id)
     }
 }
 

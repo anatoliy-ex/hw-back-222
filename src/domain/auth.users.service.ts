@@ -1,15 +1,22 @@
 import {LoginType} from "../types/auth.users.types";
-import {authUsersRepositories} from "../repositories/auth.users.repositories";
+import {AuthUsersRepositories, authUsersRepositories} from "../repositories/auth.users.repositories";
 import {jwtService} from "../application/jwtService";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {RefreshTokenSessionModel} from "../dataBase/db";
 
-class AuthUsersService {
+export class AuthUsersService {
+
+    private authUsersRepositories : AuthUsersRepositories
+
+    constructor() {
+
+        this.authUsersRepositories = new AuthUsersRepositories()
+    }
 
     //login users
     async loginUser(authUser: LoginType, userIp: string, deviceId: string, deviceName: string) {
 
-        const userId = await authUsersRepositories.loginUser(authUser);
+        const userId = await this.authUsersRepositories.loginUser(authUser);
 
         if (userId) {
 

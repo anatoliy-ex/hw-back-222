@@ -7,7 +7,7 @@ import nodemailer from 'nodemailer'
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
 
-class AuthUsersRepositories {
+export class AuthUsersRepositories {
 
     //login users
     async loginUser(authUser: LoginType)

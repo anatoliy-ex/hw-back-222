@@ -1,7 +1,7 @@
 import {TypeCommentatorInfo, TypeViewCommentModel} from "../types/comments.types";
 import {CommentModel} from "../dataBase/db";
 
-class CommentRepositories {
+export class CommentRepositories {
 
     //update comment by ID
     async updateComment(commentId: string, content: string) : Promise<boolean> {

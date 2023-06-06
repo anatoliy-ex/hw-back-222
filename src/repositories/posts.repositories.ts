@@ -5,7 +5,7 @@ import {TypeCommentatorInfo, TypeGetCommentModel, TypeViewCommentModel} from "..
 import {UserConfirmTypes} from "../types/userConfirmTypes";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
-class PostsRepositories {
+export class PostsRepositories {
 
     //get comments for post
     async getCommentsForPost(pagination: PaginationQueryTypeForPostsAndComments, postId: string) {

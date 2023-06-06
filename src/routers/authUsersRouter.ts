@@ -1,8 +1,8 @@
 import {Request, Response, Router} from "express"
-import {authUsersService} from "../domain/auth.users.service";
+import {AuthUsersService, authUsersService} from "../domain/auth.users.service";
 import {authMiddleware, rateLimitedMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {jwtService} from "../application/jwtService";
-import {authUsersRepositories} from "../repositories/auth.users.repositories";
+import {AuthUsersRepositories, authUsersRepositories} from "../repositories/auth.users.repositories";
 import {
     codeValidator,
     createUsersValidator,
@@ -15,19 +15,27 @@ import {
     recoveryCodeValidator,
     recoveryEmailValidator} from "../middlewares/middleware.validators";
 import {RefreshTokenSessionModel} from "../dataBase/db";
-import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {randomUUID} from "crypto";
 
 export const authUsersRouter = Router({});
 
 class AuthUsersController {
 
+    private authUsersService: AuthUsersService
+    private authUsersRepositories : AuthUsersRepositories
+
+    constructor() {
+
+        this.authUsersService = new AuthUsersService()
+        this.authUsersRepositories = new AuthUsersRepositories()
+    }
+
     async LoginUser (req: Request, res: Response) {
 
         const userIp = req.ip
         const deviceId = randomUUID();
         const deviceName = req.headers["user-agent"] || "Other Device"
-        const isLogin = await authUsersService.loginUser(req.body, userIp, deviceId, deviceName);
+        const isLogin = await this.authUsersService.loginUser(req.body, userIp, deviceId, deviceName);
 
         if (isLogin) {
 
@@ -43,13 +51,13 @@ class AuthUsersController {
 
     async PasswordRecovery (req: Request, res: Response) {
 
-        await authUsersRepositories.recoveryPasswordWithSendEmail(req.body.email);
+        await this.authUsersRepositories.recoveryPasswordWithSendEmail(req.body.email);
         res.sendStatus(204);
     }
 
     async ConfirmNewPassword (req: Request, res: Response) {
 
-        const isConfirmation = await authUsersRepositories.confirmNewPasswordWithCode(req.body.newPassword, req.body.recoveryCode);
+        const isConfirmation = await this.authUsersRepositories.confirmNewPasswordWithCode(req.body.newPassword, req.body.recoveryCode);
 
         if(isConfirmation) {
             res.sendStatus(204);
@@ -76,7 +84,7 @@ class AuthUsersController {
             return res.sendStatus(403)
         }
 
-        const isGenerate = await authUsersService.GenerateRefreshAndAccessToken(userId, deviceId, sessions, deviceIp)
+        const isGenerate = await this.authUsersService.GenerateRefreshAndAccessToken(userId, deviceId, sessions, deviceIp)
 
         res.cookie('refreshToken', isGenerate.refreshToken, {httpOnly: true, secure: true,})
         res.status(200).send({accessToken: isGenerate.accessTokes})
@@ -84,7 +92,7 @@ class AuthUsersController {
 
     async RegistrationAndConfirmation (req: Request, res: Response) {
 
-        const confirmationWithCode = await authUsersRepositories.confirmEmailByUser(req.body.code);
+        const confirmationWithCode = await this.authUsersRepositories.confirmEmailByUser(req.body.code);
         console.log(confirmationWithCode)
 
         if (confirmationWithCode) {
@@ -97,7 +105,7 @@ class AuthUsersController {
 
     async FirstRegistration (req: Request, res: Response) {
 
-        const firstRegistration: boolean = await authUsersRepositories.firstRegistrationInSystem(req.body);
+        const firstRegistration: boolean = await this.authUsersRepositories.firstRegistrationInSystem(req.body);
 
         if (firstRegistration) {
             res.sendStatus(204);
@@ -109,7 +117,7 @@ class AuthUsersController {
 
     async RegistrationEmailResending (req: Request, res: Response) {
 
-        const isResending = await authUsersRepositories.registrationWithSendingEmail(req.body.email);
+        const isResending = await this.authUsersRepositories.registrationWithSendingEmail(req.body.email);
 
         if (isResending) {
             res.sendStatus(204);
@@ -138,29 +146,29 @@ class AuthUsersController {
 
 const authUserController = new AuthUsersController()
 //login user
-authUsersRouter.post('/login', rateLimitedMiddleware, loginOrEmailValidator, passwordValidator, inputValidationMiddleware, authUserController.LoginUser);
+authUsersRouter.post('/login', rateLimitedMiddleware, loginOrEmailValidator, passwordValidator, inputValidationMiddleware, authUserController.LoginUser.bind(authUserController));
 
 //password recovery via email
-authUsersRouter.post('/password-recovery', rateLimitedMiddleware, recoveryEmailValidator,  inputValidationMiddleware, authUserController.PasswordRecovery);
+authUsersRouter.post('/password-recovery', rateLimitedMiddleware, recoveryEmailValidator,  inputValidationMiddleware, authUserController.PasswordRecovery.bind(authUserController));
 
 //confirm new password with recovery code
-authUsersRouter.post('/new-password', rateLimitedMiddleware, recoveryPasswordValidator, recoveryCodeValidator, inputValidationMiddleware, authUserController.ConfirmNewPassword);
+authUsersRouter.post('/new-password', rateLimitedMiddleware, recoveryPasswordValidator, recoveryCodeValidator, inputValidationMiddleware, authUserController.ConfirmNewPassword.bind(authUserController));
 
 // TODO: cron job for delete old tokens (scheduler)
 //generate new refresh Token and access Token
-authUsersRouter.post('/refresh-token', refreshAuthMiddleware, authUserController.GenerateRefreshAndAccessToken);
+authUsersRouter.post('/refresh-token', refreshAuthMiddleware, authUserController.GenerateRefreshAndAccessToken.bind(authUserController));
 
 //confirm registration-2
-authUsersRouter.post('/registration-confirmation', rateLimitedMiddleware, codeValidator, inputValidationMiddleware, authUserController.RegistrationAndConfirmation);
+authUsersRouter.post('/registration-confirmation', rateLimitedMiddleware, codeValidator, inputValidationMiddleware, authUserController.RegistrationAndConfirmation.bind(authUserController));
 
 //first registration in system => send to email code for verification-1
-authUsersRouter.post('/registration', rateLimitedMiddleware, createUsersValidator, existEmailValidator, inputValidationMiddleware, authUserController.FirstRegistration);
+authUsersRouter.post('/registration', rateLimitedMiddleware, createUsersValidator, existEmailValidator, inputValidationMiddleware, authUserController.FirstRegistration.bind(authUserController));
 
 //registration in system-3
-authUsersRouter.post('/registration-email-resending', rateLimitedMiddleware, emailAlreadyExistButNotConfirmedValidator, inputValidationMiddleware, authUserController.RegistrationEmailResending);
+authUsersRouter.post('/registration-email-resending', rateLimitedMiddleware, emailAlreadyExistButNotConfirmedValidator, inputValidationMiddleware, authUserController.RegistrationEmailResending.bind(authUserController));
 
 //logout if bad refresh token
-authUsersRouter.post('/logout', refreshAuthMiddleware, authUserController.Logout);
+authUsersRouter.post('/logout', refreshAuthMiddleware, authUserController.Logout.bind(authUserController));
 
 //get information about user
-authUsersRouter.get('/me', authMiddleware, authUserController.GetInformationAboutUser);
+authUsersRouter.get('/me', authMiddleware, authUserController.GetInformationAboutUser.bind(authUserController));

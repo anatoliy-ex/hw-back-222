@@ -3,7 +3,7 @@ export const blogsRouter = Router({});
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from "../middlewares/middleware.validators";
-import {blogsService} from "../domain/blogs.service";
+import {BlogsService, blogsService} from "../domain/blogs.service";
 import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
 import {
     BlogModel,
@@ -16,6 +16,13 @@ import {getPaginationFromQueryBlogs} from "../pagination.query/blog.pagination";
 import {getPaginationFromQueryPostsAndComments} from "../pagination.query/post.pagination";
 
 class BlogsController {
+
+    private blogsService : BlogsService
+
+    constructor() {
+
+        this.blogsService = new BlogsService()
+    }
 
     async ClearAllModelInDb (req: Request, res: Response) {
 
@@ -38,7 +45,7 @@ class BlogsController {
 
     async CreateNewBlog (req: Request, res: Response) {
 
-        const newBlog: BlogsTypes = await blogsService.createNewBlog(req.body)
+        const newBlog: BlogsTypes = await this.blogsService.createNewBlog(req.body)
 
         if (newBlog) {
             res.status(201).send(newBlog);
@@ -52,11 +59,11 @@ class BlogsController {
 
     async GetPostsForSpecifiedBlog (req: Request, res: Response) {
 
-        const foundBlog: BlogsTypes | null = await blogsService.getBlogById(req.params.blogId);
+        const foundBlog: BlogsTypes | null = await this.blogsService.getBlogById(req.params.blogId);
 
         if (foundBlog) {
             const pagination = getPaginationFromQueryPostsAndComments(req.query);
-            const postsForBlog = await blogsService.getPostsForBlog(pagination, foundBlog.id);
+            const postsForBlog = await this.blogsService.getPostsForBlog(pagination, foundBlog.id);
 
             res.status(200).send(postsForBlog);
             return;
@@ -69,10 +76,10 @@ class BlogsController {
 
     async CreateNewPostForSpecificBlog (req: Request, res: Response) {
 
-        const foundBlog: BlogsTypes | null = await blogsService.getBlogById(req.params.blogId);
+        const foundBlog: BlogsTypes | null = await this.blogsService.getBlogById(req.params.blogId);
 
         if (foundBlog) {
-            const newPostsForBlog: PostsTypes = await blogsService.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
+            const newPostsForBlog: PostsTypes = await this.blogsService.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
             res.status(201).send(newPostsForBlog);
             return;
         }
@@ -84,7 +91,7 @@ class BlogsController {
 
     async GetBlogById (req: Request, res: Response) {
 
-        const BlogWithId: BlogsTypes | null = await blogsService.getBlogById(req.params.id);
+        const BlogWithId: BlogsTypes | null = await this.blogsService.getBlogById(req.params.id);
 
         if (BlogWithId) {
             res.status(200).send(BlogWithId);
@@ -98,7 +105,7 @@ class BlogsController {
 
     async UpdateBlogById (req: Request, res: Response) {
 
-        const isUpdated = await blogsService.updateBlog(req.body, req.params.id);
+        const isUpdated = await this.blogsService.updateBlog(req.body, req.params.id);
 
         if (isUpdated) {
             res.sendStatus(204);
@@ -113,7 +120,7 @@ class BlogsController {
 
     async DeleteBlogById (req: Request, res: Response) {
 
-        const isDelete = await blogsService.deleteBlogById(req.params.id);
+        const isDelete = await this.blogsService.deleteBlogById(req.params.id);
 
         if (isDelete) {
             res.sendStatus(204);
@@ -129,25 +136,25 @@ class BlogsController {
 
 const blogController = new BlogsController()
 //delete all
-blogsRouter.delete('/all-data', blogController.ClearAllModelInDb)
+blogsRouter.delete('/all-data', blogController.ClearAllModelInDb.bind(blogController))
 
 //get all blogs
-blogsRouter.get('/', blogController.GetAllBlogs);
+blogsRouter.get('/', blogController.GetAllBlogs.bind(blogController));
 
 //create new blogs
-blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, blogController.CreateNewBlog);
+blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, blogController.CreateNewBlog.bind(blogController));
 
 //get posts for specified blog
-blogsRouter.get('/:blogId/posts', blogController.GetPostsForSpecifiedBlog);
+blogsRouter.get('/:blogId/posts', blogController.GetPostsForSpecifiedBlog.bind(blogController));
 
 //create new post for specific blog
-blogsRouter.post('/:blogId/posts', adminStatusAuth, createPostForBlog, inputValidationMiddleware, blogController.CreateNewPostForSpecificBlog);
+blogsRouter.post('/:blogId/posts', adminStatusAuth, createPostForBlog, inputValidationMiddleware, blogController.CreateNewPostForSpecificBlog.bind(blogController));
 
 //get blog by ID
-blogsRouter.get('/:id', blogController.GetBlogById);
+blogsRouter.get('/:id', blogController.GetBlogById.bind(blogController));
 
 //update blog by ID
-blogsRouter.put('/:id', adminStatusAuth, createBlogValidator, inputValidationMiddleware, blogController.UpdateBlogById);
+blogsRouter.put('/:id', adminStatusAuth, createBlogValidator, inputValidationMiddleware, blogController.UpdateBlogById.bind(blogController));
 
 //delete blog by id
-blogsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, blogController.DeleteBlogById);
+blogsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, blogController.DeleteBlogById.bind(blogController));

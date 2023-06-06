@@ -1,6 +1,6 @@
 import { RefreshTokenSessionModel} from "../dataBase/db";
 
-class SecurityDevicesRepositories {
+export class SecurityDevicesRepositories {
 
     //get information  about all sessions
     async getInformationAboutAllSessions(userId: string) {

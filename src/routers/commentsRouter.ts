@@ -1,14 +1,21 @@
 import {Request, Response, Router} from "express"
-import {commentRepositories} from "../repositories/comment.repositories";
+import {CommentRepositories, commentRepositories} from "../repositories/comment.repositories";
 import {authMiddleware, checkForUser} from "../middlewares/auth/auth.middleware";
 import {contentCommentValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 export const commentsRouter = Router({});
 
 class CommentsController {
 
+    private commentRepositories : CommentRepositories
+
+    constructor() {
+
+        this.commentRepositories = new CommentRepositories()
+    }
+
     async UpdateCommentById (req: Request, res: Response){
 
-        const newComment = await commentRepositories.updateComment(req.params.commentId, req.body.content);
+        const newComment = await this.commentRepositories.updateComment(req.params.commentId, req.body.content);
 
         if(newComment) {
             res.sendStatus(204);
@@ -20,7 +27,7 @@ class CommentsController {
 
     async DeleteCommentById (req: Request, res: Response){
 
-        const isDeleted = await commentRepositories.deleteComment(req.params.commentId);
+        const isDeleted = await this.commentRepositories.deleteComment(req.params.commentId);
 
         if(isDeleted) {
 
@@ -33,7 +40,7 @@ class CommentsController {
 
     async GetCommentById (req: Request, res: Response){
 
-        const comment = await commentRepositories.getComment(req.params.id);
+        const comment = await this.commentRepositories.getComment(req.params.id);
 
         if(comment) {
             res.status(200).send(comment);
@@ -47,10 +54,10 @@ class CommentsController {
 const commentController = new CommentsController()
 
 //update comment by ID
-commentsRouter.put('/:commentId', authMiddleware, checkForUser, contentCommentValidator, inputValidationMiddleware , commentController.UpdateCommentById);
+commentsRouter.put('/:commentId', authMiddleware, checkForUser, contentCommentValidator, inputValidationMiddleware , commentController.UpdateCommentById.bind(commentController));
 
 //delete comment by ID
-commentsRouter.delete('/:commentId', authMiddleware, checkForUser, commentController.DeleteCommentById);
+commentsRouter.delete('/:commentId', authMiddleware, checkForUser, commentController.DeleteCommentById.bind(commentController));
 
 //get comment by ID
-commentsRouter.get('/:id', commentController.GetCommentById);
+commentsRouter.get('/:id', commentController.GetCommentById.bind(commentController));

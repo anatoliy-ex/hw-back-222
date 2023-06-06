@@ -5,7 +5,7 @@ import {OutputType} from "../types/output.type";
 import {PaginationQueryTypeForBlogs} from "../pagination.query/blog.pagination";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
-class BlogsRepositories {
+export class BlogsRepositories {
 
     //return all blogs
     async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<BlogsTypes[]>> {
