@@ -2,24 +2,26 @@ import {Request, Response, Router} from "express"
 import {refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {SecurityDevicesRepositories, securityDevicesRepositories} from "../repositories/security.device.repositories";
 import {RefreshTokenSessionModel} from "../dataBase/db";
-import {jwtService} from "../application/jwtService";
+import {JwtTokenService} from "../application/jwt.token.service";
 
 export const securityDevicesRouter = Router({});
 
 export class  SecurityDeviceController {
 
     private securityDevicesRepositories : SecurityDevicesRepositories
+    private jwtTokenService : JwtTokenService
 
     constructor() {
 
         this.securityDevicesRepositories = new SecurityDevicesRepositories()
+        this.jwtTokenService = new JwtTokenService()
     }
     async GetInformationAboutAllSessions (req: Request, res: Response) {
 
         const refreshToken = req.cookies.refreshToken!
         const deviceId = req.deviceId!
         const userId = req.user!.id
-        const lastActiveDate = await jwtService.getLastActiveDateFromToken(refreshToken);
+        const lastActiveDate = await this.jwtTokenService.getLastActiveDateFromToken(refreshToken);
         const device = await this.securityDevicesRepositories.getDeviceByDeviceIdAndLastActiveDate(deviceId, lastActiveDate);
 
         if(!device) return res.sendStatus(401);

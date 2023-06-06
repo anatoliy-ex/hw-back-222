@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {jwtService} from "../../application/jwtService";
+import {jwtTokenService} from "../../application/jwt.token.service";
 import jwt from "jsonwebtoken";
 import {RateLimitedModel, UserModel} from "../../dataBase/db";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
@@ -80,7 +80,7 @@ export const checkForUser = async (req: Request, res: Response, next: NextFuncti
 
     const token: string = req.headers.authorization!.split(" ")[1]
 
-    const userId = await jwtService.getUserIdByToken(token)
+    const userId = await jwtTokenService.getUserIdByToken(token)
     const comment = await commentRepositories.getComment(req.params.commentId)
 
     if (!comment) {

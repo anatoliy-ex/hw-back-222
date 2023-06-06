@@ -1,8 +1,8 @@
 import {Request, Response, Router} from "express"
 import {AuthUsersService, authUsersService} from "../domain/auth.users.service";
 import {authMiddleware, rateLimitedMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
-import {jwtService} from "../application/jwtService";
-import {AuthUsersRepositories, authUsersRepositories} from "../repositories/auth.users.repositories";
+import {JwtTokenService} from "../application/jwt.token.service";
+import {AuthUsersRepositories} from "../repositories/auth.users.repositories";
 import {
     codeValidator,
     createUsersValidator,
@@ -23,11 +23,13 @@ class AuthUsersController {
 
     private authUsersService: AuthUsersService
     private authUsersRepositories : AuthUsersRepositories
+    private jwtTokenService : JwtTokenService
 
     constructor() {
 
         this.authUsersService = new AuthUsersService()
         this.authUsersRepositories = new AuthUsersRepositories()
+        this.jwtTokenService = new JwtTokenService()
     }
 
     async LoginUser (req: Request, res: Response) {
@@ -73,7 +75,7 @@ class AuthUsersController {
         const userId = req.user!.id
         const deviceId = req.deviceId!
         const deviceIp = req.ip;
-        const oldLastActiveDate = await jwtService.getLastActiveDateFromToken(oldRefreshToken)
+        const oldLastActiveDate = await this.jwtTokenService.getLastActiveDateFromToken(oldRefreshToken)
         const sessions = await RefreshTokenSessionModel.findOne({deviceId: deviceId})
 
         if (!sessions || sessions.lastActiveDate !== oldLastActiveDate) {

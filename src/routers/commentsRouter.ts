@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express"
-import {CommentRepositories, commentRepositories} from "../repositories/comment.repositories";
+import {CommentRepositories} from "../repositories/comment.repositories";
 import {authMiddleware, checkForUser} from "../middlewares/auth/auth.middleware";
 import {contentCommentValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 export const commentsRouter = Router({});

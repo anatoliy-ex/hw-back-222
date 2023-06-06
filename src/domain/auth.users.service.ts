@@ -1,16 +1,18 @@
 import {LoginType} from "../types/auth.users.types";
 import {AuthUsersRepositories, authUsersRepositories} from "../repositories/auth.users.repositories";
-import {jwtService} from "../application/jwtService";
+import {JwtTokenService, jwtTokenService} from "../application/jwt.token.service";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {RefreshTokenSessionModel} from "../dataBase/db";
 
 export class AuthUsersService {
 
     private authUsersRepositories : AuthUsersRepositories
+    private jwtTokenService : JwtTokenService
 
     constructor() {
 
         this.authUsersRepositories = new AuthUsersRepositories()
+        this.jwtTokenService = new JwtTokenService()
     }
 
     //login users
@@ -20,9 +22,9 @@ export class AuthUsersService {
 
         if (userId) {
 
-            const newAccessTokes = await jwtService.createJWT(userId);
-            const newRefreshToken = await jwtService.createRefreshToken(userId, deviceId);
-            const lastActiveDate = await jwtService.getLastActiveDateFromToken(newRefreshToken)
+            const newAccessTokes = await this.jwtTokenService.createAccessTokes(userId);
+            const newRefreshToken = await this.jwtTokenService.createRefreshToken(userId, deviceId);
+            const lastActiveDate = await this.jwtTokenService.getLastActiveDateFromToken(newRefreshToken)
             console.log(newRefreshToken)
 
             const newSessions: RefreshTokenSessionsTypes = {
@@ -44,9 +46,9 @@ export class AuthUsersService {
 
     async GenerateRefreshAndAccessToken(userId: string, deviceId: string, sessions: any, deviceIp: string) {
 
-        const newAccessTokes = await jwtService.createJWT(userId);
-        const newRefreshToken = await jwtService.createRefreshToken(userId, deviceId);
-        const lastActiveDate = await jwtService.getLastActiveDateFromToken(newRefreshToken)
+        const newAccessTokes = await this.jwtTokenService.createAccessTokes(userId);
+        const newRefreshToken = await this.jwtTokenService.createRefreshToken(userId, deviceId);
+        const lastActiveDate = await this.jwtTokenService.getLastActiveDateFromToken(newRefreshToken)
 
         const updateSessions: RefreshTokenSessionsTypes = {
             deviceId: sessions.deviceId,

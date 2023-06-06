@@ -1,6 +1,6 @@
 import {Request, Response, Router} from "express"
 import {createUsersValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
-import {UsersService, usersService} from "../domain/users.service";
+import {UsersService} from "../domain/users.service";
 export const usersRouter = Router({});
 import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
 import {getPaginationFromQueryUsers} from "../pagination.query/user.pagination";

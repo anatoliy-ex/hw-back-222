@@ -1,13 +1,22 @@
 import {LoginType} from "../types/auth.users.types";
 import * as bcrypt from 'bcrypt'
 import {PasswordRecoveryModel, UserModel, UserNotConfirmationModel,} from "../dataBase/db";
-import {jwtService} from "../application/jwtService";
+import {JwtTokenService, jwtTokenService} from "../application/jwt.token.service";
 import {InputUserType, UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import nodemailer from 'nodemailer'
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
+import {AuthUsersService} from "../domain/auth.users.service";
 
 export class AuthUsersRepositories {
+
+    private jwtTokenService : JwtTokenService
+
+    constructor() {
+
+        this.jwtTokenService = new JwtTokenService()
+    }
+
 
     //login users
     async loginUser(authUser: LoginType)
@@ -220,7 +229,7 @@ export class AuthUsersRepositories {
     //get information about user
     async getUserWithAccessToken(token: string)
     {
-        const userId = await  jwtService.getUserIdByToken(token);
+        const userId = await  this.jwtTokenService.getUserIdByToken(token);
 
         if(userId != null) {
             return UserModel.findOne({id: userId})

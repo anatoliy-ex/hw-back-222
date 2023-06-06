@@ -1,16 +1,16 @@
 import jwt from 'jsonwebtoken';
 import {settings} from "../../.env/settings";
 
-export const jwtService = {
-    //create jwt
-    async createJWT(userId: any) {
+export class JwtTokenService {
+
+    async createAccessTokes(userId: any) {
         return jwt.sign({userId : userId}, settings.JWT_SECRET, {expiresIn: '10s'});
-    },
+    }
 
     async createRefreshToken(userId: any, deviceId: any){
         return  jwt.sign({userId : userId, deviceId: deviceId}, settings.REFRESH_TOKEN_SECRET, {expiresIn: '20s'});
 
-    },
+    }
 
     //id user on  token
     async getUserIdByToken(token: string) {
@@ -23,7 +23,7 @@ export const jwtService = {
         catch(error){
             return null
         }
-    },
+    }
 
     async getUserIdByRefreshToken(token: string) {
         try
@@ -34,9 +34,13 @@ export const jwtService = {
         catch(error){
             return null
         }
-    },
+    }
+
     async getLastActiveDateFromToken(refreshToken: string) {
         const payload: any = jwt.decode(refreshToken)
         return new Date(payload.iat * 1000).toISOString()
     }
-};
+
+}
+
+export const jwtTokenService = new JwtTokenService()
