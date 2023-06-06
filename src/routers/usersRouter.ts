@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express"
 import {createUsersValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 import {usersService} from "../domain/users.service";
-export const usersController = Router({});
+export const usersRouter = Router({});
 import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
 import {getPaginationFromQueryUsers} from "../pagination.query/user.pagination";
 
@@ -52,11 +52,11 @@ class UsersController {
 const userController = new UsersController()
 
 //get all user
-usersController.get('/', userController.getAllUsers);
+usersRouter.get('/', userController.getAllUsers);
 
 //post user
-usersController.post('/', adminStatusAuth, createUsersValidator, inputValidationMiddleware, userController.CreateUser);
+usersRouter.post('/', adminStatusAuth, createUsersValidator, inputValidationMiddleware, userController.CreateUser);
 
 //delete user bu ID
-usersController.delete('/:id', adminStatusAuth, userController.DeleteUserById);
+usersRouter.delete('/:id', adminStatusAuth, userController.DeleteUserById);
 

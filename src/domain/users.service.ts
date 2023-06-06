@@ -1,9 +1,9 @@
 import {OutputType} from "../types/output.type";
 import {InputUserType, UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
-import {PaginationQueryTypeForUsers} from "../controllers/users.controller";
 import * as bcrypt from "bcrypt";
 import {usersRepositories} from "../repositories/users.repositories";
 import {UserModel} from "../dataBase/db";
+import {PaginationQueryTypeForUsers} from "../pagination.query/user.pagination";
 
 export const usersService = {
 
@@ -38,19 +38,5 @@ export const usersService = {
     async deleteUserById(id: string): Promise<boolean> {
 
         return usersRepositories.deleteUserById(id);
-    },
-
-    //get user bu ID
-    async findUserById(id: string){
-        const user =   await UserModel.findOne({id}, {projection: {_id:0, hash:0, createdAt:0, isConfirm:0}})
-
-        if(!user)
-        {
-            return null;
-        }
-        else
-        {
-            return user;
-        }
     },
 };

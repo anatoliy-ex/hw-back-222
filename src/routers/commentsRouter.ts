@@ -2,7 +2,7 @@ import {Request, Response, Router} from "express"
 import {commentRepositories} from "../repositories/comment.repositories";
 import {authMiddleware, checkForUser} from "../middlewares/auth/auth.middleware";
 import {contentCommentValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
-export const commentsController = Router({});
+export const commentsRouter = Router({});
 
 class CommentsController {
 
@@ -47,10 +47,10 @@ class CommentsController {
 const commentController = new CommentsController()
 
 //update comment by ID
-commentsController.put('/:commentId', authMiddleware, checkForUser, contentCommentValidator, inputValidationMiddleware , commentController.UpdateCommentById);
+commentsRouter.put('/:commentId', authMiddleware, checkForUser, contentCommentValidator, inputValidationMiddleware , commentController.UpdateCommentById);
 
 //delete comment by ID
-commentsController.delete('/:commentId', authMiddleware, checkForUser, commentController.DeleteCommentById);
+commentsRouter.delete('/:commentId', authMiddleware, checkForUser, commentController.DeleteCommentById);
 
 //get comment by ID
-commentsController.get('/:id', commentController.GetCommentById);
+commentsRouter.get('/:id', commentController.GetCommentById);

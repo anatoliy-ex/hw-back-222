@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express"
-export const postsController = Router({});
+export const postsRouter = Router({});
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {blogsRepositories} from "../repositories/blogs.repositories";
@@ -120,22 +120,22 @@ class PostsController {
 
 const postController = new PostsController()
 //get comment for post
-postsController.get('/:postId/comments', postController.GetCommentsForPost);
+postsRouter.get('/:postId/comments', postController.GetCommentsForPost);
 
 //create new comment
-postsController.post('/:postId/comments',authMiddleware, contentCommentValidator, inputValidationMiddleware, postController.CreateNewComment);
+postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, inputValidationMiddleware, postController.CreateNewComment);
 
 //get all posts
-postsController.get('/', postController.GetAllPosts);
+postsRouter.get('/', postController.GetAllPosts);
 
 //create new post
-postsController.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.CreateNewPost);
+postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.CreateNewPost);
 
 //get post by ID
-postsController.get('/:id', postController.GetPostById);
+postsRouter.get('/:id', postController.GetPostById);
 
 //update post by ID
-postsController.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.UpdatePostById);
+postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.UpdatePostById);
 
 //delete post by ID
-postsController.delete('/:id', adminStatusAuth, inputValidationMiddleware, postController.DeletePostById);
+postsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, postController.DeletePostById);

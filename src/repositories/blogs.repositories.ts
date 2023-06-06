@@ -1,20 +1,12 @@
-import {BlogModel, PostModel, UserModel} from "../dataBase/db";
+import {BlogModel, PostModel} from "../dataBase/db";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
-import {PaginationQueryTypeForBlogs} from "../controllers/blogs.controller";
-import {PaginationQueryTypeForPosts} from "../controllers/posts.controller";
 import {OutputType} from "../types/output.type";
+import {PaginationQueryTypeForBlogs} from "../pagination.query/blog.pagination";
+import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
 export const blogsRepositories =
     {
-        //delete all
-        async deleteAll(): Promise<[]> {
-            await PostModel.deleteMany({});
-            await BlogModel.deleteMany({});
-            await UserModel.deleteMany({});
-            return [];
-        },
-
         //return all blogs
         async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<BlogsTypes[]>> {
 
@@ -48,7 +40,7 @@ export const blogsRepositories =
         },
 
         //get posts for specified blog
-        async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<PostsTypes[]> {
+        async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<PostsTypes[]> {
 
             const filter = {blogId: {$regex: blogId}}
 

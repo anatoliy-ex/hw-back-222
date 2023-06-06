@@ -1,5 +1,5 @@
-import {TypeCommentatorInfo, TypeInputModel, TypeViewCommentModel} from "../types/comments.types";
-import {BlogModel, CommentModel} from "../dataBase/db";
+import {TypeCommentatorInfo, TypeViewCommentModel} from "../types/comments.types";
+import {CommentModel} from "../dataBase/db";
 
 export const commentRepositories = {
 

@@ -1,4 +1,4 @@
-type PaginationQueryTypeForBlogs = {
+export type PaginationQueryTypeForBlogs = {
     searchNameTerm: string,
     sortBy: string,
     sortDirection: 'asc' | 'desc',

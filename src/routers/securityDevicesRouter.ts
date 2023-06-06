@@ -4,7 +4,7 @@ import {securityDevicesRepositories} from "../repositories/security.device.repos
 import {RefreshTokenSessionModel} from "../dataBase/db";
 import {jwtService} from "../application/jwtService";
 
-export const SecurityDevicesController = Router({});
+export const securityDevicesRouter = Router({});
 
 class  SecurityDeviceController {
 
@@ -52,10 +52,10 @@ class  SecurityDeviceController {
 const securityDevicesController = new SecurityDeviceController()
 
 //get information  about all sessions
-SecurityDevicesController.get('/devices', refreshAuthMiddleware, securityDevicesController.GetInformationAboutAllSessions);
+securityDevicesRouter.get('/devices', refreshAuthMiddleware, securityDevicesController.GetInformationAboutAllSessions);
 
 //logout on all sessions(expect current)
-SecurityDevicesController.delete('/devices', refreshAuthMiddleware, securityDevicesController.LogoutInAllAllSessions);
+securityDevicesRouter.delete('/devices', refreshAuthMiddleware, securityDevicesController.LogoutInAllAllSessions);
 
 //logout in specific session
-SecurityDevicesController.delete('/devices/:deviceId', refreshAuthMiddleware, securityDevicesController.LogoutInSpecificSession);
+securityDevicesRouter.delete('/devices/:deviceId', refreshAuthMiddleware, securityDevicesController.LogoutInSpecificSession);

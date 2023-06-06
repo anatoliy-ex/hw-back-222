@@ -1,6 +1,5 @@
 import {Request, Response, Router} from "express"
-
-export const blogsController = Router({});
+export const blogsRouter = Router({});
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from "../middlewares/middleware.validators";
@@ -130,25 +129,25 @@ class BlogsController {
 
 const blogController = new BlogsController()
 //delete all
-blogsController.delete('/all-data', blogController.ClearAllModelInDb)
+blogsRouter.delete('/all-data', blogController.ClearAllModelInDb)
 
 //get all blogs
-blogsController.get('/', blogController.GetAllBlogs);
+blogsRouter.get('/', blogController.GetAllBlogs);
 
 //create new blogs
-blogsController.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, blogController.CreateNewBlog);
+blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, blogController.CreateNewBlog);
 
 //get posts for specified blog
-blogsController.get('/:blogId/posts', blogController.GetPostsForSpecifiedBlog);
+blogsRouter.get('/:blogId/posts', blogController.GetPostsForSpecifiedBlog);
 
 //create new post for specific blog
-blogsController.post('/:blogId/posts', adminStatusAuth, createPostForBlog, inputValidationMiddleware, blogController.CreateNewPostForSpecificBlog);
+blogsRouter.post('/:blogId/posts', adminStatusAuth, createPostForBlog, inputValidationMiddleware, blogController.CreateNewPostForSpecificBlog);
 
 //get blog by ID
-blogsController.get('/:id', blogController.GetBlogById);
+blogsRouter.get('/:id', blogController.GetBlogById);
 
 //update blog by ID
-blogsController.put('/:id', adminStatusAuth, createBlogValidator, inputValidationMiddleware, blogController.UpdateBlogById);
+blogsRouter.put('/:id', adminStatusAuth, createBlogValidator, inputValidationMiddleware, blogController.UpdateBlogById);
 
 //delete blog by id
-blogsController.delete('/:id', adminStatusAuth, inputValidationMiddleware, blogController.DeleteBlogById);
+blogsRouter.delete('/:id', adminStatusAuth, inputValidationMiddleware, blogController.DeleteBlogById);

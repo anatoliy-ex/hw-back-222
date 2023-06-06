@@ -1,4 +1,4 @@
-type PaginationQueryTypeForUsers = {
+export type PaginationQueryTypeForUsers = {
     searchLoginTerm: string,
     searchEmailTerm: string,
     sortBy: string,

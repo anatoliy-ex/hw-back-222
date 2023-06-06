@@ -1,13 +1,13 @@
-import {PostModel} from "../dataBase/db";
+
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
-import {PaginationQueryTypeForPosts} from "../controllers/posts.controller";
 import {postsRepositories} from "../repositories/posts.repositories";
+import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
 export const postsService =
     {
         //return all posts
-        async allPosts(pagination: PaginationQueryTypeForPosts) : Promise<OutputType<PostsTypes[]>>
+        async allPosts(pagination: PaginationQueryTypeForPostsAndComments) : Promise<OutputType<PostsTypes[]>>
         {
             return postsRepositories.allPosts((pagination))
         },

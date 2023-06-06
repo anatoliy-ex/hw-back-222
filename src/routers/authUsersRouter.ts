@@ -19,7 +19,7 @@ import {RefreshTokenSessionModel} from "../dataBase/db";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {randomUUID} from "crypto";
 
-export const authUsersController = Router({});
+export const authUsersRouter = Router({});
 
 class AuthUsersController {
 
@@ -163,29 +163,29 @@ class AuthUsersController {
 
 const authUserController = new AuthUsersController()
 //login user
-authUsersController.post('/login', rateLimitedMiddleware, loginOrEmailValidator, passwordValidator, inputValidationMiddleware, authUserController.LoginUser);
+authUsersRouter.post('/login', rateLimitedMiddleware, loginOrEmailValidator, passwordValidator, inputValidationMiddleware, authUserController.LoginUser);
 
 //password recovery via email
-authUsersController.post('/password-recovery', rateLimitedMiddleware, recoveryEmailValidator,  inputValidationMiddleware, authUserController.PasswordRecovery);
+authUsersRouter.post('/password-recovery', rateLimitedMiddleware, recoveryEmailValidator,  inputValidationMiddleware, authUserController.PasswordRecovery);
 
 //confirm new password with recovery code
-authUsersController.post('/new-password', rateLimitedMiddleware, recoveryPasswordValidator, recoveryCodeValidator, inputValidationMiddleware, authUserController.ConfirmNewPassword);
+authUsersRouter.post('/new-password', rateLimitedMiddleware, recoveryPasswordValidator, recoveryCodeValidator, inputValidationMiddleware, authUserController.ConfirmNewPassword);
 
 // TODO: cron job for delete old tokens (scheduler)
 //generate new refresh Token and access Token
-authUsersController.post('/refresh-token', refreshAuthMiddleware, authUserController.GenerateRefreshAndAccessToken);
+authUsersRouter.post('/refresh-token', refreshAuthMiddleware, authUserController.GenerateRefreshAndAccessToken);
 
 //confirm registration-2
-authUsersController.post('/registration-confirmation', rateLimitedMiddleware, codeValidator, inputValidationMiddleware, authUserController.RegistrationAndConfirmation);
+authUsersRouter.post('/registration-confirmation', rateLimitedMiddleware, codeValidator, inputValidationMiddleware, authUserController.RegistrationAndConfirmation);
 
 //first registration in system => send to email code for verification-1
-authUsersController.post('/registration', rateLimitedMiddleware, createUsersValidator, existEmailValidator, inputValidationMiddleware, authUserController.FirstRegistration);
+authUsersRouter.post('/registration', rateLimitedMiddleware, createUsersValidator, existEmailValidator, inputValidationMiddleware, authUserController.FirstRegistration);
 
 //registration in system-3
-authUsersController.post('/registration-email-resending', rateLimitedMiddleware, emailAlreadyExistButNotConfirmedValidator, inputValidationMiddleware, authUserController.RegistrationEmailResending);
+authUsersRouter.post('/registration-email-resending', rateLimitedMiddleware, emailAlreadyExistButNotConfirmedValidator, inputValidationMiddleware, authUserController.RegistrationEmailResending);
 
 //logout if bad refresh token
-authUsersController.post('/logout', refreshAuthMiddleware, authUserController.Logout);
+authUsersRouter.post('/logout', refreshAuthMiddleware, authUserController.Logout);
 
 //get information about user
-authUsersController.get('/me', authMiddleware, authUserController.GetInformationAboutUser);
+authUsersRouter.get('/me', authMiddleware, authUserController.GetInformationAboutUser);

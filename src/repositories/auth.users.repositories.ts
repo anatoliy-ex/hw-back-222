@@ -1,16 +1,12 @@
 import {LoginType} from "../types/auth.users.types";
 import * as bcrypt from 'bcrypt'
-import {
-    PasswordRecoveryModel,
-    RefreshTokenSessionModel,
-    UserModel, UserNotConfirmationModel,
-} from "../dataBase/db";
+import {PasswordRecoveryModel, UserModel, UserNotConfirmationModel,} from "../dataBase/db";
 import {jwtService} from "../application/jwtService";
 import {InputUserType, UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import nodemailer from 'nodemailer'
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
-import {addSeconds} from "date-fns";
+
 
 
 export const authUsersRepositories = {
@@ -79,19 +75,14 @@ export const authUsersRepositories = {
     //confirm new password with recovery code
     async confirmNewPasswordWithCode(newPassword: string, userConfirmCode: string) : Promise<boolean> {
 
-        const nowDate = new Date();
-
-
         try {
             const user = await PasswordRecoveryModel.findOne({confirmCode: userConfirmCode})
-            // if(addSeconds(user!.dateAt, +10 * 100) > nowDate) {
-            //     return false
-            // }
             const passwordHash = await bcrypt.hash(newPassword, 10);
             await UserModel.updateOne({email: user!.email}, {hash: passwordHash});
             await PasswordRecoveryModel.deleteOne({confirmCode: userConfirmCode})
             return true;
-        }catch  {
+        }
+        catch  {
             return false;
         }
     },

@@ -1,7 +1,7 @@
 import {OutputType} from "../types/output.type";
-import {InputUserType, UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
+import { UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
 import {UserModel} from "../dataBase/db";
-import {PaginationQueryTypeForUsers} from "../controllers/users.controller";
+import {PaginationQueryTypeForUsers} from "../pagination.query/user.pagination";
 
 export const usersRepositories = {
 

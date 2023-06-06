@@ -1,16 +1,16 @@
-import {BlogModel, CommentModel, PostModel} from "../dataBase/db";
+import { CommentModel, PostModel} from "../dataBase/db";
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
-import {PaginationQueryTypeForComments, PaginationQueryTypeForPosts} from "../controllers/posts.controller";
 import {TypeCommentatorInfo, TypeGetCommentModel, TypeViewCommentModel} from "../types/comments.types";
-import {UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
+import {UserConfirmTypes} from "../types/userConfirmTypes";
+import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
 export const postsRepositories =
 {
 
 
     //get comments for post
-    async getCommentsForPost(pagination: PaginationQueryTypeForComments, postId: string) {
+    async getCommentsForPost(pagination: PaginationQueryTypeForPostsAndComments, postId: string) {
 
         const filter = {postId: postId}
         console.log(postId)
@@ -59,7 +59,7 @@ export const postsRepositories =
     },
 
     //return all posts
-    async allPosts(pagination: PaginationQueryTypeForPosts) : Promise<OutputType<PostsTypes[]>>
+    async allPosts(pagination: PaginationQueryTypeForPostsAndComments) : Promise<OutputType<PostsTypes[]>>
     {
         const posts: PostsTypes[] = await PostModel
             .find({})

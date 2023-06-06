@@ -1,14 +1,10 @@
-import {
-    BlogModel,
-    PostModel,
-    UserModel, UserNotConfirmationModel,
-} from "../dataBase/db";
+import {PostModel,} from "../dataBase/db";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
-import {PaginationQueryTypeForBlogs} from "../controllers/blogs.controller";
-import {PaginationQueryTypeForPosts} from "../controllers/posts.controller";
 import {blogsRepositories} from "../repositories/blogs.repositories";
+import {PaginationQueryTypeForBlogs} from "../pagination.query/blog.pagination";
+import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
 export const blogsService =
     {
@@ -36,7 +32,7 @@ export const blogsService =
         },
 
         //get posts for specified blog
-        async getPostsForBlog(pagination: PaginationQueryTypeForPosts, blogId: string): Promise<OutputType<PostsTypes[]>> {
+        async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<OutputType<PostsTypes[]>> {
 
             const posts = await blogsRepositories.getPostsForBlog(pagination, blogId)
             const countOfPosts = await PostModel.countDocuments({blogId});

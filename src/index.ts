@@ -1,10 +1,10 @@
 import {runDb, UserModel} from "./dataBase/db";
-import {postsController} from "./controllers/posts.controller";
-import {blogsController} from "./controllers/blogs.controller";
-import {usersController} from "./controllers/users.controller";
-import {authUsersController} from "./controllers/auth.users.controller";
-import {commentsController} from "./controllers/comments.controller";
-import {securityDevicesController} from "./controllers/security.devices.controller";
+import {postsRouter} from "./routers/postsRouter";
+import {blogsRouter} from "./routers/blogsRouter";
+import {usersRouter} from "./routers/usersRouter";
+import {authUsersRouter} from "./routers/authUsersRouter";
+import {commentsRouter} from "./routers/commentsRouter";
+import {securityDevicesRouter} from "./routers/securityDevicesRouter";
 import cookieParser from "cookie-parser";
 
 const express = require('express');
@@ -16,13 +16,13 @@ app.use(cookieParser())
 app.use(parserMiddleware);
 app.set('trust proxy', true)
 
-app.use('/posts', postsController);
-app.use('/blogs', blogsController);
-app.use('/testing', blogsController);
-app.use('/users', usersController);
-app.use('/auth', authUsersController)
-app.use('/comments', commentsController)
-app.use('/security', securityDevicesController)
+app.use('/posts', postsRouter);
+app.use('/blogs', blogsRouter);
+app.use('/testing', blogsRouter);
+app.use('/users', usersRouter);
+app.use('/auth', authUsersRouter)
+app.use('/comments', commentsRouter)
+app.use('/security', securityDevicesRouter)
 
 
 const startApp = async () => {
