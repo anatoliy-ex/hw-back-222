@@ -14,6 +14,7 @@ import {
     UserModel,
     UserNotConfirmationModel} from "../dataBase/db";
 import {getPaginationFromQueryBlogs} from "../pagination.query/blog.pagination";
+import {getPaginationFromQueryPostsAndComments} from "../pagination.query/post.pagination";
 
 class BlogsController {
 

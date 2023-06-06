@@ -7,7 +7,6 @@ import {
     codeValidator,
     createUsersValidator,
     emailAlreadyExistButNotConfirmedValidator,
-    emailValidator,
     existEmailValidator,
     inputValidationMiddleware,
     loginOrEmailValidator,
@@ -19,11 +18,6 @@ import {
 import {RefreshTokenSessionModel} from "../dataBase/db";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {randomUUID} from "crypto";
-import jwt from "jsonwebtoken";
-import {settings} from "../../.env/settings";
-import {body} from "express-validator";
-import {usersService} from "../domain/users.service";
-import {getPaginationFromQueryUsers} from "./users.controller";
 
 export const authUsersController = Router({});
 
