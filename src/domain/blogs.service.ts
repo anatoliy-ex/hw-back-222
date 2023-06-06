@@ -6,81 +6,81 @@ import {blogsRepositories} from "../repositories/blogs.repositories";
 import {PaginationQueryTypeForBlogs} from "../pagination.query/blog.pagination";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
-export const blogsService =
-    {
-        //return all blogs+++
-        async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<BlogsTypes[]>> {
+class BlogsService {
 
-            return blogsRepositories.allBlogs(pagination);
-        },
+    //return all blogs+++
+    async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<BlogsTypes[]>> {
 
-        //create new blog+++
-        async createNewBlog(blog: BlogsTypes): Promise<BlogsTypes> {
+        return blogsRepositories.allBlogs(pagination);
+    }
 
-            const now = new Date();
+    //create new blog+++
+    async createNewBlog(blog: BlogsTypes): Promise<BlogsTypes> {
 
-            const newBlog = {
+        const now = new Date();
+
+        const newBlog = {
+            id: `${Date.now()}`,
+            name: blog.name,
+            description: blog.description,
+            websiteUrl: blog.websiteUrl,
+            createdAt: now.toISOString(),
+            isMembership: false,
+        };
+
+        return  blogsRepositories.createNewBlog(newBlog);
+    }
+
+    //get posts for specified blog
+    async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<OutputType<PostsTypes[]>> {
+
+        const posts = await blogsRepositories.getPostsForBlog(pagination, blogId)
+        const countOfPosts = await PostModel.countDocuments({blogId});
+        const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
+
+        return {
+            page: pagination.pageNumber,
+            pagesCount: pageCount === 0 ? 1 : pageCount,
+            pageSize: pagination.pageSize,
+            totalCount: countOfPosts,
+            items: posts
+        }
+    }
+
+    //create new post for specific blog+++
+    async createPostForSpecificBlog(post: PostsTypes, blogId: string, blogName: string): Promise<PostsTypes> {
+        const now = new Date();
+
+        const newPost = {
                 id: `${Date.now()}`,
-                name: blog.name,
-                description: blog.description,
-                websiteUrl: blog.websiteUrl,
+                title: post.title,
+                shortDescription: post.shortDescription,
+                content: post.content,
+                blogId: blogId,
+                blogName: blogName,
                 createdAt: now.toISOString(),
-                isMembership: false,
             };
 
-           return  blogsRepositories.createNewBlog(newBlog);
-        },
-
-        //get posts for specified blog
-        async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<OutputType<PostsTypes[]>> {
-
-            const posts = await blogsRepositories.getPostsForBlog(pagination, blogId)
-            const countOfPosts = await PostModel.countDocuments({blogId});
-            const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
-
-            return {
-                page: pagination.pageNumber,
-                pagesCount: pageCount === 0 ? 1 : pageCount,
-                pageSize: pagination.pageSize,
-                totalCount: countOfPosts,
-                items: posts
-            }
-        },
-
-        //create new post for specific blog+++
-        async createPostForSpecificBlog(post: PostsTypes, blogId: string, blogName: string): Promise<PostsTypes> {
-            const now = new Date();
-
-            const newPost =
-                {
-                    id: `${Date.now()}`,
-                    title: post.title,
-                    shortDescription: post.shortDescription,
-                    content: post.content,
-                    blogId: blogId,
-                    blogName: blogName,
-                    createdAt: now.toISOString(),
-                };
-
-            return blogsRepositories.createPostForSpecificBlog(newPost);
-        },
-
-
-        //get blog bu ID+++
-        async getBlogById(id: string): Promise<BlogsTypes | null> {
-
-            return await blogsRepositories.getBlogById(id);
-        },
-
-        //update blog by ID+++
-        async updateBlog(newBlog: BlogsTypes, id: string): Promise<boolean> {
-
-            return await blogsRepositories.updateBlog(newBlog, id);
-        },
-
-        //delete blog byID+++
-        async deleteBlogById(id: string): Promise<boolean> {
-
-            return await blogsRepositories.deleteBlogById(id);
-        },
+        return blogsRepositories.createPostForSpecificBlog(newPost);
     }
+
+
+    //get blog bu ID+++
+    async getBlogById(id: string): Promise<BlogsTypes | null> {
+
+        return await blogsRepositories.getBlogById(id);
+    }
+
+    //update blog by ID+++
+    async updateBlog(newBlog: BlogsTypes, id: string): Promise<boolean> {
+
+        return await blogsRepositories.updateBlog(newBlog, id);
+    }
+
+    //delete blog byID+++
+    async deleteBlogById(id: string): Promise<boolean> {
+
+        return await blogsRepositories.deleteBlogById(id);
+    }
+}
+export const blogsService = new BlogsService();

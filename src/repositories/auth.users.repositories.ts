@@ -7,40 +7,39 @@ import nodemailer from 'nodemailer'
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
 
+class AuthUsersRepositories {
 
+    //login users
+    async loginUser(authUser: LoginType)
+    {
+        const filter = {
+            $or: [
+                {login: {$regex: authUser.loginOrEmail, $options: 'i'}},
+                {email: {$regex: authUser.loginOrEmail, $options: 'i'}}
+            ]
+        };
 
-export const authUsersRepositories = {
-  //login users
-   async loginUser(authUser: LoginType)
-   {
-       const filter = {
-           $or: [
-               {login: {$regex: authUser.loginOrEmail, $options: 'i'}},
-               {email: {$regex: authUser.loginOrEmail, $options: 'i'}}
-           ]
-       };
+        const user = await UserModel.findOne(filter)
 
-       const user = await UserModel.findOne(filter)
+        if(user)
+        {
+            const isLogin =  await bcrypt.compare(authUser.password, user.hash);
 
-       if(user)
-       {
-           const isLogin =  await bcrypt.compare(authUser.password, user.hash);
+            if(isLogin)
+            {
+                return user.id
+            }
+            else
+            {
+                return false;
+            }
 
-           if(isLogin)
-           {
-               return user.id
-           }
-           else
-           {
-              return false;
-           }
-
-       }
-       else
-       {
-           return false;
-       }
-   },
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     ////password recovery via email
     async recoveryPasswordWithSendEmail(email: string) : Promise<boolean> {
@@ -70,7 +69,7 @@ export const authUsersRepositories = {
         });
 
         return true;
-    },
+    }
 
     //confirm new password with recovery code
     async confirmNewPasswordWithCode(newPassword: string, userConfirmCode: string) : Promise<boolean> {
@@ -85,34 +84,34 @@ export const authUsersRepositories = {
         catch  {
             return false;
         }
-    },
+    }
 
     //confirm registration-2
     async confirmEmailByUser(code: string) : Promise<boolean> {
 
-      let confirmationUser = await UserNotConfirmationModel.findOne({confirmationCode: code});
+        let confirmationUser = await UserNotConfirmationModel.findOne({confirmationCode: code});
 
-      if(confirmationUser && confirmationUser.expirationDate > new Date())
-      {
-          const updateUser : UserConfirmTypes = {
-              id: confirmationUser.id,
-              login: confirmationUser.login,
-              email: confirmationUser.email,
-              hash: confirmationUser.hash,
-              createdAt: confirmationUser.createdAt,
-              isConfirm: true,
-          }
-          const filter = {confirmationCode: code}
+        if(confirmationUser && confirmationUser.expirationDate > new Date())
+        {
+            const updateUser : UserConfirmTypes = {
+                id: confirmationUser.id,
+                login: confirmationUser.login,
+                email: confirmationUser.email,
+                hash: confirmationUser.hash,
+                createdAt: confirmationUser.createdAt,
+                isConfirm: true,
+            }
+            const filter = {confirmationCode: code}
 
-          await UserNotConfirmationModel.deleteOne(filter);
-          await UserModel.create(updateUser);
-          return true
-      }
-      else
-      {
-          return false;
-      }
-    },
+            await UserNotConfirmationModel.deleteOne(filter);
+            await UserModel.create(updateUser);
+            return true
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     //first registration in system => send to email code for verification-1
     async firstRegistrationInSystem(user: InputUserType) : Promise<boolean> {
@@ -145,16 +144,16 @@ export const authUsersRepositories = {
             console.log(code)
 
             const newUser: UserIsNotConfirmTypes =
-            {
-                id: `${Date.now()}`,
-                login: user.login,
-                email: user.email,
-                hash: passwordHash,
-                createdAt: now.toISOString(),
-                isConfirm: false,
-                confirmationCode: code,
-                expirationDate: add(new Date(),{hours: 1,}),
-            }
+                {
+                    id: `${Date.now()}`,
+                    login: user.login,
+                    email: user.email,
+                    hash: passwordHash,
+                    createdAt: now.toISOString(),
+                    isConfirm: false,
+                    confirmationCode: code,
+                    expirationDate: add(new Date(),{hours: 1,}),
+                }
 
 
             let transporter = nodemailer.createTransport({
@@ -179,7 +178,7 @@ export const authUsersRepositories = {
             await UserNotConfirmationModel.insertMany([newUser]);
             return true;
         }
-    },
+    }
 
     //registration in system-3
     async registrationWithSendingEmail(email: string){
@@ -216,7 +215,7 @@ export const authUsersRepositories = {
         {
             return false;
         }
-    },
+    }
 
     //get information about user
     async getUserWithAccessToken(token: string)
@@ -230,7 +229,7 @@ export const authUsersRepositories = {
         {
             return null
         }
-    },
+    }
 
     //get user id by login or email
     async getUserIdByLoginOrEmail(authUser: LoginType){
@@ -251,5 +250,7 @@ export const authUsersRepositories = {
         {
             return false;
         }
-    },
-};
+    }
+}
+
+export const authUsersRepositories = new AuthUsersRepositories();

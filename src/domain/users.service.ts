@@ -2,16 +2,15 @@ import {OutputType} from "../types/output.type";
 import {InputUserType, UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
 import * as bcrypt from "bcrypt";
 import {usersRepositories} from "../repositories/users.repositories";
-import {UserModel} from "../dataBase/db";
 import {PaginationQueryTypeForUsers} from "../pagination.query/user.pagination";
 
-export const usersService = {
+class UsersService {
 
     //return all users
     async allUsers(paginationUsers: PaginationQueryTypeForUsers): Promise<OutputType<UserConfirmTypes[]>> {
 
         return usersRepositories.allUsers(paginationUsers)
-    },
+    }
 
     //create user
     async createNewUser(user: InputUserType): Promise<UserViewType> {
@@ -32,11 +31,12 @@ export const usersService = {
         console.log(user.email)
 
         return usersRepositories.createNewUser(newUser)
-    },
+    }
 
     //delete user bu ID
     async deleteUserById(id: string): Promise<boolean> {
 
         return usersRepositories.deleteUserById(id);
-    },
-};
+    }
+}
+export const usersService = new UsersService();

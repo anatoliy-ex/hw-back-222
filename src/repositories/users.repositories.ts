@@ -3,10 +3,10 @@ import { UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
 import {UserModel} from "../dataBase/db";
 import {PaginationQueryTypeForUsers} from "../pagination.query/user.pagination";
 
-export const usersRepositories = {
-
+class UsersRepositories {
     //return all users
     async allUsers(paginationUsers: PaginationQueryTypeForUsers): Promise<OutputType<UserConfirmTypes[]>> {
+
         const filter = {
             $or: [
                 {login: {$regex: paginationUsers.searchLoginTerm, $options: 'i'}},
@@ -34,7 +34,7 @@ export const usersRepositories = {
             totalCount: countOfUsers,
             items: users
         };
-    },
+    }
 
     //create user
     async createNewUser(newUser: UserConfirmTypes): Promise<UserViewType> {
@@ -47,11 +47,14 @@ export const usersRepositories = {
             login: newUser.login,
             createdAt: newUser.createdAt,
         }
-    },
+    }
 
     //delete user bu ID
     async deleteUserById(id: string): Promise<boolean> {
         const isDeleted = await UserModel.deleteOne({id: id})
         return isDeleted.deletedCount === 1;
-    },
-};
+    }
+}
+export const usersRepositories = new UsersRepositories();
+
+

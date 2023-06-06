@@ -5,9 +5,7 @@ import {TypeCommentatorInfo, TypeGetCommentModel, TypeViewCommentModel} from "..
 import {UserConfirmTypes} from "../types/userConfirmTypes";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
-export const postsRepositories =
-{
-
+class PostsRepositories {
 
     //get comments for post
     async getCommentsForPost(pagination: PaginationQueryTypeForPostsAndComments, postId: string) {
@@ -35,7 +33,7 @@ export const postsRepositories =
             totalCount: countOfComments,
             items: comments,
         }
-    },
+    }
 
     //create comment for post
     async createCommentForPost(postId: string, content: string, user: UserConfirmTypes) : Promise<TypeViewCommentModel<TypeCommentatorInfo>>{
@@ -46,17 +44,17 @@ export const postsRepositories =
             id: `${Date.now()}`,
             content: content,
             commentatorInfo:
-            {
-                userId: user.id,
-                userLogin: user.login
-            },
+                {
+                    userId: user.id,
+                    userLogin: user.login
+                },
             createdAt: now.toISOString(),
             postId: postId,
         };
 
         await CommentModel.insertMany([newComment]);
         return newComment;
-    },
+    }
 
     //return all posts
     async allPosts(pagination: PaginationQueryTypeForPostsAndComments) : Promise<OutputType<PostsTypes[]>>
@@ -73,13 +71,13 @@ export const postsRepositories =
         const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
 
         return {
-          page: pagination.pageNumber,
-          pagesCount: pageCount === 0 ?  1 : pageCount,
-          pageSize: pagination.pageSize,
-          totalCount: countOfPosts,
-          items: posts
+            page: pagination.pageNumber,
+            pagesCount: pageCount === 0 ?  1 : pageCount,
+            pageSize: pagination.pageSize,
+            totalCount: countOfPosts,
+            items: posts
         };
-    },
+    }
 
     //create new post
     async createNewPost(newPost: PostsTypes) : Promise<PostsTypes>
@@ -87,33 +85,33 @@ export const postsRepositories =
 
         await PostModel.insertMany([newPost]);
         return newPost;
-    },
+    }
 
     //get post by ID
     async getPostById(id: string) : Promise<PostsTypes | null>
     {
         return PostModel.findOne({id: id}, {projection :{_id: 0}});
-    },
+    }
 
     //update post by ID
     async updatePost(newPost : PostsTypes, id: string) : Promise<boolean>
     {
         const result = await PostModel.updateOne({id: id}, {
-            $set:
-            {
-                title: newPost.title,
-                shortDescription: newPost.shortDescription,
-                content: newPost.content,
-                blogId: newPost.blogId
-            }
+            $set: {
+                    title: newPost.title,
+                    shortDescription: newPost.shortDescription,
+                    content: newPost.content,
+                    blogId: newPost.blogId
+                }
         });
         return result.matchedCount === 1;
-    },
+    }
 
     //delete post by ID
-    async deletePostsById(id: string) : Promise<boolean>
-    {
+    async deletePostsById(id: string) : Promise<boolean> {
         const isDeleted = await PostModel.deleteOne({id: id});
         return isDeleted.deletedCount === 1;
-    },
-};
+    }
+}
+
+export const postsRepositories = new PostsRepositories();

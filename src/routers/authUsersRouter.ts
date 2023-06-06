@@ -13,8 +13,7 @@ import {
     recoveryPasswordValidator,
     passwordValidator,
     recoveryCodeValidator,
-    recoveryEmailValidator
-} from "../middlewares/middleware.validators";
+    recoveryEmailValidator} from "../middlewares/middleware.validators";
 import {RefreshTokenSessionModel} from "../dataBase/db";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {randomUUID} from "crypto";
