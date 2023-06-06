@@ -117,7 +117,7 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
         await RateLimitedModel.deleteMany(deleteFilter);
         return res.sendStatus(429);
     }
-    else{
+    else {
         await RateLimitedModel.create(rateLimitedMeta);
         return next();
     }

@@ -3,7 +3,8 @@ import { UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
 import {UserModel} from "../dataBase/db";
 import {PaginationQueryTypeForUsers} from "../pagination.query/user.pagination";
 
-class UsersRepositories {
+export class UsersRepositories {
+
     //return all users
     async allUsers(paginationUsers: PaginationQueryTypeForUsers): Promise<OutputType<UserConfirmTypes[]>> {
 
