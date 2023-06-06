@@ -61,7 +61,7 @@ const userController = new UsersController()
 usersRouter.get('/', userController.getAllUsers.bind(userController));
 
 //post user
-usersRouter.post('/', adminStatusAuth, createUsersValidator, inputValidationMiddleware, userController.CreateUser);
+usersRouter.post('/', adminStatusAuth, createUsersValidator, inputValidationMiddleware, userController.CreateUser.bind(userController));
 
 //delete user bu ID
 usersRouter.delete('/:id', adminStatusAuth, userController.DeleteUserById.bind(userController));
