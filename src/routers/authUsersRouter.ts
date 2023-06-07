@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express"
-import {AuthUsersService, authUsersService} from "../domain/auth.users.service";
+import {AuthUsersService} from "../domain/auth.users.service";
 import {authMiddleware, rateLimitedMiddleware, refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
 import {JwtTokenService} from "../application/jwt.token.service";
 import {AuthUsersRepositories} from "../repositories/auth.users.repositories";

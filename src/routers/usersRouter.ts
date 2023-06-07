@@ -4,16 +4,13 @@ import {UsersService} from "../domain/users.service";
 export const usersRouter = Router({});
 import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
 import {getPaginationFromQueryUsers} from "../pagination.query/user.pagination";
+import {userController} from "../roots/user.root";
 
 
 export class UsersController {
 
-    private usersService: UsersService;
 
-    constructor() {
-
-        this.usersService = new UsersService()
-    }
+    constructor(protected usersService: UsersService) {}
     //get all user
     async getAllUsers (req: Request, res: Response) {
 
@@ -54,8 +51,6 @@ export class UsersController {
         }
     }
 }
-
-const userController = new UsersController()
 
 //get all user
 usersRouter.get('/', userController.getAllUsers.bind(userController));

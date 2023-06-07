@@ -1,12 +1,11 @@
 import {LoginType} from "../types/auth.users.types";
 import * as bcrypt from 'bcrypt'
 import {PasswordRecoveryModel, UserModel, UserNotConfirmationModel,} from "../dataBase/db";
-import {JwtTokenService, jwtTokenService} from "../application/jwt.token.service";
+import {JwtTokenService} from "../application/jwt.token.service";
 import {InputUserType, UserConfirmTypes, UserIsNotConfirmTypes} from "../types/userConfirmTypes";
 import nodemailer from 'nodemailer'
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
-import {AuthUsersService} from "../domain/auth.users.service";
 
 export class AuthUsersRepositories {
 

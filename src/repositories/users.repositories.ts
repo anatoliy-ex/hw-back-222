@@ -56,6 +56,5 @@ export class UsersRepositories {
         return isDeleted.deletedCount === 1;
     }
 }
-export const usersRepositories = new UsersRepositories();
 
 
