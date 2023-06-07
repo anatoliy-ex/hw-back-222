@@ -30,5 +30,3 @@ export class SecurityDevicesRepositories {
         return RefreshTokenSessionModel.findOne({deviceId: deviceId, lastActiveDate: lastActiveDate});
     }
 }
-
-export const securityDevicesRepositories = new SecurityDevicesRepositories();

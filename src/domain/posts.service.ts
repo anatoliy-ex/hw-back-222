@@ -5,11 +5,7 @@ import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.p
 
 export class PostsService {
 
-    private postsRepositories : PostsRepositories
-
-    constructor() {
-        this.postsRepositories = new PostsRepositories()
-    }
+    constructor(protected postsRepositories : PostsRepositories) {}
 
     //return all posts
     async allPosts(pagination: PaginationQueryTypeForPostsAndComments) : Promise<OutputType<PostsTypes[]>>
@@ -55,5 +51,3 @@ export class PostsService {
         return await this.postsRepositories.deletePostsById(id)
     }
 }
-
-export const postsService = new PostsService();

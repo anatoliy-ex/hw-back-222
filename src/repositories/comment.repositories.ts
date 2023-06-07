@@ -27,5 +27,3 @@ export class CommentRepositories {
             .select('-_id -postId ');
     }
 }
-
-export const commentRepositories = new CommentRepositories();

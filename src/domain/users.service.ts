@@ -1,8 +1,8 @@
 import {OutputType} from "../types/output.type";
 import {InputUserType, UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
 import * as bcrypt from "bcrypt";
-import {UsersRepositories} from "../repositories/users.repositories";
 import {PaginationQueryTypeForUsers} from "../pagination.query/user.pagination";
+import {UsersRepositories} from "../repositories/users.repositories";
 
 export class UsersService {
 

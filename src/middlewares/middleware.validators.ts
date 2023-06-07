@@ -1,9 +1,9 @@
-import {blogsRepositories} from "../repositories/blogs.repositories";
 import {CustomValidator} from "express-validator";
 import { Response, Request } from "express";
 import {  body,  validationResult } from 'express-validator';
 import {NextFunction} from "express";
 import {PasswordRecoveryModel, UserModel, UserNotConfirmationModel} from "../dataBase/db";
+import {blogsRepositories} from "../roots/composition.root";
 
 const findBlogId : CustomValidator = async value =>
 {

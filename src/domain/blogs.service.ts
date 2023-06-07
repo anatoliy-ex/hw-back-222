@@ -8,12 +8,7 @@ import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.p
 
 export class BlogsService {
 
-    private blogsRepositories : BlogsRepositories
-
-    constructor() {
-
-        this.blogsRepositories = new BlogsRepositories()
-    }
+    constructor(protected blogsRepositories : BlogsRepositories) {}
 
     //return all blogs+++
     async allBlogs(pagination: PaginationQueryTypeForBlogs): Promise<OutputType<BlogsTypes[]>> {
@@ -90,5 +85,3 @@ export class BlogsService {
         return await this.blogsRepositories.deleteBlogById(id);
     }
 }
-
-export const blogsService = new BlogsService();
