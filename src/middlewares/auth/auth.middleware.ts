@@ -3,10 +3,10 @@ import {jwtTokenService} from "../../application/jwt.token.service";
 import jwt from "jsonwebtoken";
 import {RateLimitedModel, UserModel} from "../../dataBase/db";
 import {authUsersRepositories} from "../../repositories/auth.users.repositories";
-import {commentRepositories} from "../../repositories/comment.repositories";
 import {settings} from "../../../.env/settings";
 import {RateLimitedTypes} from "../../types/rate.limited.types";
 import {addSeconds} from "date-fns";
+import {commentRepositories} from "../../roots/composition.root";
 
 
 //super admin check

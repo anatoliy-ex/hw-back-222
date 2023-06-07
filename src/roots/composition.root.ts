@@ -33,7 +33,7 @@ const postsRepositories = new  PostsRepositories();
 const postsService = new PostsService(postsRepositories);
 export const postController = new PostsController(postsService, postsRepositories, blogsRepositories);
 
-const commentRepositories = new CommentRepositories();
+export const commentRepositories = new CommentRepositories();
 export const commentController = new CommentsController(commentRepositories);
 
 const securityDevicesRepositories = new SecurityDevicesRepositories()

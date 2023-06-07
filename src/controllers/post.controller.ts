@@ -3,10 +3,9 @@ import {postsRepositories, PostsRepositories} from "../repositories/posts.reposi
 import {BlogsRepositories} from "../repositories/blogs.repositories";
 import {Request, Response} from "express";
 import {getPaginationFromQueryPostsAndComments} from "../pagination.query/post.pagination";
-import {commentRepositories} from "../repositories/comment.repositories";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
-import {blogsRepositories} from "../roots/composition.root";
+import {blogsRepositories, commentRepositories} from "../roots/composition.root";
 
 export class PostsController {
 
