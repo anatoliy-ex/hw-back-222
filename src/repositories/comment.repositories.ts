@@ -95,6 +95,6 @@ export class CommentRepositories {
     async getComment(id: string): Promise<TypeViewCommentModel<TypeCommentatorInfo, TypeLikeAndDislikeInfo> | null>{
         return CommentModel
             .findOne({id: id})
-            .select('-_id -postId ');
+            .select('-_id -postId -__v');
     }
 }
