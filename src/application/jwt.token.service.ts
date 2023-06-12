@@ -4,11 +4,11 @@ import {settings} from "../../.env/settings";
 export class JwtTokenService {
 
     async createAccessTokes(userId: any) {
-        return jwt.sign({userId : userId}, settings.JWT_SECRET, {expiresIn: '10s'});
+        return jwt.sign({userId : userId}, settings.JWT_SECRET, {expiresIn: '420s'});
     }
 
     async createRefreshToken(userId: any, deviceId: any){
-        return  jwt.sign({userId : userId, deviceId: deviceId}, settings.REFRESH_TOKEN_SECRET, {expiresIn: '20s'});
+        return  jwt.sign({userId : userId, deviceId: deviceId}, settings.REFRESH_TOKEN_SECRET, {expiresIn: '540s'});
 
     }
 

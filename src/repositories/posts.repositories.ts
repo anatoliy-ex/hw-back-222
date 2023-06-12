@@ -61,6 +61,7 @@ export class PostsRepositories {
                 myStatus: 'None',
             }
         };
+        console.log(newComment.id)
 
         await CommentModel.insertMany([newComment]);
         return newComment;

@@ -7,14 +7,16 @@ export class CommentRepositories {
     async updateLikeAndDislikeStatus(commentId: string, likeStatus: string) {
 
         const comment = await CommentModel.findOne({id: commentId});
-
         //if like
         if(likeStatus == 'Like') {
 
             if(comment!.likesInfo.myStatus == 'None') {
                 await CommentModel.updateMany({id: commentId}, {
-                    myStatus: likeStatus,
-                    likesCount: + 1})
+                    $set: {
+                        'likesInfo.myStatus': likeStatus,
+                        'likesInfo.likesCount': + 1
+                    }
+                });
                 return;
             }
             else if (comment!.likesInfo.myStatus == 'Like') {
@@ -23,9 +25,13 @@ export class CommentRepositories {
             else if(comment!.likesInfo.myStatus == 'Dislike ') {
 
                 await CommentModel.updateMany({id: commentId}, {
-                    myStatus: likeStatus,
-                    dislikesCount: - 1,
-                    likesCount: + 1})
+
+                    set$: {
+                        'likesInfo.myStatus': likeStatus,
+                        'likesInfo.dislikesCount': - 1,
+                        'likesInfo.likesCount': + 1
+                    }
+                });
                 return;
             }
         }
@@ -35,8 +41,11 @@ export class CommentRepositories {
 
             if(comment!.likesInfo.myStatus == 'None') {
                 await CommentModel.updateMany({id: commentId}, {
-                    myStatus: likeStatus,
-                    dislikesCount: + 1})
+                    $set: {
+                        'likesInfo.myStatus': likeStatus,
+                        'likesInfo.dislikesCount': + 1
+                    }
+                });
                 return;
             }
             else if (comment!.likesInfo.myStatus == 'Dislike') {
@@ -45,9 +54,13 @@ export class CommentRepositories {
             else if(comment!.likesInfo.myStatus == 'Like ') {
 
                 await CommentModel.updateMany({id: commentId}, {
-                    myStatus: likeStatus,
-                    likesCount: - 1,
-                    dislikesCount: + 1})
+
+                    $set: {
+                        'likesInfo.myStatus': likeStatus,
+                        'likesInfo.likesCount': - 1,
+                        'likesInfo.dislikesCount': + 1
+                    }
+                });
                 return;
             }
         }
@@ -60,15 +73,21 @@ export class CommentRepositories {
             }
             else if (comment!.likesInfo.myStatus == 'Dislike') {
                 await CommentModel.updateMany({id: commentId}, {
-                    myStatus: likeStatus,
-                    dislikesCount: - 1})
+                    $set: {
+                        'likesInfo.myStatus': likeStatus,
+                        'likesInfo.dislikesCount': - 1
+                    }
+                });
                 return;
             }
             else if(comment!.likesInfo.myStatus == 'Like ') {
 
                 await CommentModel.updateMany({id: commentId}, {
-                    myStatus: likeStatus,
-                    likesCount: - 1})
+                    $set: {
+                        'likesInfo.myStatus': likeStatus,
+                        'likesInfo.likesCount': - 1
+                    }
+                });
                 return;
             }
         }
@@ -80,7 +99,7 @@ export class CommentRepositories {
         const newComment = await CommentModel.updateOne({id: commentId}, {
             $set: {
                     content: content,
-                }
+            }
         });
         return newComment.matchedCount === 1;
     }
