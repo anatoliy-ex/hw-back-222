@@ -1,20 +1,50 @@
 import {TypeCommentatorInfo, TypeLikeAndDislikeInfo, TypeViewCommentModel} from "../types/comments.types";
-import {CommentModel} from "../dataBase/db";
+import {CommentModel, LikeModelForComment} from "../dataBase/db";
+import {LikeStatusUserForComment} from "../types/like.status.user.for.comment";
 
 export class CommentRepositories {
 
     //like and dislike status
-    async updateLikeAndDislikeStatus(commentId: string, likeStatus: string) {
+    async updateLikeAndDislikeStatus(commentId: string, likeStatus: string, userId: string) {
+
+        const iLike = await LikeModelForComment.findOne({ commentId: commentId})
+
+        if(iLike == null) {
+            const LikeInfo: LikeStatusUserForComment = {
+                commentId: commentId,
+                userStatus: 'None',
+                userId: userId,
+            }
+            await LikeModelForComment.create({...LikeInfo})
+            await CommentModel.updateOne({id: commentId}, {
+                $set:{
+                    'likesInfo.myStatus': LikeInfo.userStatus
+                }
+            })
+        }
+        else {
+            const status = await LikeModelForComment.findOne({commentId: commentId})
+            await CommentModel.updateOne({id: commentId}, {
+                $set:{
+                    'likesInfo.myStatus': status!.userStatus
+                }
+            })
+        }
 
         const comment = await CommentModel.findOne({id: commentId});
+
         //if like
         if(likeStatus == 'Like') {
 
             if(comment!.likesInfo.myStatus == 'None') {
-                await CommentModel.updateMany({id: commentId}, {
+                await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.myStatus': likeStatus,
                         'likesInfo.likesCount': + 1
+                    }
+                });
+                await LikeModelForComment.updateOne({commentId: commentId}, {
+                    $set:{
+                        userStatus: likeStatus
                     }
                 });
                 return;
@@ -24,12 +54,15 @@ export class CommentRepositories {
             }
             else if(comment!.likesInfo.myStatus == 'Dislike') {
 
-                await CommentModel.updateMany({id: commentId}, {
-
+                await CommentModel.updateOne({id: commentId}, {
                     set$: {
-                        'likesInfo.myStatus': likeStatus,
                         'likesInfo.dislikesCount': - 1,
                         'likesInfo.likesCount': + 1
+                    }
+                });
+                await LikeModelForComment.updateOne({commentId: commentId}, {
+                    $set:{
+                        userStatus: likeStatus
                     }
                 });
                 return;
@@ -40,10 +73,14 @@ export class CommentRepositories {
         if(likeStatus == 'Dislike ') {
 
             if(comment!.likesInfo.myStatus == 'None') {
-                await CommentModel.updateMany({id: commentId}, {
+                await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.myStatus': likeStatus,
                         'likesInfo.dislikesCount': + 1
+                    }
+                });
+                await LikeModelForComment.updateOne({commentId: commentId}, {
+                    $set:{
+                        userStatus: likeStatus
                     }
                 });
                 return;
@@ -53,12 +90,15 @@ export class CommentRepositories {
             }
             else if(comment!.likesInfo.myStatus == 'Like') {
 
-                await CommentModel.updateMany({id: commentId}, {
-
+                await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.myStatus': likeStatus,
                         'likesInfo.likesCount': - 1,
                         'likesInfo.dislikesCount': + 1
+                    }
+                });
+                await LikeModelForComment.updateOne({commentId: commentId}, {
+                    $set:{
+                        userStatus: likeStatus
                     }
                 });
                 return;
@@ -72,20 +112,28 @@ export class CommentRepositories {
                 return;
             }
             else if (comment!.likesInfo.myStatus == 'Dislike') {
-                await CommentModel.updateMany({id: commentId}, {
+                await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.myStatus': likeStatus,
                         'likesInfo.dislikesCount': - 1
+                    }
+                });
+                await LikeModelForComment.updateOne({commentId: commentId}, {
+                    $set:{
+                        userStatus: likeStatus
                     }
                 });
                 return;
             }
             else if(comment!.likesInfo.myStatus == 'Like') {
 
-                await CommentModel.updateMany({id: commentId}, {
+                await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.myStatus': likeStatus,
                         'likesInfo.likesCount': - 1
+                    }
+                });
+                await LikeModelForComment.updateOne({commentId: commentId}, {
+                    $set:{
+                        userStatus: likeStatus
                     }
                 });
                 return;

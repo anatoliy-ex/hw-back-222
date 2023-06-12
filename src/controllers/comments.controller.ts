@@ -7,7 +7,8 @@ export class CommentsController {
 
     async LikeAndDislikeStatus (req: Request, res: Response){
 
-        await this.commentRepositories.updateLikeAndDislikeStatus(req.params.commentId,  req.body.likeStatus)
+        const userId = req.user!.id
+        await this.commentRepositories.updateLikeAndDislikeStatus(req.params.commentId,  req.body.likeStatus, userId)
         res.sendStatus(204);
     }
 

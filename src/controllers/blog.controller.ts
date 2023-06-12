@@ -2,7 +2,7 @@ import {BlogsService} from "../domain/blogs.service";
 import {Request, Response} from "express";
 import {
     BlogModel,
-    CommentModel,
+    CommentModel, LikeModelForComment,
     PostModel, RateLimitedModel,
     RefreshTokenSessionModel,
     UserModel,
@@ -26,6 +26,7 @@ export class BlogsController {
         await UserNotConfirmationModel.deleteMany()
         await RefreshTokenSessionModel.deleteMany()
         await RateLimitedModel.deleteMany()
+        await LikeModelForComment.deleteMany()
         res.sendStatus(204);
     }
 
