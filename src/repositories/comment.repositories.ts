@@ -22,7 +22,7 @@ export class CommentRepositories {
             else if (comment!.likesInfo.myStatus == 'Like') {
                 return;
             }
-            else if(comment!.likesInfo.myStatus == 'Dislike ') {
+            else if(comment!.likesInfo.myStatus == 'Dislike') {
 
                 await CommentModel.updateMany({id: commentId}, {
 
@@ -51,7 +51,7 @@ export class CommentRepositories {
             else if (comment!.likesInfo.myStatus == 'Dislike') {
                 return;
             }
-            else if(comment!.likesInfo.myStatus == 'Like ') {
+            else if(comment!.likesInfo.myStatus == 'Like') {
 
                 await CommentModel.updateMany({id: commentId}, {
 
@@ -80,7 +80,7 @@ export class CommentRepositories {
                 });
                 return;
             }
-            else if(comment!.likesInfo.myStatus == 'Like ') {
+            else if(comment!.likesInfo.myStatus == 'Like') {
 
                 await CommentModel.updateMany({id: commentId}, {
                     $set: {
