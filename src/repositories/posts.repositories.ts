@@ -1,7 +1,12 @@
 import { CommentModel, PostModel} from "../dataBase/db";
 import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
-import {TypeCommentatorInfo, TypeGetCommentModel, TypeViewCommentModel} from "../types/comments.types";
+import {
+    TypeCommentatorInfo,
+    TypeGetCommentModel,
+    TypeLikeAndDislikeInfo,
+    TypeViewCommentModel
+} from "../types/comments.types";
 import {UserConfirmTypes} from "../types/userConfirmTypes";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 
@@ -36,7 +41,7 @@ export class PostsRepositories {
     }
 
     //create comment for post
-    async createCommentForPost(postId: string, content: string, user: UserConfirmTypes) : Promise<TypeViewCommentModel<TypeCommentatorInfo>>{
+    async createCommentForPost(postId: string, content: string, user: UserConfirmTypes) : Promise<TypeViewCommentModel<TypeCommentatorInfo, TypeLikeAndDislikeInfo>>{
 
         const now = new Date();
 
@@ -50,6 +55,11 @@ export class PostsRepositories {
                 },
             createdAt: now.toISOString(),
             postId: postId,
+            likesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: 'None',
+            }
         };
 
         await CommentModel.insertMany([newComment]);

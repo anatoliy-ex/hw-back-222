@@ -7,13 +7,21 @@ export type TypeCommentatorInfo = {
     userLogin: string,
 };
 
-export type TypeViewCommentModel<T> = {
+export type TypeViewCommentModel<T, Y> = {
     id: string,
     content: string,
     commentatorInfo: T,
     createdAt: string,
     postId: string,
+    likesInfo: Y
 };
+
+export type TypeLikeAndDislikeInfo = {
+    likesCount: number,
+    dislikesCount: number,
+    myStatus: string,
+};
+
 
 export type TypeGetCommentModel<T> = {
     id: string,

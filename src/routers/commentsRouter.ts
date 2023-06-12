@@ -1,8 +1,15 @@
 import {Router} from "express"
 import {authMiddleware, checkForUser} from "../middlewares/auth/auth.middleware";
-import {contentCommentValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
+import {
+    contentCommentValidator,
+    inputValidationMiddleware,
+    likeStatusValidator
+} from "../middlewares/middleware.validators";
 import {commentController} from "../roots/composition.root";
 export const commentsRouter = Router({});
+
+//like and dislike status
+commentsRouter.put('/:commentId/like-status', authMiddleware, checkForUser, likeStatusValidator, inputValidationMiddleware , commentController.UpdateCommentById.bind(commentController));
 
 //update comment by ID
 commentsRouter.put('/:commentId', authMiddleware, checkForUser, contentCommentValidator, inputValidationMiddleware , commentController.UpdateCommentById.bind(commentController));

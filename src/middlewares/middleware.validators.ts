@@ -111,6 +111,15 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
     }
 };
 
+const likeDislikeNone : CustomValidator = async value =>
+{
+
+    if(value != 'None' || 'Like' || 'Dislike ')
+    {
+        throw new Error('inputModel has incorrect values');
+    }
+};
+
 //for login
 export const loginOrEmailValidator = body('loginOrEmail').isString().trim().notEmpty()
 
@@ -146,6 +155,9 @@ export const contentCommentValidator = body('content').isString().trim().isLengt
 
 //check for exits email validator
 export const existEmailValidator = body('email').custom(emailAlreadyExist)
+
+//for like and dislike status
+export const likeStatusValidator = body('likeStatus').trim().isString().custom(likeDislikeNone)
 
 export const emailAlreadyExistButNotConfirmedValidator = body('email').custom(emailAlreadyExistButNotConfirmed)
 

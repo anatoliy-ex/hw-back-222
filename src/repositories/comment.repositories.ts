@@ -1,7 +1,78 @@
-import {TypeCommentatorInfo, TypeViewCommentModel} from "../types/comments.types";
+import {TypeCommentatorInfo, TypeLikeAndDislikeInfo, TypeViewCommentModel} from "../types/comments.types";
 import {CommentModel} from "../dataBase/db";
 
 export class CommentRepositories {
+
+    //like and dislike status
+    async updateLikeAndDislikeStatus(commentId: string, likeStatus: string) {
+
+        const comment = await CommentModel.findOne({id: commentId});
+
+        //if like
+        if(likeStatus == 'Like') {
+
+            if(comment!.likesInfo.myStatus == 'None') {
+                await CommentModel.updateMany({id: commentId}, {
+                    myStatus: likeStatus,
+                    likesCount: + 1})
+                return;
+            }
+            else if (comment!.likesInfo.myStatus == 'Like') {
+                return;
+            }
+            else if(comment!.likesInfo.myStatus == 'Dislike ') {
+
+                await CommentModel.updateMany({id: commentId}, {
+                    myStatus: likeStatus,
+                    dislikesCount: - 1,
+                    likesCount: + 1})
+                return;
+            }
+        }
+
+        //if dislike
+        if(likeStatus == 'Dislike ') {
+
+            if(comment!.likesInfo.myStatus == 'None') {
+                await CommentModel.updateMany({id: commentId}, {
+                    myStatus: likeStatus,
+                    dislikesCount: + 1})
+                return;
+            }
+            else if (comment!.likesInfo.myStatus == 'Dislike') {
+                return;
+            }
+            else if(comment!.likesInfo.myStatus == 'Like ') {
+
+                await CommentModel.updateMany({id: commentId}, {
+                    myStatus: likeStatus,
+                    likesCount: - 1,
+                    dislikesCount: + 1})
+                return;
+            }
+        }
+
+        //if none
+        if(likeStatus == 'None') {
+
+            if(comment!.likesInfo.myStatus == 'None') {
+                return;
+            }
+            else if (comment!.likesInfo.myStatus == 'Dislike') {
+                await CommentModel.updateMany({id: commentId}, {
+                    myStatus: likeStatus,
+                    dislikesCount: - 1})
+                return;
+            }
+            else if(comment!.likesInfo.myStatus == 'Like ') {
+
+                await CommentModel.updateMany({id: commentId}, {
+                    myStatus: likeStatus,
+                    likesCount: - 1})
+                return;
+            }
+        }
+    }
 
     //update comment by ID
     async updateComment(commentId: string, content: string) : Promise<boolean> {
@@ -21,7 +92,7 @@ export class CommentRepositories {
     }
 
     //get comment by ID
-    async getComment(id: string): Promise<TypeViewCommentModel<TypeCommentatorInfo> | null>{
+    async getComment(id: string): Promise<TypeViewCommentModel<TypeCommentatorInfo, TypeLikeAndDislikeInfo> | null>{
         return CommentModel
             .findOne({id: id})
             .select('-_id -postId ');

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import {TypeCommentatorInfo, TypeViewCommentModel} from "../types/comments.types";
+import {TypeCommentatorInfo, TypeLikeAndDislikeInfo, TypeViewCommentModel} from "../types/comments.types";
 
-export const commentSchema = new mongoose.Schema<TypeViewCommentModel<TypeCommentatorInfo>>({
+export const commentSchema = new mongoose.Schema<TypeViewCommentModel<TypeCommentatorInfo, TypeLikeAndDislikeInfo>>({
     id: {type: String, required: true},
     content: {type: String, required: true},
     commentatorInfo: {
@@ -10,4 +10,9 @@ export const commentSchema = new mongoose.Schema<TypeViewCommentModel<TypeCommen
     },
     createdAt: {type: String, required: true},
     postId: {type: String, required: true},
+    likesInfo: {
+        likesCount: {type: Number, required: true},
+        dislikesCount:  {type: Number, required: true},
+        myStatus: {type: String, required: true},
+    }
 })
