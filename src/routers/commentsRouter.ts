@@ -9,7 +9,7 @@ import {commentController} from "../roots/composition.root";
 export const commentsRouter = Router({});
 
 //like and dislike status
-commentsRouter.put('/:commentId/like-status', authMiddleware, checkForUser, likeStatusValidator, inputValidationMiddleware , commentController.LikeAndDislikeStatus.bind(commentController));
+commentsRouter.put('/:commentId/like-status', authMiddleware, checkForUser, inputValidationMiddleware , commentController.LikeAndDislikeStatus.bind(commentController));
 
 //update comment by ID
 commentsRouter.put('/:commentId', authMiddleware, checkForUser, contentCommentValidator, inputValidationMiddleware , commentController.UpdateCommentById.bind(commentController));
