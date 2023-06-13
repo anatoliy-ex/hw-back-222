@@ -41,7 +41,7 @@ export class CommentsController {
 
         const comment = await this.commentRepositories.getComment(req.params.id);
 
-        if(comment) {
+        if(comment != false) {
             res.status(200).send(comment);
 
         }
