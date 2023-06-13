@@ -36,7 +36,7 @@ export class PostsController {
         if(req.user != null) {
             if(postForComment) {
                 const newComment = await this.postsRepositories.createCommentForPost(req.params.postId, content, req.user);
-                const viewComment = await commentRepositories.getComment(newComment.id);
+                const viewComment = await commentRepositories.getComment(newComment.id, true);
                 res.status(201).send(viewComment);
             }
             else {
