@@ -43,6 +43,7 @@ export class CommentsController {
 
         if(comment) {
             res.status(200).send(comment);
+
         }
         else {
             res.sendStatus(404);
