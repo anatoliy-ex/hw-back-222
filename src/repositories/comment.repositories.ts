@@ -7,7 +7,7 @@ export class CommentRepositories {
     //like and dislike status
     async updateLikeAndDislikeStatus(commentId: string, likeStatus: string, userId: string) {
 
-        const iLike = await LikeModelForComment.findOne({ commentId: commentId})
+        const iLike = await LikeModelForComment.findOne({ commentId: commentId, userId: userId})
 
         if(iLike == null) {
             const LikeInfo: LikeStatusUserForComment = {
@@ -23,13 +23,15 @@ export class CommentRepositories {
             })
         }
         else {
-            const status = await LikeModelForComment.findOne({commentId: commentId})
+            const status = await LikeModelForComment.findOne({commentId: commentId, userId: userId})
             await CommentModel.updateOne({id: commentId}, {
                 $set:{
                     'likesInfo.myStatus': status!.userStatus
                 }
             })
         }
+
+        //console.log(await LikeModelForComment.findOne({commentId: commentId}) + '2222222222')
 
         const comment = await CommentModel.findOne({id: commentId});
 
@@ -39,14 +41,17 @@ export class CommentRepositories {
             if(comment!.likesInfo.myStatus == 'None') {
                 await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.likesCount': + 1
+                        'likesInfo.likesCount': comment!.likesInfo.likesCount + 1,
+                        'likesInfo.myStatus': likeStatus
                     }
                 });
-                await LikeModelForComment.updateOne({commentId: commentId}, {
+                await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
                     $set:{
                         userStatus: likeStatus
                     }
                 });
+                console.log(await LikeModelForComment.findOne({commentId: commentId})+ '121212121212212')
+                console.log(await CommentModel.findOne({id: commentId}));
                 return;
             }
             else if (comment!.likesInfo.myStatus == 'Like') {
@@ -56,11 +61,12 @@ export class CommentRepositories {
 
                 await CommentModel.updateOne({id: commentId}, {
                     set$: {
-                        'likesInfo.dislikesCount': - 1,
-                        'likesInfo.likesCount': + 1
+                        'likesInfo.dislikesCount': comment!.likesInfo.dislikesCount - 1,
+                        'likesInfo.likesCount': comment!.likesInfo.likesCount + 1,
+                        'likesInfo.myStatus': likeStatus
                     }
                 });
-                await LikeModelForComment.updateOne({commentId: commentId}, {
+                await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
                     $set:{
                         userStatus: likeStatus
                     }
@@ -70,15 +76,16 @@ export class CommentRepositories {
         }
 
         //if dislike
-        if(likeStatus == 'Dislike ') {
+        if(likeStatus == 'Dislike') {
 
             if(comment!.likesInfo.myStatus == 'None') {
                 await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.dislikesCount': + 1
+                        'likesInfo.dislikesCount': comment!.likesInfo.dislikesCount + 1,
+                        'likesInfo.myStatus': likeStatus
                     }
                 });
-                await LikeModelForComment.updateOne({commentId: commentId}, {
+                await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
                     $set:{
                         userStatus: likeStatus
                     }
@@ -92,11 +99,12 @@ export class CommentRepositories {
 
                 await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.likesCount': - 1,
-                        'likesInfo.dislikesCount': + 1
+                        'likesInfo.likesCount': comment!.likesInfo.likesCount - 1,
+                        'likesInfo.dislikesCount': comment!.likesInfo.dislikesCount + 1,
+                        'likesInfo.myStatus': likeStatus
                     }
                 });
-                await LikeModelForComment.updateOne({commentId: commentId}, {
+                await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
                     $set:{
                         userStatus: likeStatus
                     }
@@ -114,11 +122,12 @@ export class CommentRepositories {
             else if (comment!.likesInfo.myStatus == 'Dislike') {
                 await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.dislikesCount': - 1
+                        'likesInfo.dislikesCount': comment!.likesInfo.dislikesCount - 1,
+                        'likesInfo.myStatus': likeStatus
                     }
                 });
-                await LikeModelForComment.updateOne({commentId: commentId}, {
-                    $set:{
+                await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
+                    $set: {
                         userStatus: likeStatus
                     }
                 });
@@ -128,11 +137,12 @@ export class CommentRepositories {
 
                 await CommentModel.updateOne({id: commentId}, {
                     $set: {
-                        'likesInfo.likesCount': - 1
+                        'likesInfo.likesCount': comment!.likesInfo.likesCount - 1,
+                        'likesInfo.myStatus': likeStatus
                     }
                 });
-                await LikeModelForComment.updateOne({commentId: commentId}, {
-                    $set:{
+                await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
+                    $set: {
                         userStatus: likeStatus
                     }
                 });
