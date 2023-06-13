@@ -8,11 +8,9 @@ import {RateLimitedTypes} from "../../types/rate.limited.types";
 import {addSeconds} from "date-fns";
 import {commentRepositories} from "../../roots/composition.root";
 
-
 //super admin check
 const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
-
 
 //check token
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -75,6 +73,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
     }
     return next()
 }
+
 //check if try edit the comment that
 export const checkForUser = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -91,8 +90,6 @@ export const checkForUser = async (req: Request, res: Response, next: NextFuncti
         res.sendStatus(403)
     }
 }
-
-//
 
 //rate limited
 export const rateLimitedMiddleware = async (req: Request, res: Response, next: NextFunction) => {
