@@ -168,33 +168,10 @@ export class CommentRepositories {
     }
 
     //get comment by ID
-    async getComment(id: string, auth: boolean) {
+    async getComment(id: string) {
 
-        if(auth) {
-            return CommentModel
-                .findOne({id: id})
-                .select('-_id -postId -__v');
-        }
-        else {
-            const comment = await CommentModel
-                .findOne({id: id})
-                .select('-_id -postId -__v');
-
-            return {
-                id: comment!.id,
-                content: comment!.content,
-                commentatorInfo: {
-                    userId: comment!.commentatorInfo.userId,
-                    userLogin: comment!.commentatorInfo.userLogin,
-                },
-                createdAt: comment!.createdAt,
-                postId: comment!.postId,
-                likesInfo: {
-                    likesCount: comment!.likesInfo.likesCount,
-                    dislikesCount: comment!.likesInfo.dislikesCount,
-                    myStatus: 'None',
-                }
-            }
-        }
+        return CommentModel
+            .findOne({id: id})
+            .select('-_id -postId -__v');
     }
 }

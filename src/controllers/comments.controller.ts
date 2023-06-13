@@ -41,11 +41,11 @@ export class CommentsController {
 
         if(!req.headers.authorization)
         {
-            const commentWithNoneStatus = await this.commentRepositories.getComment(req.params.id, false);
+            const commentWithNoneStatus = await this.commentRepositories.getComment(req.params.id);
             res.status(200).send(commentWithNoneStatus)
         }
 
-        const comment = await this.commentRepositories.getComment(req.params.id, true);
+        const comment = await this.commentRepositories.getComment(req.params.id);
 
         if(comment) {
             res.status(200).send(comment);
