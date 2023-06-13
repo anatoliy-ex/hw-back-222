@@ -1,5 +1,6 @@
 import {CommentRepositories} from "../repositories/comment.repositories";
 import {Request, Response} from "express";
+import {CommentModel} from "../dataBase/db";
 
 export class CommentsController {
 
@@ -8,6 +9,13 @@ export class CommentsController {
     async LikeAndDislikeStatus (req: Request, res: Response){
 
         const userId = req.user!.id
+        const searchComment = await this.commentRepositories.getComment(req.params.commentId)
+
+        if(searchComment == false) {
+
+            res.sendStatus(404);
+        }
+
         await this.commentRepositories.updateLikeAndDislikeStatus(req.params.commentId,  req.body.likeStatus, userId)
         res.sendStatus(204);
     }
