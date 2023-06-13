@@ -113,7 +113,8 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
 
 const likeDislikeNone : CustomValidator = async value =>
 {
-    if(value != 'None' || 'Like' || 'Dislike')
+    console.log(value)
+    if(value != "None" && value != "Like" &&  value &&  "Dislike")
     {
         throw new Error('inputModel has incorrect values');
     }
