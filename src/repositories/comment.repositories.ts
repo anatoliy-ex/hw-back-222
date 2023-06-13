@@ -1,4 +1,3 @@
-import {TypeCommentatorInfo, TypeLikeAndDislikeInfo, TypeViewCommentModel} from "../types/comments.types";
 import {CommentModel, LikeModelForComment} from "../dataBase/db";
 import {LikeStatusUserForComment} from "../types/like.status.user.for.comment";
 
@@ -169,9 +168,33 @@ export class CommentRepositories {
     }
 
     //get comment by ID
-    async getComment(id: string): Promise<TypeViewCommentModel<TypeCommentatorInfo, TypeLikeAndDislikeInfo> | null>{
-        return CommentModel
-            .findOne({id: id})
-            .select('-_id -postId -__v');
+    async getComment(id: string, auth: boolean) {
+
+        if(auth) {
+            return CommentModel
+                .findOne({id: id})
+                .select('-_id -postId -__v');
+        }
+        else {
+            const comment = await CommentModel
+                .findOne({id: id})
+                .select('-_id -postId -__v');
+
+            return {
+                id: comment!.id,
+                content: comment!.content,
+                commentatorInfo: {
+                    userId: comment!.commentatorInfo.userId,
+                    userLogin: comment!.commentatorInfo.userLogin,
+                },
+                createdAt: comment!.createdAt,
+                postId: comment!.postId,
+                likesInfo: {
+                    likesCount: comment!.likesInfo.likesCount,
+                    dislikesCount: comment!.likesInfo.dislikesCount,
+                    myStatus: 'None',
+                }
+            }
+        }
     }
 }

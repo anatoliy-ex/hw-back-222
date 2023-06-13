@@ -39,7 +39,13 @@ export class CommentsController {
 
     async GetCommentById (req: Request, res: Response){
 
-        const comment = await this.commentRepositories.getComment(req.params.id);
+        if(!req.headers.authorization)
+        {
+            const commentWithNoneStatus = await this.commentRepositories.getComment(req.params.id, false);
+            res.status(200).send(commentWithNoneStatus)
+        }
+
+        const comment = await this.commentRepositories.getComment(req.params.id, true);
 
         if(comment) {
             res.status(200).send(comment);
