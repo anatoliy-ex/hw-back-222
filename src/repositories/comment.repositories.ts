@@ -168,9 +168,11 @@ export class CommentRepositories {
     }
 
     //get comment by ID
-    async getComment(id: string) {
-        return CommentModel
+    async getComment(id: string) : Promise<boolean>{
+        const comment = await CommentModel
             .findOne({id: id})
             .select('-_id -postId -__v');
+
+        return !!comment;
     }
 }
