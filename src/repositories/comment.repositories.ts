@@ -1,6 +1,7 @@
 import {CommentModel, LikeModelForComment} from "../dataBase/db";
 import {LikeStatusUserForComment} from "../types/like.status.user.for.comment";
 import {LikeStatusesEnum} from "../scheme/like.status.user.for.comment.shame";
+import {CommentsController} from "../controllers/comments.controller";
 
 export class CommentRepositories {
 
@@ -14,12 +15,17 @@ export class CommentRepositories {
         const likesCount = await LikeModelForComment.countDocuments({commentId, userStatus: LikeStatusesEnum.Like})
         const dislikesCount = await LikeModelForComment.countDocuments({commentId, userStatus: LikeStatusesEnum.Dislike})
 
+        const comment = await CommentModel.findOne({id: commentId})
+        const postId = comment!.postId
+        const allCommentsForPost = await CommentModel.find({postId: postId})
+
         return CommentModel.updateOne({id: commentId}, {
             $set: {
                 'likesInfo.likesCount':likesCount,
                 'likesInfo.dislikesCount': dislikesCount
             }
         })
+
         // const iLike = await LikeModelForComment.findOne({ commentId: commentId, userId: userId})
         //
         // if(iLike == null) {

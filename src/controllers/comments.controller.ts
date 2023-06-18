@@ -16,7 +16,7 @@ export class CommentsController {
 
         if(searchComment == false) {
 
-            res.sendStatus(404);
+            return res.sendStatus(404);
         }
 
         await this.commentRepositories.updateLikeAndDislikeStatus(req.params.commentId,  req.body.likeStatus, userId)
