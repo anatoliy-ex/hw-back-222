@@ -44,6 +44,7 @@ export class PostsRepositories {
     //create comment for post
     async createCommentForPost(postId: string, content: string, user: UserConfirmTypes) : Promise<TypeViewCommentModel<TypeCommentatorInfo, TypeLikeAndDislikeInfo>>{
 
+
         const now = new Date();
 
         const newComment = {
