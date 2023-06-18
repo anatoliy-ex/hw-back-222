@@ -1,6 +1,9 @@
 import {CommentRepositories} from "../repositories/comment.repositories";
 import {Request, Response} from "express";
 import {CommentModel} from "../dataBase/db";
+import jwt from "jsonwebtoken";
+import {settings} from "../../.env/settings";
+import {authUsersRepositories} from "../repositories/auth.users.repositories";
 
 export class CommentsController {
 
@@ -46,8 +49,27 @@ export class CommentsController {
     }
 
     async GetCommentById (req: Request, res: Response){
+        let userId = null
+        if (!req.headers.authorization) userId = null
 
-        const comment = await this.commentRepositories.getComment(req.params.id);
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) userId = null
+        try {
+            const IsDecode: any = jwt.verify(token!,  settings.JWT_SECRET)
+
+            if (IsDecode) {
+                const user = await authUsersRepositories.getUserWithAccessToken(token!)
+
+                if (user === null) {
+                    userId = null
+                } else {
+                    userId = user.id
+                }
+            }
+        } catch (e) {
+            userId = null
+        }
+        const comment = await this.commentRepositories.getComment(req.params.id, userId);
 
         if(comment != false) {
             res.status(200).send(comment);
