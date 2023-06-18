@@ -9,6 +9,7 @@ import {
 } from "../types/comments.types";
 import {UserConfirmTypes} from "../types/userConfirmTypes";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
+import {LikeStatusesEnum} from "../scheme/like.status.user.for.comment.shame";
 
 export class PostsRepositories {
 
@@ -58,7 +59,7 @@ export class PostsRepositories {
             likesInfo: {
                 likesCount: 0,
                 dislikesCount: 0,
-                myStatus: 'None',
+                myStatus: LikeStatusesEnum.None,
             }
         };
         console.log(newComment.id)
