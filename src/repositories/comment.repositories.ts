@@ -1,7 +1,5 @@
 import {CommentModel, LikeModelForComment} from "../dataBase/db";
-import {LikeStatusUserForComment} from "../types/like.status.user.for.comment";
 import {LikeStatusesEnum} from "../scheme/like.status.user.for.comment.shame";
-import {CommentsController} from "../controllers/comments.controller";
 
 export class CommentRepositories {
 

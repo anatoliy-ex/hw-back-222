@@ -19,7 +19,7 @@ export class PostsRepositories {
         const filter = {postId: postId}
         console.log(postId)
 
-        const comments: TypeViewCommentModel<TypeCommentatorInfo, TypeLikeAndDislikeInfo> = await CommentModel
+        const comments: TypeViewCommentModel<TypeCommentatorInfo, TypeLikeAndDislikeInfo>[] = await CommentModel
             .find(filter, {_id: 0, __v: 0, postId: 0})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
@@ -41,15 +41,21 @@ export class PostsRepositories {
             }
         }
         else {
+            const commentsWithStatuses = await Promise.all(comments.map(async c => {
+                const findUser = await LikeModelForComment.findOne({userId: userId}, {_id: 0, userStatus: 1})
+                if(findUser) {
+                    c.likesInfo.myStatus = findUser.userStatus
+                    return c
+                }
+                return c
+            }))
 
-            const findUser = await LikeModelForComment.findOne({userId: userId}, {_id: 0, userStatus: 1})
-            comments.likesInfo.myStatus = findUser!.userStatus
             return {
                 page: pagination.pageNumber,
                 pagesCount: pagesCount === 0 ? 1 : pagesCount,
                 pageSize: pagination.pageSize,
                 totalCount: countOfComments,
-                items: comments,
+                items: commentsWithStatuses,
             }
         }
     }
