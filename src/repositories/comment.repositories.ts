@@ -13,13 +13,9 @@ export class CommentRepositories {
         const likesCount = await LikeModelForComment.countDocuments({commentId, userStatus: LikeStatusesEnum.Like})
         const dislikesCount = await LikeModelForComment.countDocuments({commentId, userStatus: LikeStatusesEnum.Dislike})
 
-        const comment = await CommentModel.findOne({id: commentId})
-        const postId = comment!.postId
-        const allCommentsForPost = await CommentModel.find({postId: postId})
-
         return CommentModel.updateOne({id: commentId}, {
             $set: {
-                'likesInfo.likesCount':likesCount,
+                'likesInfo.likesCount': likesCount,
                 'likesInfo.dislikesCount': dislikesCount
             }
         })

@@ -14,7 +14,7 @@ import {LikeStatusesEnum} from "../scheme/like.status.user.for.comment.shame";
 export class PostsRepositories {
 
     //get comments for post
-    async getCommentsForPost(pagination: PaginationQueryTypeForPostsAndComments, postId: string, userId: string | null) {
+    async getCommentsForPost(pagination: PaginationQueryTypeForPostsAndComments, postId: string, userId?: string | null) {
 
         const filter = {postId: postId}
         console.log(postId)
@@ -31,7 +31,7 @@ export class PostsRepositories {
         const countOfComments = await CommentModel.countDocuments(filter);
         const pagesCount = Math.ceil(countOfComments / pagination.pageSize);
 
-        if(userId == null) {
+        if (userId == null) {
             return {
                 page: pagination.pageNumber,
                 pagesCount: pagesCount === 0 ? 1 : pagesCount,
@@ -39,11 +39,13 @@ export class PostsRepositories {
                 totalCount: countOfComments,
                 items: comments,
             }
-        }
-        else {
+        } else {
             const commentsWithStatuses = await Promise.all(comments.map(async c => {
-                const findUser = await LikeModelForComment.findOne({id: c.id, userId: userId}, {_id: 0, userStatus: 1})
-                if(findUser) {
+                const findUser = await LikeModelForComment.findOne({commentId: c.id, userId: userId}, {
+                    _id: 0,
+                    userStatus: 1
+                })
+                if (findUser) {
                     c.likesInfo.myStatus = findUser.userStatus
                     return c
                 }
