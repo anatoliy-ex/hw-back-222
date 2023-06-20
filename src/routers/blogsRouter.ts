@@ -1,8 +1,12 @@
 import {Router} from "express"
-export const blogsRouter = Router({});
 import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from "../middlewares/middleware.validators";
 import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
-import {blogController} from "../roots/composition.root";
+import {container} from "../roots/composition.root";
+import {BlogsController} from "../controllers/blog.controller";
+
+export const blogsRouter = Router({});
+
+const blogController = container.resolve(BlogsController)
 
 
 //delete all

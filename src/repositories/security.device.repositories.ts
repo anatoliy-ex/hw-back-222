@@ -1,5 +1,7 @@
 import { RefreshTokenSessionModel} from "../dataBase/db";
+import {injectable} from "inversify";
 
+@injectable()
 export class SecurityDevicesRepositories {
 
     //get information  about all sessions

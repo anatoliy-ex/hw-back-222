@@ -1,10 +1,13 @@
 import {CommentModel, LikeModelForComment} from "../dataBase/db";
 import {LikeStatusesEnum} from "../scheme/like.status.user.for.comment.shame";
+import {injectable} from "inversify";
 
+@injectable()
 export class CommentRepositories {
 
     //like and dislike status
     async updateLikeAndDislikeStatus(commentId: string, likeStatus: LikeStatusesEnum, userId: string) {
+
         await LikeModelForComment.updateOne(
             {commentId, userId},
             {$set: {userStatus: likeStatus}},
@@ -19,148 +22,6 @@ export class CommentRepositories {
                 'likesInfo.dislikesCount': dislikesCount
             }
         })
-
-        // const iLike = await LikeModelForComment.findOne({ commentId: commentId, userId: userId})
-        //
-        // if(iLike == null) {
-        //     const LikeInfo: LikeStatusUserForComment = {
-        //         commentId: commentId,
-        //         userStatus: 'None',
-        //         userId: userId,
-        //     }
-        //     await LikeModelForComment.create({...LikeInfo})
-        //     await CommentModel.updateOne({id: commentId}, {
-        //         $set:{
-        //             'likesInfo.myStatus': 'None'
-        //         }
-        //     })
-        // }
-        // else {
-        //     const status = await LikeModelForComment.findOne({commentId: commentId, userId: userId})
-        //     console.log(status!.userStatus + '######')
-        //     await CommentModel.updateOne({id: commentId}, {
-        //         $set:{
-        //             'likesInfo.myStatus': status!.userStatus
-        //         }
-        //     })
-        //     const status2 = await LikeModelForComment.findOne({commentId: commentId, userId: userId})
-        //     console.log(status2!.userStatus + '@@@@@')
-        // }
-        //
-        // const comment = await CommentModel.findOne({id: commentId});
-        //
-        // //if like
-        // if(likeStatus == 'Like') {
-        //
-        //     if(comment!.likesInfo.myStatus == 'None') {
-        //         await CommentModel.updateMany({id: commentId}, {
-        //             $set: {
-        //                 'likesInfo.likesCount': (comment!.likesInfo.likesCount + 1),
-        //                 'likesInfo.myStatus': likeStatus
-        //             }
-        //         });
-        //         await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
-        //             $set:{
-        //                 userStatus: likeStatus
-        //             }
-        //         });
-        //         return;
-        //     }
-        //     else if (comment!.likesInfo.myStatus == 'Like') {
-        //         return;
-        //     }
-        //     else if(comment!.likesInfo.myStatus == 'Dislike') {
-        //
-        //         await CommentModel.updateMany({id: commentId}, {
-        //             $set: {
-        //                 'likesInfo.dislikesCount': (comment!.likesInfo.dislikesCount - 1),
-        //                 'likesInfo.likesCount': (comment!.likesInfo.likesCount + 1),
-        //                 'likesInfo.myStatus': likeStatus
-        //             }
-        //         });
-        //         await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
-        //             $set:{
-        //                 userStatus: likeStatus
-        //             }
-        //         });
-        //         return;
-        //     }
-        // }
-        //
-        // //if dislike
-        // if(likeStatus == 'Dislike') {
-        //
-        //     if(comment!.likesInfo.myStatus == 'None') {
-        //         await CommentModel.updateMany({id: commentId}, {
-        //             $set: {
-        //                 'likesInfo.dislikesCount': (comment!.likesInfo.dislikesCount + 1),
-        //                 'likesInfo.myStatus': likeStatus
-        //             }
-        //         });
-        //         await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
-        //             $set:{
-        //                 userStatus: likeStatus
-        //             }
-        //         });
-        //         return;
-        //     }
-        //     else if (comment!.likesInfo.myStatus == 'Dislike') {
-        //         return;
-        //     }
-        //     else if(comment!.likesInfo.myStatus == 'Like') {
-        //
-        //         await CommentModel.updateMany({id: commentId}, {
-        //             $set: {
-        //                 'likesInfo.likesCount': (comment!.likesInfo.likesCount - 1),
-        //                 'likesInfo.dislikesCount': (comment!.likesInfo.dislikesCount + 1),
-        //                 'likesInfo.myStatus': likeStatus
-        //             }
-        //         });
-        //         await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
-        //             $set:{
-        //                 userStatus: likeStatus
-        //             }
-        //         });
-        //         return;
-        //     }
-        // }
-        //
-        // //if none
-        // if(likeStatus == 'None') {
-        //
-        //     if(comment!.likesInfo.myStatus == 'None') {
-        //         return;
-        //     }
-        //     else if (comment!.likesInfo.myStatus == 'Dislike') {
-        //         await CommentModel.updateMany({id: commentId}, {
-        //             $set: {
-        //                 'likesInfo.dislikesCount': (comment!.likesInfo.dislikesCount - 1),
-        //                 'likesInfo.myStatus': likeStatus
-        //             }
-        //         });
-        //         await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
-        //             $set: {
-        //                 userStatus: likeStatus
-        //             }
-        //         });
-        //         return;
-        //     }
-        //     else if(comment!.likesInfo.myStatus == 'Like') {
-        //
-        //         await CommentModel.updateMany({id: commentId}, {
-        //             $set: {
-        //                 'likesInfo.likesCount': (comment!.likesInfo.likesCount - 1),
-        //                 'likesInfo.myStatus': likeStatus
-        //             }
-        //         });
-        //         await LikeModelForComment.updateOne({commentId: commentId, userId: userId}, {
-        //             $set: {
-        //                 userStatus: likeStatus
-        //             }
-        //         });
-        //         return;
-        //     }
-        // }
     }
 
     //update comment by ID

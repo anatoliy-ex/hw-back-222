@@ -1,6 +1,9 @@
 import {Router} from "express"
 import {refreshAuthMiddleware} from "../middlewares/auth/auth.middleware";
-import {securityDevicesController} from "../roots/composition.root";
+import {container} from "../roots/composition.root";
+import {SecurityDeviceController} from "../controllers/security.devices.controller";
+
+const securityDevicesController = container.resolve(SecurityDeviceController)
 
 export const securityDevicesRouter = Router({});
 

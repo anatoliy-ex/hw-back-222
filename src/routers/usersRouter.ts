@@ -1,9 +1,11 @@
 import {Router} from "express"
 import {createUsersValidator, inputValidationMiddleware} from "../middlewares/middleware.validators";
 import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
-import {userController} from "../roots/composition.root";
+import {container} from "../roots/composition.root";
+import {UserController} from "../controllers/user.controller";
 
 export const usersRouter = Router({});
+const userController = container.resolve(UserController)
 
 
 //get all user

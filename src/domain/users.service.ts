@@ -3,7 +3,9 @@ import {InputUserType, UserConfirmTypes, UserViewType} from "../types/userConfir
 import * as bcrypt from "bcrypt";
 import {PaginationQueryTypeForUsers} from "../pagination.query/user.pagination";
 import {UsersRepositories} from "../repositories/users.repositories";
+import {injectable} from "inversify";
 
+@injectable()
 export class UsersService {
 
     constructor(protected usersRepositories : UsersRepositories) {}

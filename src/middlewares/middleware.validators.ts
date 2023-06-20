@@ -1,9 +1,13 @@
+import "reflect-metadata"
 import {CustomValidator} from "express-validator";
 import { Response, Request } from "express";
 import {  body,  validationResult } from 'express-validator';
 import {NextFunction} from "express";
 import {PasswordRecoveryModel, UserModel, UserNotConfirmationModel} from "../dataBase/db";
-import {blogsRepositories} from "../roots/composition.root";
+import {BlogsRepositories} from "../repositories/blogs.repositories";
+import {container} from "../roots/composition.root";
+
+const blogsRepositories = container.resolve(BlogsRepositories)
 
 const findBlogId : CustomValidator = async value =>
 {

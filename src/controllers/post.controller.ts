@@ -5,14 +5,17 @@ import {Request, Response} from "express";
 import {getPaginationFromQueryPostsAndComments} from "../pagination.query/post.pagination";
 import {BlogsTypes} from "../types/blogs.types";
 import {PostsTypes} from "../types/posts.types";
-import {blogsRepositories, commentRepositories} from "../roots/composition.root";
 import jwt from "jsonwebtoken";
 import {settings} from "../../.env/settings";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
+import {injectable} from "inversify";
+import {CommentRepositories} from "../repositories/comment.repositories";
 
+@injectable()
 export class PostsController {
 
     constructor(protected postsService: PostsService,
+                protected commentRepositories: CommentRepositories,
                 protected postsRepositories: PostsRepositories,
                 protected blogsRepositories: BlogsRepositories) {
     }
@@ -60,7 +63,7 @@ export class PostsController {
         if (req.user != null) {
             if (postForComment) {
                 const newComment = await this.postsRepositories.createCommentForPost(req.params.postId, content, req.user);
-                const viewComment = await commentRepositories.getComment(newComment.id);
+                const viewComment = await this.commentRepositories.getComment(newComment.id);
                 res.status(201).send(viewComment);
             } else {
                 res.sendStatus(404);
@@ -78,7 +81,7 @@ export class PostsController {
     }
 
     async CreateNewPost(req: Request, res: Response) {
-        const foundBlog: BlogsTypes | null = await blogsRepositories.getBlogById(req.body.blogId);
+        const foundBlog: BlogsTypes | null = await this.blogsRepositories.getBlogById(req.body.blogId);
 
         if (!foundBlog) {
             res.sendStatus(404);

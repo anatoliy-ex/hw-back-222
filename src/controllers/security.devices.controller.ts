@@ -2,7 +2,9 @@ import {JwtTokenService} from "../application/jwt.token.service";
 import {SecurityDevicesRepositories} from "../repositories/security.device.repositories";
 import {Request, Response} from "express";
 import {RefreshTokenSessionModel} from "../dataBase/db";
+import {injectable} from "inversify";
 
+@injectable()
 export class  SecurityDeviceController {
 
     constructor(protected securityDevicesRepositories : SecurityDevicesRepositories,

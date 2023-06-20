@@ -2,7 +2,9 @@ import {PostsTypes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {PostsRepositories, postsRepositories} from "../repositories/posts.repositories";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
+import {injectable} from "inversify";
 
+@injectable()
 export class PostsService {
 
     constructor(protected postsRepositories : PostsRepositories) {}

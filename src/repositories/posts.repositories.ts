@@ -10,7 +10,9 @@ import {
 import {UserConfirmTypes} from "../types/userConfirmTypes";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 import {LikeStatusesEnum} from "../scheme/like.status.user.for.comment.shame";
+import {injectable} from "inversify";
 
+@injectable()
 export class PostsRepositories {
 
     //get comments for post
@@ -41,10 +43,8 @@ export class PostsRepositories {
             }
         } else {
             const commentsWithStatuses = await Promise.all(comments.map(async c => {
-                const findUser = await LikeModelForComment.findOne({commentId: c.id, userId: userId}, {
-                    _id: 0,
-                    userStatus: 1
-                })
+                const findUser = await LikeModelForComment.findOne({commentId: c.id, userId: userId}, {_id: 0, userStatus: 1})
+
                 if (findUser) {
                     c.likesInfo.myStatus = findUser.userStatus
                     return c

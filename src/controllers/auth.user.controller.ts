@@ -4,7 +4,9 @@ import {JwtTokenService} from "../application/jwt.token.service";
 import {Request, Response} from "express";
 import {randomUUID} from "crypto";
 import {RefreshTokenSessionModel} from "../dataBase/db";
+import {injectable} from "inversify";
 
+@injectable()
 export class AuthUsersController {
 
 

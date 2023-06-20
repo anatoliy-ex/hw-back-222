@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import {NextFunction, Request, Response} from "express";
 import {jwtTokenService} from "../../application/jwt.token.service";
 import jwt from "jsonwebtoken";
@@ -6,12 +7,15 @@ import {authUsersRepositories} from "../../repositories/auth.users.repositories"
 import {settings} from "../../../.env/settings";
 import {RateLimitedTypes} from "../../types/rate.limited.types";
 import {addSeconds} from "date-fns";
-import {commentRepositories} from "../../roots/composition.root";
+import {CommentRepositories} from "../../repositories/comment.repositories";
+import {injectable} from "inversify";
+import {container} from "../../roots/composition.root";
 
 //super admin check
 const expressBasicAuth = require('express-basic-auth');
 export const adminStatusAuth = expressBasicAuth({users: {'admin': 'qwerty'}});
 
+const commentRepositories = container.resolve(CommentRepositories)
 //check token
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -74,7 +78,7 @@ export const refreshAuthMiddleware = async (req: Request, res: Response, next: N
     return next()
 }
 
-//check if try edit the comment that
+//check if try edit the comment that()
 export const checkForUser = async (req: Request, res: Response, next: NextFunction) => {
 
     const token: string = req.headers.authorization!.split(" ")[1]

@@ -12,7 +12,9 @@ import {getPaginationFromQueryBlogs} from "../pagination.query/blog.pagination";
 import {BlogsTypes} from "../types/blogs.types";
 import {getPaginationFromQueryPostsAndComments} from "../pagination.query/post.pagination";
 import {PostsTypes} from "../types/posts.types";
+import {injectable} from "inversify";
 
+@injectable()
 export class BlogsController {
 
     constructor(protected blogsService : BlogsService) {}

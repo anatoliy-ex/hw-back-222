@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import {settings} from "../../.env/settings";
+import {injectable} from "inversify";
 
+@injectable()
 export class JwtTokenService {
 
     async createAccessTokes(userId: any) {

@@ -5,8 +5,10 @@ import {
     createPostValidator,
     inputValidationMiddleware} from "../middlewares/middleware.validators";
 import {adminStatusAuth, authMiddleware} from "../middlewares/auth/auth.middleware";
-import {postController} from "../roots/composition.root";
+import {container} from "../roots/composition.root";
+import {PostsController} from "../controllers/post.controller";
 
+const postController = container.resolve(PostsController)
 //get comment for post
 postsRouter.get('/:postId/comments', postController.GetCommentsForPost.bind(postController));
 

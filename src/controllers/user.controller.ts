@@ -1,7 +1,9 @@
 import {UsersService} from "../domain/users.service";
 import {Request, Response} from "express";
 import {getPaginationFromQueryUsers} from "../pagination.query/user.pagination";
+import {injectable} from "inversify";
 
+@injectable()
 export class UserController {
 
     constructor(protected usersService: UsersService) {}

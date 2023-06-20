@@ -3,7 +3,9 @@ import {AuthUsersRepositories, authUsersRepositories} from "../repositories/auth
 import {JwtTokenService, jwtTokenService} from "../application/jwt.token.service";
 import {RefreshTokenSessionsTypes} from "../types/refreshTokenSessionsTypes";
 import {RefreshTokenSessionModel} from "../dataBase/db";
+import {injectable} from "inversify";
 
+@injectable()
 export class AuthUsersService {
 
     private authUsersRepositories : AuthUsersRepositories

@@ -5,7 +5,9 @@ import {OutputType} from "../types/output.type";
 import {BlogsRepositories} from "../repositories/blogs.repositories";
 import {PaginationQueryTypeForBlogs} from "../pagination.query/blog.pagination";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
+import {injectable} from "inversify";
 
+@injectable()
 export class BlogsService {
 
     constructor(protected blogsRepositories : BlogsRepositories) {}

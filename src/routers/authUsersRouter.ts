@@ -10,10 +10,13 @@ import {
     recoveryPasswordValidator,
     passwordValidator,
     recoveryCodeValidator,
-    recoveryEmailValidator} from "../middlewares/middleware.validators";
-import {authUserController} from "../roots/composition.root";
+    recoveryEmailValidator} from "../middlewares/middleware.validators";;
+import {container} from "../roots/composition.root";
+import {AuthUsersController} from "../controllers/auth.user.controller";
 
 export const authUsersRouter = Router({});
+
+const authUserController = container.resolve(AuthUsersController)
 
 //login user
 authUsersRouter.post('/login', rateLimitedMiddleware, loginOrEmailValidator, passwordValidator, inputValidationMiddleware, authUserController.LoginUser.bind(authUserController));

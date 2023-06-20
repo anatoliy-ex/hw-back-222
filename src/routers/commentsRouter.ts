@@ -5,8 +5,11 @@ import {
     inputValidationMiddleware,
     likeStatusValidator
 } from "../middlewares/middleware.validators";
-import {commentController} from "../roots/composition.root";
+import {container} from "../roots/composition.root";
+import {CommentsController} from "../controllers/comments.controller";
 export const commentsRouter = Router({});
+
+const commentController = container.resolve(CommentsController)
 
 //like and dislike status
 commentsRouter.put('/:commentId/like-status', authMiddleware, likeStatusValidator, inputValidationMiddleware , commentController.LikeAndDislikeStatus.bind(commentController));

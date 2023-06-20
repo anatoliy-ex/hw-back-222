@@ -2,7 +2,9 @@ import {OutputType} from "../types/output.type";
 import { UserConfirmTypes, UserViewType} from "../types/userConfirmTypes";
 import {UserModel} from "../dataBase/db";
 import {PaginationQueryTypeForUsers} from "../pagination.query/user.pagination";
+import {injectable} from "inversify";
 
+@injectable()
 export class UsersRepositories {
 
     //return all users

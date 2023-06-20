@@ -4,7 +4,9 @@ import {CommentModel} from "../dataBase/db";
 import jwt from "jsonwebtoken";
 import {settings} from "../../.env/settings";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
+import {injectable} from "inversify";
 
+@injectable()
 export class CommentsController {
 
     constructor(protected commentRepositories : CommentRepositories) {}

@@ -6,7 +6,9 @@ import {InputUserType, UserConfirmTypes, UserIsNotConfirmTypes} from "../types/u
 import nodemailer from 'nodemailer'
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
+import {injectable} from "inversify";
 
+@injectable()
 export class AuthUsersRepositories {
 
     private jwtTokenService : JwtTokenService
