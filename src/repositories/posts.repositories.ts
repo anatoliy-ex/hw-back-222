@@ -127,23 +127,11 @@ export class PostsRepositories {
     }
 
     //create new post
-    async createNewPost(newPost: any) : Promise<ViewTypePost>{
+    async createNewPost(newPost: any) {
         await PostModel.create({...newPost})
-        return {
-            id: newPost.id,
-            title: newPost.title,
-            shortDescription: newPost.shortDescription,
-            content: newPost.content,
-            blogId: newPost.blogId,
-            blogName: newPost.blogName,
-            createdAt: newPost.createdAt,
-            extendedLikesInfo: {
-                likesCount: newPost.extendedLikesInfo.likesCount,
-                dislikesCount: newPost.extendedLikesInfo.dislikesCount,
-                myStatus: newPost.extendedLikesInfo.myStatus,
-                newestLikes: []
-            }
-        }
+        return PostModel
+            .findOne({id: newPost.id})
+            .select('-__v -_id -extendedLikesInfo.newestLikes.addedAt -extendedLikesInfo.newestLikes.userId -extendedLikesInfo.newestLikes.login ')
     }
 
     //get post by ID

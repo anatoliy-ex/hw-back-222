@@ -33,7 +33,13 @@ export class PostsService {
                     likesCount: 0,
                     dislikesCount: 0,
                     myStatus: LikeStatusesEnum.None,
-                    newestLikes: []
+                    newestLikes: {
+                        addedAt: " ",
+                        userId: " ",
+                        login: " ",
+                    }
+
+
                 }
             };
 
