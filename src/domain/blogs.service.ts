@@ -1,11 +1,12 @@
 import {PostModel,} from "../dataBase/db";
 import {BlogsTypes} from "../types/blogs.types";
-import {PostsTypes} from "../types/posts.types";
+import {PostsTypes, UserLikes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {BlogsRepositories} from "../repositories/blogs.repositories";
 import {PaginationQueryTypeForBlogs} from "../pagination.query/blog.pagination";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 import {injectable} from "inversify";
+import {LikeStatusesEnum} from "../scheme/like.status.user.for.comment.shame";
 
 @injectable()
 export class BlogsService {
@@ -36,7 +37,7 @@ export class BlogsService {
     }
 
     //get posts for specified blog
-    async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<OutputType<PostsTypes[]>> {
+    async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<OutputType<PostsTypes<UserLikes>[]>> {
 
         const posts = await this.blogsRepositories.getPostsForBlog(pagination, blogId)
         const countOfPosts = await PostModel.countDocuments({blogId});
@@ -52,18 +53,28 @@ export class BlogsService {
     }
 
     //create new post for specific blog+++
-    async createPostForSpecificBlog(post: PostsTypes, blogId: string, blogName: string): Promise<PostsTypes> {
+    async createPostForSpecificBlog(post: PostsTypes<UserLikes>, blogId: string, blogName: string): Promise<PostsTypes<UserLikes>> {
         const now = new Date();
 
         const newPost = {
-                id: `${Date.now()}`,
-                title: post.title,
-                shortDescription: post.shortDescription,
-                content: post.content,
-                blogId: blogId,
-                blogName: blogName,
-                createdAt: now.toISOString(),
-            };
+            id: `${Date.now()}`,
+            title: post.title,
+            shortDescription: post.shortDescription,
+            content: post.content,
+            blogId: blogId,
+            blogName: blogName,
+            createdAt: now.toISOString(),
+            extendedLikesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: LikeStatusesEnum.None,
+                newestLikes: {
+                    addedAt: " ",
+                    userId: " ",
+                    login: " "
+                },
+            }
+        };
 
         return this.blogsRepositories.createPostForSpecificBlog(newPost);
     }

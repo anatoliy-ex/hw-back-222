@@ -11,6 +11,7 @@ import {rateLimitedSchema} from "../scheme/rate.limit.db.shame";
 import {commentSchema} from "../scheme/comment.db.shame";
 import {passwordRecoveryShame} from "../scheme/password.recovery.shame";
 import {likeStatusUserForCommentShame} from "../scheme/like.status.user.for.comment.shame";
+import {likeStatusUserForPostShame} from "../scheme/like.status.user.for.post.sheme";
 dotenv.config()
 
 const dbName = 'it-incubator-blog'
@@ -25,6 +26,7 @@ export const RefreshTokenSessionModel = mongoose.model('refreshTokenSession', re
 export const RateLimitedModel = mongoose.model('rateLimited', rateLimitedSchema)
 export const PasswordRecoveryModel = mongoose.model('passwordRecovery', passwordRecoveryShame)
 export const LikeModelForComment = mongoose.model('likeModelForComment', likeStatusUserForCommentShame)
+export const LikeModelForPost = mongoose.model('likeModelForPost', likeStatusUserForPostShame)
 
 export const collections = [
     BlogModel,

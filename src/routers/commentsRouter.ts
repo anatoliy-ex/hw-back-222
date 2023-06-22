@@ -12,7 +12,7 @@ export const commentsRouter = Router({});
 const commentController = container.resolve(CommentsController)
 
 //like and dislike status
-commentsRouter.put('/:commentId/like-status', authMiddleware, likeStatusValidator, inputValidationMiddleware , commentController.LikeAndDislikeStatus.bind(commentController));
+commentsRouter.put('/:commentId/like-status', authMiddleware, likeStatusValidator, inputValidationMiddleware , commentController.LikeAndDislikeStatusForComment.bind(commentController));
 
 //update comment by ID
 commentsRouter.put('/:commentId', authMiddleware, checkForUser, contentCommentValidator, inputValidationMiddleware , commentController.UpdateCommentById.bind(commentController));

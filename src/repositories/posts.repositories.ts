@@ -1,12 +1,7 @@
-import {CommentModel, LikeModelForComment, PostModel} from "../dataBase/db";
-import {PostsTypes} from "../types/posts.types";
+import {CommentModel, LikeModelForComment, LikeModelForPost, PostModel} from "../dataBase/db";
+import {PostsTypes, UserLikes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
-import {
-    TypeCommentatorInfo,
-    TypeGetCommentModel,
-    TypeLikeAndDislikeInfo,
-    TypeViewCommentModel
-} from "../types/comments.types";
+import {TypeCommentatorInfo, TypeLikeAndDislikeInfo, TypeViewCommentModel} from "../types/comments.types";
 import {UserConfirmTypes} from "../types/userConfirmTypes";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
 import {LikeStatusesEnum} from "../scheme/like.status.user.for.comment.shame";
@@ -15,6 +10,25 @@ import {injectable} from "inversify";
 @injectable()
 export class PostsRepositories {
 
+    //update like and dislike status for post
+    async updateLikeAndDislikeStatusForPost(postId: string, likeStatus: LikeStatusesEnum, userId: string) {
+
+        await LikeModelForPost.updateOne(
+            {postId, userId},
+            {$set: {userStatus: likeStatus}},
+            {upsert: true}
+        )
+
+        const likesCount = await LikeModelForComment.countDocuments({postId, userStatus: LikeStatusesEnum.Like})
+        const dislikesCount = await LikeModelForComment.countDocuments({postId, userStatus: LikeStatusesEnum.Dislike})
+
+        return PostModel.updateOne({id: postId}, {
+            $set: {
+                'extendedLikesInfo.likesCount': likesCount,
+                'extendedLikesInfo.dislikesCount': dislikesCount
+            }
+        })
+    }
     //get comments for post
     async getCommentsForPost(pagination: PaginationQueryTypeForPostsAndComments, postId: string, userId?: string | null) {
 
@@ -91,8 +105,8 @@ export class PostsRepositories {
     }
 
     //return all posts
-    async allPosts(pagination: PaginationQueryTypeForPostsAndComments): Promise<OutputType<PostsTypes[]>> {
-        const posts: PostsTypes[] = await PostModel
+    async allPosts(pagination: PaginationQueryTypeForPostsAndComments): Promise<OutputType<PostsTypes<UserLikes>[]>> {
+        const posts: PostsTypes<UserLikes>[] = await PostModel
             .find({})
             .select('-_id')
             .sort({[pagination.sortBy]: pagination.sortDirection})
@@ -113,21 +127,31 @@ export class PostsRepositories {
     }
 
     //create new post
-    async createNewPost(newPost: PostsTypes): Promise<PostsTypes> {
-        const res = new PostModel(newPost)
-        return res.save()
-        // await PostModel.insertMany([newPost]);
-        // return newPost;
+    async createNewPost(newPost: PostsTypes<UserLikes>) : Promise<PostsTypes<UserLikes>>{
+        return await PostModel.create({...newPost})
     }
 
     //get post by ID
-    async getPostById(postId: string): Promise<PostsTypes | null> {
+    async getPostById(postId: string, userId?: string | null) {
 
-        return PostModel.findOne({id: postId}, {projection: {_id: 0}});
+        const post = await PostModel
+            .findOne({id: postId})
+            .select('-_id -__v');
+
+
+        if(!post) return false;
+
+        if(userId) {
+            const findUser = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, userStatus: 1})
+            if (!findUser) return post
+            post.extendedLikesInfo.myStatus = findUser.userStatus
+            return post
+        }
+        return post
     }
 
     //update post by ID
-    async updatePost(newPost: PostsTypes, id: string): Promise<boolean> {
+    async updatePost(newPost: PostsTypes<UserLikes>, id: string): Promise<boolean> {
         const result = await PostModel.updateOne({id: id}, {
             $set: {
                 title: newPost.title,

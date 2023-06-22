@@ -1,6 +1,6 @@
 import {BlogModel, PostModel} from "../dataBase/db";
 import {BlogsTypes} from "../types/blogs.types";
-import {PostsTypes} from "../types/posts.types";
+import {PostsTypes, UserLikes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {PaginationQueryTypeForBlogs} from "../pagination.query/blog.pagination";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
@@ -42,7 +42,7 @@ export class BlogsRepositories {
     }
 
     //get posts for specified blog
-    async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<PostsTypes[]> {
+    async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<PostsTypes<UserLikes>[]> {
 
         const filter = {blogId: {$regex: blogId}}
 
@@ -55,7 +55,7 @@ export class BlogsRepositories {
     }
 
     //create new post for specific blog
-    async createPostForSpecificBlog(newPost: PostsTypes): Promise<PostsTypes> {
+    async createPostForSpecificBlog(newPost: PostsTypes<UserLikes>): Promise<PostsTypes<UserLikes>> {
 
         await PostModel.create({...newPost});
         return newPost;

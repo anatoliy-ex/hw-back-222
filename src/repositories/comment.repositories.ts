@@ -42,16 +42,16 @@ export class CommentRepositories {
     }
 
     //get comment by ID
-    async getComment(id: string, userId?: string | null) {
+    async getComment(commentId: string, userId?: string | null) {
 
         const comment = await CommentModel
-            .findOne({id: id})
+            .findOne({id: commentId})
             .select('-_id -postId -__v');
 
         if(!comment) return false
 
-        if(userId){
-            const findUser = await LikeModelForComment.findOne({userId: userId, commentId: id}, {_id: 0, userStatus: 1})
+        if(userId) {
+            const findUser = await LikeModelForComment.findOne({userId: userId, commentId: commentId}, {_id: 0, userStatus: 1})
             if (!findUser) return comment
             comment.likesInfo.myStatus = findUser.userStatus
             return comment

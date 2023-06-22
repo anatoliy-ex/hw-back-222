@@ -4,7 +4,7 @@ import {BlogsRepositories} from "../repositories/blogs.repositories";
 import {Request, Response} from "express";
 import {getPaginationFromQueryPostsAndComments} from "../pagination.query/post.pagination";
 import {BlogsTypes} from "../types/blogs.types";
-import {PostsTypes} from "../types/posts.types";
+import {PostsTypes, UserLikes} from "../types/posts.types";
 import jwt from "jsonwebtoken";
 import {settings} from "../../.env/settings";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
@@ -18,6 +18,21 @@ export class PostsController {
                 protected commentRepositories: CommentRepositories,
                 protected postsRepositories: PostsRepositories,
                 protected blogsRepositories: BlogsRepositories) {
+    }
+
+    async LikeAndDislikeStatusForPost(req: Request, res: Response) {
+
+        const userId = req.user!.id
+        const searchComment = await this.postsRepositories.getPostById(req.params.postId)
+
+        if(searchComment == false) {
+
+            return res.sendStatus(404);
+        }
+
+        await this.postsRepositories.updateLikeAndDislikeStatusForPost(req.params.postId, req.body.likeStatus, userId);
+
+        res.sendStatus(204);
     }
 
     async GetCommentsForPost(req: Request, res: Response) {
@@ -87,7 +102,7 @@ export class PostsController {
             res.sendStatus(404);
         } else {
             const blogName = foundBlog.name;
-            const newPost: PostsTypes = await this.postsService.createNewPost(req.body, blogName);
+            const newPost: PostsTypes<UserLikes> = await this.postsService.createNewPost(req.body, blogName);
             res.status(201).send(newPost);
         }
 
@@ -96,7 +111,7 @@ export class PostsController {
 
     async GetPostById(req: Request, res: Response) {
 
-        const PostWithId: PostsTypes | null = await this.postsService.getPostById(req.params.id);
+        const PostWithId = await this.postsService.getPostById(req.params.id);
 
         if (PostWithId) {
             res.status(200).send(PostWithId);

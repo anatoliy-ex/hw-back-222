@@ -3,12 +3,16 @@ export const postsRouter = Router({});
 import {
     contentCommentValidator,
     createPostValidator,
-    inputValidationMiddleware} from "../middlewares/middleware.validators";
+    inputValidationMiddleware, likeStatusValidator
+} from "../middlewares/middleware.validators";
 import {adminStatusAuth, authMiddleware} from "../middlewares/auth/auth.middleware";
 import {container} from "../roots/composition.root";
 import {PostsController} from "../controllers/post.controller";
 
 const postController = container.resolve(PostsController)
+
+//update like and dislike on post
+postsRouter.put('/:postId/like-status', authMiddleware, likeStatusValidator, inputValidationMiddleware, postController.LikeAndDislikeStatusForPost.bind(postController));
 //get comment for post
 postsRouter.get('/:postId/comments', postController.GetCommentsForPost.bind(postController));
 

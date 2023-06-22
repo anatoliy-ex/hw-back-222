@@ -11,7 +11,7 @@ export class CommentsController {
 
     constructor(protected commentRepositories : CommentRepositories) {}
 
-    async LikeAndDislikeStatus (req: Request, res: Response){
+    async LikeAndDislikeStatusForComment (req: Request, res: Response){
 
         const userId = req.user!.id
         const searchComment = await this.commentRepositories.getComment(req.params.commentId)
@@ -21,7 +21,7 @@ export class CommentsController {
             return res.sendStatus(404);
         }
 
-        await this.commentRepositories.updateLikeAndDislikeStatus(req.params.commentId,  req.body.likeStatus, userId)
+        await this.commentRepositories.updateLikeAndDislikeStatus(req.params.commentId, req.body.likeStatus, userId)
         res.sendStatus(204);
     }
 

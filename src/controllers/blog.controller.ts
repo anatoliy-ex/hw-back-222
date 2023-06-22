@@ -2,7 +2,7 @@ import {BlogsService} from "../domain/blogs.service";
 import {Request, Response} from "express";
 import {
     BlogModel,
-    CommentModel, LikeModelForComment,
+    CommentModel, LikeModelForComment, LikeModelForPost,
     PostModel, RateLimitedModel,
     RefreshTokenSessionModel,
     UserModel,
@@ -11,7 +11,7 @@ import {
 import {getPaginationFromQueryBlogs} from "../pagination.query/blog.pagination";
 import {BlogsTypes} from "../types/blogs.types";
 import {getPaginationFromQueryPostsAndComments} from "../pagination.query/post.pagination";
-import {PostsTypes} from "../types/posts.types";
+import {PostsTypes, UserLikes} from "../types/posts.types";
 import {injectable} from "inversify";
 
 @injectable()
@@ -29,6 +29,7 @@ export class BlogsController {
         await RefreshTokenSessionModel.deleteMany()
         await RateLimitedModel.deleteMany()
         await LikeModelForComment.deleteMany()
+        await LikeModelForPost.deleteMany()
         res.sendStatus(204);
     }
 
@@ -75,7 +76,7 @@ export class BlogsController {
         const foundBlog: BlogsTypes | null = await this.blogsService.getBlogById(req.params.blogId);
 
         if (foundBlog) {
-            const newPostsForBlog: PostsTypes = await this.blogsService.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
+            const newPostsForBlog: PostsTypes<UserLikes> = await this.blogsService.createPostForSpecificBlog(req.body, req.params.blogId, foundBlog.name)
             res.status(201).send(newPostsForBlog);
             return;
         }
