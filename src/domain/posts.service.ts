@@ -37,7 +37,7 @@ export class PostsService {
                 }
             };
 
-         await this.postsRepositories.createNewPost(newPost);
+         return  this.postsRepositories.createNewPost(newPost);
     }
 
     //get post by ID
