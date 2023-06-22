@@ -127,7 +127,7 @@ export class PostsRepositories {
     }
 
     //create new post
-    async createNewPost(newPost: PostsTypes<UserLikes>) : Promise<ViewTypePost>{
+    async createNewPost(newPost: any) : Promise<ViewTypePost>{
         await PostModel.create({...newPost})
         return {
             id: newPost.id,

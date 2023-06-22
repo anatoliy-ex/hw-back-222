@@ -17,7 +17,7 @@ export class PostsService {
     }
 
     //create new post+++
-    async createNewPost(post: PostsTypes<UserLikes>, blogName : string) : Promise<ViewTypePost>
+    async createNewPost(post: PostsTypes<UserLikes>, blogName : string)
     {
         const now = new Date();
 
@@ -33,15 +33,11 @@ export class PostsService {
                     likesCount: 0,
                     dislikesCount: 0,
                     myStatus: LikeStatusesEnum.None,
-                    newestLikes: {
-                        addedAt: " ",
-                        userId: " ",
-                        login: " "
-                    },
+                    newestLikes: []
                 }
             };
 
-        return this.postsRepositories.createNewPost(newPost);
+         await this.postsRepositories.createNewPost(newPost);
     }
 
     //get post by ID
