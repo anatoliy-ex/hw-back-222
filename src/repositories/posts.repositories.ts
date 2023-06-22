@@ -1,5 +1,5 @@
 import {CommentModel, LikeModelForComment, LikeModelForPost, PostModel} from "../dataBase/db";
-import {PostsTypes, UserLikes} from "../types/posts.types";
+import {PostsTypes, UserLikes, ViewTypePost} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {TypeCommentatorInfo, TypeLikeAndDislikeInfo, TypeViewCommentModel} from "../types/comments.types";
 import {UserConfirmTypes} from "../types/userConfirmTypes";
@@ -127,8 +127,23 @@ export class PostsRepositories {
     }
 
     //create new post
-    async createNewPost(newPost: PostsTypes<UserLikes>) : Promise<PostsTypes<UserLikes>>{
-        return await PostModel.create({...newPost})
+    async createNewPost(newPost: PostsTypes<UserLikes>) : Promise<ViewTypePost>{
+        await PostModel.create({...newPost})
+        return {
+            id: newPost.id,
+            title: newPost.title,
+            shortDescription: newPost.shortDescription,
+            content: newPost.content,
+            blogId: newPost.blogId,
+            blogName: newPost.blogName,
+            createdAt: newPost.createdAt,
+            extendedLikesInfo: {
+                likesCount: newPost.extendedLikesInfo.likesCount,
+                dislikesCount: newPost.extendedLikesInfo.dislikesCount,
+                myStatus: newPost.extendedLikesInfo.myStatus,
+                newestLikes: []
+            }
+        }
     }
 
     //get post by ID

@@ -1,4 +1,4 @@
-import {PostsTypes, UserLikes} from "../types/posts.types";
+import {PostsTypes, UserLikes, ViewTypePost} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {PostsRepositories, postsRepositories} from "../repositories/posts.repositories";
 import {PaginationQueryTypeForPostsAndComments} from "../pagination.query/post.pagination";
@@ -17,7 +17,7 @@ export class PostsService {
     }
 
     //create new post+++
-    async createNewPost(post: PostsTypes<UserLikes>, blogName : string) : Promise<PostsTypes<UserLikes>>
+    async createNewPost(post: PostsTypes<UserLikes>, blogName : string) : Promise<ViewTypePost>
     {
         const now = new Date();
 

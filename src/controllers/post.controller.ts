@@ -4,7 +4,7 @@ import {BlogsRepositories} from "../repositories/blogs.repositories";
 import {Request, Response} from "express";
 import {getPaginationFromQueryPostsAndComments} from "../pagination.query/post.pagination";
 import {BlogsTypes} from "../types/blogs.types";
-import {PostsTypes, UserLikes} from "../types/posts.types";
+import {PostsTypes, UserLikes, ViewTypePost} from "../types/posts.types";
 import jwt from "jsonwebtoken";
 import {settings} from "../../.env/settings";
 import {authUsersRepositories} from "../repositories/auth.users.repositories";
@@ -102,7 +102,7 @@ export class PostsController {
             res.sendStatus(404);
         } else {
             const blogName = foundBlog.name;
-            const newPost: PostsTypes<UserLikes> = await this.postsService.createNewPost(req.body, blogName);
+            const newPost = await this.postsService.createNewPost(req.body, blogName);
             res.status(201).send(newPost);
         }
 
