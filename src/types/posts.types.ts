@@ -12,7 +12,7 @@ export type PostsTypes<T> = {
         likesCount: number,
         dislikesCount: number,
         myStatus: LikeStatusesEnum,
-        newestLikes: T
+        newestLikes: T[]
     }
 }
 
@@ -20,9 +20,10 @@ export type UserLikes = {
     addedAt: string,
     userId: string,
     login: string,
+    likeStatus: string
 }
 
-export type ViewTypePost ={
+export type ViewTypePost<T> ={
     id: string,
     title: string,
     shortDescription: string,
@@ -34,6 +35,6 @@ export type ViewTypePost ={
         likesCount: number,
         dislikesCount: number,
         myStatus: LikeStatusesEnum,
-        newestLikes: []
+        newestLikes: T[]
     }
 }

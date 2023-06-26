@@ -14,10 +14,11 @@ export const postSchema = new mongoose.Schema<PostsTypes<UserLikes>>({
         likesCount: {type: Number, required: true},
         dislikesCount: {type: Number, required: true},
         myStatus: {type: String, required: true},
-        newestLikes: {
-            addedAt: {type: String, required: true},
-            userId: {type: String, required: true},
-            login: {type: String, required: true},
-        }
+        newestLikes: [{
+            addedAt: String,
+            userId: String,
+            login: String,
+            likeStatus: String
+        }]
     }
 })

@@ -127,11 +127,20 @@ export class PostsRepositories {
     }
 
     //create new post
-    async createNewPost(newPost: any) {
+    async createNewPost(newPost: PostsTypes<UserLikes>) : Promise<Promise<PostsTypes<UserLikes>> | null>{
         await PostModel.create({...newPost})
-        return PostModel
+
+        const viewPost = PostModel
             .findOne({id: newPost.id})
             .select('-__v -_id')
+
+        if(viewPost != null) {
+            return viewPost
+        }
+        else {
+            return null
+        }
+
     }
 
     //get post by ID

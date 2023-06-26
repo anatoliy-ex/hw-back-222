@@ -68,11 +68,7 @@ export class BlogsService {
                 likesCount: 0,
                 dislikesCount: 0,
                 myStatus: LikeStatusesEnum.None,
-                newestLikes: {
-                    addedAt: " ",
-                    userId: " ",
-                    login: " "
-                },
+                newestLikes: [],
             }
         };
 
