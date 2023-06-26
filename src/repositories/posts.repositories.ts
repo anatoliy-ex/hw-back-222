@@ -19,8 +19,8 @@ export class PostsRepositories {
             {upsert: true}
         )
 
-        const likesCount = await LikeModelForComment.countDocuments({postId, userStatus: LikeStatusesEnum.Like})
-        const dislikesCount = await LikeModelForComment.countDocuments({postId, userStatus: LikeStatusesEnum.Dislike})
+        const likesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Like})
+        const dislikesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Dislike})
 
         return PostModel.updateOne({id: postId}, {
             $set: {
