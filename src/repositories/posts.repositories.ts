@@ -131,7 +131,7 @@ export class PostsRepositories {
         await PostModel.create({...newPost})
         return PostModel
             .findOne({id: newPost.id})
-            .select('-__v -_id -extendedLikesInfo.newestLikes.addedAt -extendedLikesInfo.newestLikes.userId -extendedLikesInfo.newestLikes.login ')
+            .select('-__v -_id')
     }
 
     //get post by ID
