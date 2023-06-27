@@ -125,3 +125,29 @@ export const rateLimitedMiddleware = async (req: Request, res: Response, next: N
         return next();
     }
 };
+
+export const authNotBlock = async (req: Request, res: Response, next: NextFunction) => {
+
+    let user = null
+    if (!req.headers.authorization) user = null
+
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) user = null
+    try {
+        const IsDecode: any = jwt.verify(token!,  settings.JWT_SECRET)
+
+        if (IsDecode) {
+            const user_ = await authUsersRepositories.getUserWithAccessToken(token!)
+
+            if (user_ === null) {
+                user = null
+            } else {
+                user = user_
+            }
+        }
+    } catch (e) {
+        user = null
+    }
+    req.user = user
+    next()
+}

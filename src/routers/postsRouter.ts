@@ -5,7 +5,7 @@ import {
     createPostValidator,
     inputValidationMiddleware, likeStatusValidator
 } from "../middlewares/middleware.validators";
-import {adminStatusAuth, authMiddleware} from "../middlewares/auth/auth.middleware";
+import {adminStatusAuth, authMiddleware, authNotBlock} from "../middlewares/auth/auth.middleware";
 import {container} from "../roots/composition.root";
 import {PostsController} from "../controllers/post.controller";
 
@@ -23,10 +23,10 @@ postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, in
 postsRouter.get('/', postController.GetAllPosts.bind(postController));
 
 //create new post
-postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.CreateNewPost.bind(postController));
+postsRouter.post('/', authMiddleware, adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.CreateNewPost.bind(postController));
 
 //get post by ID
-postsRouter.get('/:id', postController.GetPostById.bind(postController));
+postsRouter.get('/:id', authNotBlock, postController.GetPostById.bind(postController));
 
 //update post by ID
 postsRouter.put('/:id',adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.UpdatePostById.bind(postController));

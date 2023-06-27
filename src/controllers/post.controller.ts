@@ -111,7 +111,9 @@ export class PostsController {
 
     async GetPostById(req: Request, res: Response) {
 
-        const PostWithId = await this.postsService.getPostById(req.params.id);
+        const userId = req.user ? req.user.id : null
+
+        const PostWithId = await this.postsService.getPostById(req.params.id, userId);
 
         if (PostWithId) {
             res.status(200).send(PostWithId);
@@ -124,8 +126,9 @@ export class PostsController {
 
     async UpdatePostById(req: Request, res: Response) {
 
+        const userId = req.user ? req.user.id : null
         const findBlogWithID = await this.blogsRepositories.getBlogById(req.body.blogId);
-        const findPostWithID = await this.postsService.getPostById(req.params.id);
+        const findPostWithID = await this.postsService.getPostById(req.params.id, userId);
 
         if (findBlogWithID && findPostWithID) {
             await this.postsService.updatePost(req.body, req.params.id);

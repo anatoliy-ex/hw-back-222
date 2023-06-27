@@ -41,8 +41,8 @@ export class PostsService {
     }
 
     //get post by ID
-    async getPostById(id: string) {
-        return await this.postsRepositories.getPostById(id)
+    async getPostById(id: string, userId: string | null) {
+        return await this.postsRepositories.getPostById(id, userId)
 
     }
 
