@@ -1,5 +1,5 @@
-import {CommentModel, LikeModelForComment, LikeModelForPost, PostModel} from "../dataBase/db";
-import {PostsTypes, UserLikes, ViewTypePost} from "../types/posts.types";
+import {CommentModel, LikeModelForComment, LikeModelForPost, PostModel, UserModel} from "../dataBase/db";
+import {PostsTypes, UserLikes} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {TypeCommentatorInfo, TypeLikeAndDislikeInfo, TypeViewCommentModel} from "../types/comments.types";
 import {UserConfirmTypes} from "../types/userConfirmTypes";
@@ -13,11 +13,23 @@ export class PostsRepositories {
     //update like and dislike status for post
     async updateLikeAndDislikeStatusForPost(postId: string, likeStatus: LikeStatusesEnum, userId: string) {
 
-        await LikeModelForPost.updateOne(
-            {postId, userId},
-            {$set: {userStatus: likeStatus}},
-            {upsert: true}
-        )
+        const user = await UserModel.findOne({userId})
+        if(!user) {
+            await LikeModelForPost.updateOne(
+                {postId, userId},
+                {$set: {userStatus: likeStatus, login: user!.login, postId: postId, userId: userId, addedAt: new Date()}},
+                {upsert: true}
+            )
+        }
+        else {
+
+            const currentUser = await LikeModelForPost.findOne({userId: userId})
+            await LikeModelForPost.updateOne(
+                {postId, userId},
+                {$set: {userStatus: likeStatus, login: user!.login, postId: postId, userId: userId, addedAt: currentUser!.addedAt}}
+            )
+        }
+
 
         const likesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Like})
         const dislikesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Dislike})
@@ -152,20 +164,12 @@ export class PostsRepositories {
             .find({id: postId})
             .select('-_id -__v');
 
-
         if(!post) return false;
+        return post
 
-        const postWithStatus = await  Promise.all(post.map(async c => {
-            const findUser = await LikeModelForPost.findOne({userId: userId}, {_id: 0, __v: 0})
+        const findUser = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0})
 
-            if (findUser) {
-                c.extendedLikesInfo.myStatus = findUser.userStatus
-                return c
-            }
-            return c
-        }))
 
-        return postWithStatus
     }
 
     //update post by ID

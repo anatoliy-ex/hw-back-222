@@ -19,6 +19,7 @@ export type PostsTypes<T> = {
 export type UserLikes = {
     addedAt: string,
     userId: string,
+    postId: string
     login: string,
     likeStatus: string
 }

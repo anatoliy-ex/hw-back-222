@@ -4,4 +4,6 @@ export type LikeStatusUserForPost = {
     postId: string,
     userStatus: LikeStatusesEnum,
     userId: string,
+    addedAt: string,
+    login: string
 }

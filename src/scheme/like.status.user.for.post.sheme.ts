@@ -11,4 +11,6 @@ export const likeStatusUserForPostShame = new mongoose.Schema<LikeStatusUserForP
     postId: {type: String, required: true},
     userStatus: {type: String, enum: LikeStatusesEnum, required: true},
     userId: {type: String, required: true},
+    addedAt: {type: String, required: true},
+    login: {type: String, required: true}
 })
