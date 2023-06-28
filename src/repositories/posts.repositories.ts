@@ -120,7 +120,7 @@ export class PostsRepositories {
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
-            .select('-_id -__v')
+            .select('-_id -__v -newestLikes')
             .lean()
 
         const countOfPosts = await PostModel.countDocuments();
@@ -147,6 +147,7 @@ export class PostsRepositories {
                 }
                 return c
             }))
+
             return {
                 page: pagination.pageNumber,
                 pagesCount: pageCount === 0 ? 1 : pageCount,
@@ -155,7 +156,6 @@ export class PostsRepositories {
                 items: postsWithStatuses
             };
         }
-
     }
 
     //create new post
