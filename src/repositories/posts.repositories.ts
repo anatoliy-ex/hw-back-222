@@ -19,7 +19,8 @@ export class PostsRepositories {
             await LikeModelForPost.create(
                 {userStatus: likeStatus, login: user!.login, postId: postId, userId: userId, addedAt: new Date()}
             )
-        } else {
+        }
+        else {
             await LikeModelForPost.updateOne(
                 {postId, userId},
                 {$set: {userStatus: likeStatus, login: user!.login}}
@@ -113,25 +114,51 @@ export class PostsRepositories {
     }
 
     //return all posts
-    async allPosts(pagination: PaginationQueryTypeForPostsAndComments): Promise<OutputType<PostsTypes<UserLikes>[]>> {
+    async allPosts(pagination: PaginationQueryTypeForPostsAndComments, userId: string | null): Promise<OutputType<PostsTypes<UserLikes>[]>> {
         const posts: PostsTypes<UserLikes>[] = await PostModel
             .find({})
-            .select('-_id -__v')
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
+            .select('-_id -__v')
             .lean()
 
         const countOfPosts = await PostModel.countDocuments();
         const pageCount = Math.ceil(countOfPosts / pagination.pageSize);
 
-        return {
-            page: pagination.pageNumber,
-            pagesCount: pageCount === 0 ? 1 : pageCount,
-            pageSize: pagination.pageSize,
-            totalCount: countOfPosts,
-            items: posts
-        };
+        if(userId == null) {
+            return {
+                page: pagination.pageNumber,
+                pagesCount: pageCount === 0 ? 1 : pageCount,
+                pageSize: pagination.pageSize,
+                totalCount: countOfPosts,
+                items: posts
+            };
+        }
+        else {
+
+            const postsWithStatuses = await Promise.all(posts.map(async c => {
+
+                const findUser = await LikeModelForPost.findOne({postId: c.id, userId: userId}, {
+                    _id: 0,
+                    userStatus: 1
+                })
+
+                if (findUser) {
+                    c.extendedLikesInfo.myStatus = findUser.userStatus
+                    return c
+                }
+                return c
+            }))
+            return {
+                page: pagination.pageNumber,
+                pagesCount: pageCount === 0 ? 1 : pageCount,
+                pageSize: pagination.pageSize,
+                totalCount: countOfPosts,
+                items: postsWithStatuses
+            };
+        }
+
     }
 
     //create new post

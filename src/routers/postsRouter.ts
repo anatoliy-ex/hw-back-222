@@ -20,7 +20,7 @@ postsRouter.get('/:postId/comments', postController.GetCommentsForPost.bind(post
 postsRouter.post('/:postId/comments',authMiddleware, contentCommentValidator, inputValidationMiddleware, postController.CreateNewComment.bind(postController));
 
 //get all posts
-postsRouter.get('/', postController.GetAllPosts.bind(postController));
+postsRouter.get('/', authNotBlock, postController.GetAllPosts.bind(postController));
 
 //create new post
 postsRouter.post('/', adminStatusAuth, createPostValidator, inputValidationMiddleware, postController.CreateNewPost.bind(postController));

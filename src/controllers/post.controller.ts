@@ -90,8 +90,9 @@ export class PostsController {
 
     async GetAllPosts(req: Request, res: Response) {
 
+        const userId = req.user? req.user.id: null
         const pagination = getPaginationFromQueryPostsAndComments(req.query);
-        const allPosts = await this.postsService.allPosts(pagination);
+        const allPosts = await this.postsService.allPosts(pagination, userId);
         res.status(200).send(allPosts);
     }
 
