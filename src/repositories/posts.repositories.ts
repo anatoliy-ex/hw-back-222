@@ -13,23 +13,18 @@ export class PostsRepositories {
     //update like and dislike status for post
     async updateLikeAndDislikeStatusForPost(postId: string, likeStatus: LikeStatusesEnum, userId: string) {
 
-        const user = await UserModel.findOne({userId})
-        if(!user) {
+        const user = await LikeModelForPost.findOne({userId})
+        const isUserLiked = await LikeModelForPost.findOne({postId, userId})
+        if(!isUserLiked) {
+            await LikeModelForPost.create(
+                {userStatus: likeStatus, login: user!.login, postId: postId, userId: userId, addedAt: new Date()}
+            )
+        } else {
             await LikeModelForPost.updateOne(
                 {postId, userId},
-                {$set: {userStatus: likeStatus, login: user!.login, postId: postId, userId: userId, addedAt: new Date()}},
-                {upsert: true}
+                {$set: {userStatus: likeStatus, login: user!.login}}
             )
         }
-        else {
-
-            const currentUser = await LikeModelForPost.findOne({userId: userId})
-            await LikeModelForPost.updateOne(
-                {postId, userId},
-                {$set: {userStatus: likeStatus, login: user!.login, postId: postId, userId: userId, addedAt: currentUser!.addedAt}}
-            )
-        }
-
 
         const likesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Like})
         const dislikesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Dislike})
@@ -41,6 +36,7 @@ export class PostsRepositories {
             }
         })
     }
+
     //get comments for post
     async getCommentsForPost(pagination: PaginationQueryTypeForPostsAndComments, postId: string, userId?: string | null) {
 
@@ -69,7 +65,10 @@ export class PostsRepositories {
             }
         } else {
             const commentsWithStatuses = await Promise.all(comments.map(async c => {
-                const findUser = await LikeModelForComment.findOne({commentId: c.id, userId: userId}, {_id: 0, userStatus: 1})
+                const findUser = await LikeModelForComment.findOne({commentId: c.id, userId: userId}, {
+                    _id: 0,
+                    userStatus: 1
+                })
 
                 if (findUser) {
                     c.likesInfo.myStatus = findUser.userStatus
@@ -139,19 +138,17 @@ export class PostsRepositories {
     }
 
     //create new post
-    async createNewPost(newPost: PostsTypes<UserLikes>) : Promise<Promise<PostsTypes<UserLikes>> | null>{
+    async createNewPost(newPost: PostsTypes<UserLikes>): Promise<Promise<PostsTypes<UserLikes>> | null> {
         await PostModel.create({...newPost})
 
-        const viewPost = PostModel
+        const viewPost = await PostModel
             .findOne({id: newPost.id})
             .select('-__v -_id')
 
 
-
-        if(viewPost != null) {
+        if (viewPost != null) {
             return viewPost
-        }
-        else {
+        } else {
             return null
         }
 
@@ -160,14 +157,19 @@ export class PostsRepositories {
     //get post by ID
     async getPostById(postId: string, userId?: string | null) {
 
-        const post : PostsTypes<UserLikes>[] | null = await PostModel
-            .find({id: postId})
+        const post: PostsTypes<UserLikes> | null = await PostModel
+            .findOne({id: postId})
             .select('-_id -__v');
 
-        if(!post) return false;
+        if (!post) return false;
+        post.extendedLikesInfo.newestLikes = await LikeModelForPost.find({postId, userStatus: LikeStatusesEnum.Like}).sort({
+            ['addedAt']: 'desc'
+        }).limit(3).lean()
+        if(!userId) return post
+        const isUserLiked = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0, userStatus: 1})
+        if(!isUserLiked) return post
+        post.extendedLikesInfo.myStatus = isUserLiked.userStatus
         return post
-
-        const findUser = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0})
 
 
     }
