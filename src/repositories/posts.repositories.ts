@@ -29,12 +29,9 @@ export class PostsRepositories {
         const likesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Like})
         const dislikesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Dislike})
 
-        return PostModel.updateOne({id: postId}, {
-            $set: {
-                'extendedLikesInfo.likesCount': likesCount,
-                'extendedLikesInfo.dislikesCount': dislikesCount
-            }
-        }).select("-__v -_id")
+        return PostModel
+            .updateOne({id: postId}, {$set: {'extendedLikesInfo.likesCount': likesCount, 'extendedLikesInfo.dislikesCount': dislikesCount}})
+            .select("-__v -_id")
     }
 
     //get comments for post
