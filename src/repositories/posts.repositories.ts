@@ -134,6 +134,8 @@ export class PostsRepositories {
             .findOne({id: newPost.id})
             .select('-__v -_id')
 
+
+
         if(viewPost != null) {
             return viewPost
         }
@@ -146,20 +148,24 @@ export class PostsRepositories {
     //get post by ID
     async getPostById(postId: string, userId?: string | null) {
 
-        const post = await PostModel
-            .findOne({id: postId})
+        const post : PostsTypes<UserLikes>[] | null = await PostModel
+            .find({id: postId})
             .select('-_id -__v');
 
 
         if(!post) return false;
 
-        if(userId) {
+        const postWithStatus = await  Promise.all(post.map(async c => {
             const findUser = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, userStatus: 1})
-            if (!findUser) return post
-            post.extendedLikesInfo.myStatus = findUser.userStatus
-            return post
-        }
-        return post
+
+            if (findUser) {
+                c.extendedLikesInfo.myStatus = findUser.userStatus
+                return c
+            }
+            return c
+        }))
+
+        return postWithStatus
     }
 
     //update post by ID
