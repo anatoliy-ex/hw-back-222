@@ -29,7 +29,7 @@ export class PostsRepositories {
         const likesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Like})
         const dislikesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Dislike})
 
-        return PostModel
+        await PostModel
             .updateOne({id: postId}, {$set: {'extendedLikesInfo.likesCount': likesCount, 'extendedLikesInfo.dislikesCount': dislikesCount}})
             .select("-__v -_id")
     }
@@ -116,7 +116,7 @@ export class PostsRepositories {
     async allPosts(pagination: PaginationQueryTypeForPostsAndComments): Promise<OutputType<PostsTypes<UserLikes>[]>> {
         const posts: PostsTypes<UserLikes>[] = await PostModel
             .find({})
-            .select('-_id')
+            .select('-_id -__v')
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
