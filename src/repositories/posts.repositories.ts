@@ -139,10 +139,7 @@ export class PostsRepositories {
 
             const postsWithStatuses = await Promise.all(posts.map(async c => {
 
-                const findUser = await LikeModelForPost.findOne({postId: c.id, userId: userId}, {
-                    _id: 0,
-                    userStatus: 1
-                })
+                const findUser = await LikeModelForPost.findOne({postId: c.id, userId: userId})
 
                 if (findUser) {
                     c.extendedLikesInfo.myStatus = findUser.userStatus
