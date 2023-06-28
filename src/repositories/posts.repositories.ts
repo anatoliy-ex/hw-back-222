@@ -161,12 +161,17 @@ export class PostsRepositories {
             .findOne({id: postId})
             .select('-_id -__v');
 
+        console.log(post)
+
         if (!post) return false;
-        post.extendedLikesInfo.newestLikes = await LikeModelForPost.find({postId, userStatus: LikeStatusesEnum.Like}).sort({
+        post.extendedLikesInfo.newestLikes = await LikeModelForPost.find({
+            postId,
+            userStatus: LikeStatusesEnum.Like
+        }).sort({
             ['addedAt']: 'desc'
         }).limit(3).lean()
         if(!userId) return post
-        const isUserLiked = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0, userStatus: 1})
+        const isUserLiked = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0})
         if(!isUserLiked) return post
         post.extendedLikesInfo.myStatus = isUserLiked.userStatus
         return post
