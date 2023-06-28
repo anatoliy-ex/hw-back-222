@@ -34,7 +34,7 @@ export class PostsRepositories {
                 'extendedLikesInfo.likesCount': likesCount,
                 'extendedLikesInfo.dislikesCount': dislikesCount
             }
-        })
+        }).select("-__v -_id")
     }
 
     //get comments for post
