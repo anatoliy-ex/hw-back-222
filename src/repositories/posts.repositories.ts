@@ -13,7 +13,7 @@ export class PostsRepositories {
     //update like and dislike status for post
     async updateLikeAndDislikeStatusForPost(postId: string, likeStatus: LikeStatusesEnum, userId: string) {
 
-        const user = await LikeModelForPost.findOne({userId})
+        const user = await UserModel.findOne({id: userId})
         const isUserLiked = await LikeModelForPost.findOne({postId, userId})
         if(!isUserLiked) {
             await LikeModelForPost.create(
