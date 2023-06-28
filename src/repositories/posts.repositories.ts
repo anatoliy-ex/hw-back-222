@@ -169,7 +169,7 @@ export class PostsRepositories {
             userStatus: LikeStatusesEnum.Like
         }).sort({
             ['addedAt']: 'desc'
-        }).limit(3).lean()
+        }).select('-_id -__v').limit(3).lean()
         if(!userId) return post
         const isUserLiked = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0})
         if(!isUserLiked) return post
