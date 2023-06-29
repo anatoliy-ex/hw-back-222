@@ -114,16 +114,18 @@ export class PostsRepositories {
 
     //return all posts
     async allPosts(pagination: PaginationQueryTypeForPostsAndComments, userId: string | null): Promise<OutputType<PostsTypes<UserLikes>[]>> {
-        const posts: PostsTypes<UserLikes>[] = await PostModel
+        const postsModel: PostsTypes<UserLikes>[] = await PostModel
             .find({})
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
+            .select('-_id -__v -newestLikes')
             .lean()
 
         const countOfPosts = await PostModel.countDocuments();
         const pageCount = Math.ceil(countOfPosts / pagination.pageSize);
 
+        const posts = [...postsModel]
         if(userId == null) {
             return {
                 page: pagination.pageNumber,
@@ -137,9 +139,10 @@ export class PostsRepositories {
 
             const postsWithStatuses = await Promise.all(posts.map(async c => {
 
-                const findUser = await LikeModelForPost.findOne({postId: c.id, userId: userId})
+                const findUserModel = await LikeModelForPost.findOne({postId: c.id, userId: userId}).lean()
 
-                if (findUser) {
+                if (findUserModel) {
+                    const findUser = {...findUserModel}
                     c.extendedLikesInfo.myStatus = findUser.likeStatus
                     return c
                 }
