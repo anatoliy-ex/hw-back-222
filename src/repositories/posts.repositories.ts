@@ -176,15 +176,16 @@ export class PostsRepositories {
     //get post by ID
     async getPostById(postId: string, userId?: string | null) {
 
-        const post1: PostsTypes<UserLikes> | null = await PostModel
+        const postModel: PostsTypes<UserLikes> | null = await PostModel
             .findOne({id: postId})
             .select('-_id -__v').lean();
 
-        const post = {...post1}
+        if (!postModel) return false;
+
+        const post = {...postModel}
 
         console.log(post, 'post')
 
-        if (!post) return false;
         const newestLikes = await LikeModelForPost.find({
             postId,
             likeStatus: LikeStatusesEnum.Like
@@ -195,6 +196,7 @@ export class PostsRepositories {
         console.log(newestLikes, 'newestLikes')
 
         post.extendedLikesInfo!.newestLikes = newestLikes
+
         if(!userId) return post
         const isUserLiked1 = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0}).lean()
 
