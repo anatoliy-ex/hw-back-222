@@ -1,5 +1,5 @@
 import {CommentModel, LikeModelForComment, LikeModelForPost, PostModel, UserModel} from "../dataBase/db";
-import {PostsTypes, UserLikes} from "../types/posts.types";
+import {PostsTypes, UserLikes, UserLikesView} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {TypeCommentatorInfo, TypeLikeAndDislikeInfo, TypeViewCommentModel} from "../types/comments.types";
 import {UserConfirmTypes} from "../types/userConfirmTypes";
@@ -176,7 +176,7 @@ export class PostsRepositories {
     //get post by ID
     async getPostById(postId: string, userId?: string | null) {
 
-        const postModel: PostsTypes<UserLikes> | null = await PostModel
+        const postModel: PostsTypes<UserLikesView> | null = await PostModel
             .findOne({id: postId})
             .select('-_id -__v').lean();
 
@@ -186,7 +186,7 @@ export class PostsRepositories {
 
         console.log(post, 'post')
 
-        const newestLikes = await LikeModelForPost.find({
+        const newestLikes: UserLikes[]  = await LikeModelForPost.find({
             postId,
             likeStatus: LikeStatusesEnum.Like
         }).sort({
@@ -195,7 +195,13 @@ export class PostsRepositories {
 
         console.log(newestLikes, 'newestLikes')
 
-        post.extendedLikesInfo!.newestLikes = newestLikes
+        if(newestLikes){
+            post.extendedLikesInfo!.newestLikes = newestLikes.map((like) => ({
+                addedAt: like.addedAt,
+                    userId: like.userId,
+                    login: like.login,
+            }))
+        }
 
         if(!userId) return post
         const isUserLiked1 = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0}).lean()

@@ -24,6 +24,12 @@ export type UserLikes = {
     likeStatus: string
 }
 
+export type UserLikesView = {
+    addedAt: string,
+    userId: string,
+    login: string,
+}
+
 export type ViewTypePost<T> ={
     id: string,
     title: string,
