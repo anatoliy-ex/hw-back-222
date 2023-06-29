@@ -1,6 +1,6 @@
 import {PostModel,} from "../dataBase/db";
 import {BlogsTypes} from "../types/blogs.types";
-import {PostsTypes, UserLikes} from "../types/posts.types";
+import {PostsTypes, UserLikes, UserLikesView} from "../types/posts.types";
 import {OutputType} from "../types/output.type";
 import {BlogsRepositories} from "../repositories/blogs.repositories";
 import {PaginationQueryTypeForBlogs} from "../pagination.query/blog.pagination";
@@ -37,9 +37,9 @@ export class BlogsService {
     }
 
     //get posts for specified blog
-    async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<OutputType<PostsTypes<UserLikes>[]>> {
+    async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string, userId: string | null): Promise<OutputType<PostsTypes<UserLikesView>[]>> {
 
-        const posts = await this.blogsRepositories.getPostsForBlog(pagination, blogId)
+        const posts = await this.blogsRepositories.getPostsForBlog(pagination, blogId, userId)
         const countOfPosts = await PostModel.countDocuments({blogId});
         const pageCount = Math.ceil(countOfPosts/pagination.pageSize);
 

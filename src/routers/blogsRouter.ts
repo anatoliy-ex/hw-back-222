@@ -1,6 +1,6 @@
 import {Router} from "express"
 import {createBlogValidator, createPostForBlog, inputValidationMiddleware} from "../middlewares/middleware.validators";
-import {adminStatusAuth} from "../middlewares/auth/auth.middleware";
+import {adminStatusAuth, authNotBlock} from "../middlewares/auth/auth.middleware";
 import {container} from "../roots/composition.root";
 import {BlogsController} from "../controllers/blog.controller";
 
@@ -19,7 +19,7 @@ blogsRouter.get('/', blogController.GetAllBlogs.bind(blogController));
 blogsRouter.post('/', adminStatusAuth, createBlogValidator, inputValidationMiddleware, blogController.CreateNewBlog.bind(blogController));
 
 //get posts for specified blog
-blogsRouter.get('/:blogId/posts', blogController.GetPostsForSpecifiedBlog.bind(blogController));
+blogsRouter.get('/:blogId/posts', authNotBlock, blogController.GetPostsForSpecifiedBlog.bind(blogController));
 
 //create new post for specific blog
 blogsRouter.post('/:blogId/posts', adminStatusAuth, createPostForBlog, inputValidationMiddleware, blogController.CreateNewPostForSpecificBlog.bind(blogController));

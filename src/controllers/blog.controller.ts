@@ -57,11 +57,12 @@ export class BlogsController {
 
     async GetPostsForSpecifiedBlog (req: Request, res: Response) {
 
+        const userId = req.user ? req.user.id : null
         const foundBlog: BlogsTypes | null = await this.blogsService.getBlogById(req.params.blogId);
 
         if (foundBlog) {
             const pagination = getPaginationFromQueryPostsAndComments(req.query);
-            const postsForBlog = await this.blogsService.getPostsForBlog(pagination, foundBlog.id);
+            const postsForBlog = await this.blogsService.getPostsForBlog(pagination, foundBlog.id, userId);
 
             res.status(200).send(postsForBlog);
             return;

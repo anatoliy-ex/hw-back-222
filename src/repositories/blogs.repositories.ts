@@ -43,7 +43,7 @@ export class BlogsRepositories {
     }
 
     //get posts for specified blog
-    async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string): Promise<PostsTypes<UserLikesView>[]> {
+    async getPostsForBlog(pagination: PaginationQueryTypeForPostsAndComments, blogId: string, userId: string | null): Promise<PostsTypes<UserLikesView>[]> {
 
         const filter = {blogId: {$regex: blogId}}
 
@@ -57,26 +57,35 @@ export class BlogsRepositories {
 
         const posts = [...postsModel]
 
-        const postsWithLikes = await Promise.all(posts.map(async c => {
-            const newestLikes  = await LikeModelForPost.find({
-                postId: c.id,
-                likeStatus: LikeStatusesEnum.Like
-            }).sort({
-                ['addedAt']: 'desc'
-            }).select('-_id -__v').limit(3).lean()
+        if(userId == null) {
+            return posts
+        }{
+            const postsWithLikes = await Promise.all(posts.map(async c => {
+                const findUserModel = await LikeModelForPost.findOne({postId: c.id, userId: userId}).lean()
+                const newestLikes: UserLikes[]  = await LikeModelForPost.find({
+                    postId: c.id,
+                    likeStatus: LikeStatusesEnum.Like
+                }).sort({
+                    ['addedAt']: 'desc'
+                }).select('-_id -__v').limit(3).lean()
 
-            if(newestLikes){
-                c.extendedLikesInfo.newestLikes = newestLikes.map((like) => ({
-                    addedAt: like.addedAt,
-                    userId: like.userId,
-                    login: like.login,
-                }))
-            }
+                if (findUserModel) {
+                    const findUser = {...findUserModel}
+                    c.extendedLikesInfo.myStatus = findUser.likeStatus
+                }
+                if(newestLikes){
+                    c.extendedLikesInfo.newestLikes = newestLikes.map((like) => ({
+                        addedAt: like.addedAt,
+                        userId: like.userId,
+                        login: like.login,
+                    }))
+                }
 
-            return c
-        }))
+                return c
+            }))
 
-        return postsWithLikes
+            return postsWithLikes
+        }
     }
 
     //create new post for specific blog
