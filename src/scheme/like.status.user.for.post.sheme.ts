@@ -9,7 +9,7 @@ export enum LikeStatusesEnum {
 
 export const likeStatusUserForPostShame = new mongoose.Schema<LikeStatusUserForPost>({
     postId: {type: String, required: true},
-    userStatus: {type: String, enum: LikeStatusesEnum, required: true},
+    likeStatus: {type: String, enum: LikeStatusesEnum, required: true},
     userId: {type: String, required: true},
     addedAt: {type: String, required: true},
     login: {type: String, required: true}

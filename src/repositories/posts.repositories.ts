@@ -17,22 +17,21 @@ export class PostsRepositories {
         const isUserLiked = await LikeModelForPost.findOne({postId, userId})
         if(!isUserLiked) {
             await LikeModelForPost.create(
-                {userStatus: likeStatus, login: user!.login, postId: postId, userId: userId, addedAt: new Date()}
+                {likeStatus: likeStatus, login: user!.login, postId: postId, userId: userId, addedAt: new Date()}
             )
         }
         else {
             await LikeModelForPost.updateOne(
                 {postId, userId},
-                {$set: {userStatus: likeStatus, login: user!.login}}
+                {$set: {likeStatus: likeStatus, login: user!.login}}
             )
         }
 
-        const likesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Like})
-        const dislikesCount = await LikeModelForPost.countDocuments({postId, userStatus: LikeStatusesEnum.Dislike})
+        const likesCount = await LikeModelForPost.countDocuments({postId, likeStatus: LikeStatusesEnum.Like})
+        const dislikesCount = await LikeModelForPost.countDocuments({postId, likeStatus: LikeStatusesEnum.Dislike})
 
         await PostModel
             .updateOne({id: postId}, {$set: {'extendedLikesInfo.likesCount': likesCount, 'extendedLikesInfo.dislikesCount': dislikesCount}})
-            .select("-__v -_id")
     }
 
     //get comments for post
@@ -120,7 +119,6 @@ export class PostsRepositories {
             .sort({[pagination.sortBy]: pagination.sortDirection})
             .skip((pagination.pageNumber - 1) * pagination.pageSize)
             .limit(pagination.pageSize)
-            .select('-_id -__v -newestLikes')
             .lean()
 
         const countOfPosts = await PostModel.countDocuments();
@@ -142,7 +140,7 @@ export class PostsRepositories {
                 const findUser = await LikeModelForPost.findOne({postId: c.id, userId: userId})
 
                 if (findUser) {
-                    c.extendedLikesInfo.myStatus = findUser.userStatus
+                    c.extendedLikesInfo.myStatus = findUser.likeStatus
                     return c
                 }
                 return c
@@ -178,23 +176,34 @@ export class PostsRepositories {
     //get post by ID
     async getPostById(postId: string, userId?: string | null) {
 
-        const post: PostsTypes<UserLikes> | null = await PostModel
+        const post1: PostsTypes<UserLikes> | null = await PostModel
             .findOne({id: postId})
-            .select('-_id -__v');
+            .select('-_id -__v').lean();
 
-        console.log(post)
+        const post = {...post1}
+
+        console.log(post, 'post')
 
         if (!post) return false;
-        post.extendedLikesInfo.newestLikes = await LikeModelForPost.find({
+        const newestLikes = await LikeModelForPost.find({
             postId,
-            userStatus: LikeStatusesEnum.Like
+            likeStatus: LikeStatusesEnum.Like
         }).sort({
             ['addedAt']: 'desc'
         }).select('-_id -__v').limit(3).lean()
+
+        console.log(newestLikes, 'newestLikes')
+
+        post.extendedLikesInfo!.newestLikes = newestLikes
         if(!userId) return post
-        const isUserLiked = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0})
+        const isUserLiked1 = await LikeModelForPost.findOne({userId: userId, postId: postId}, {_id: 0, __v: 0}).lean()
+
+        const isUserLiked = {...isUserLiked1}
+
+        console.log(isUserLiked, 'isUserLiked')
         if(!isUserLiked) return post
-        post.extendedLikesInfo.myStatus = isUserLiked.userStatus
+        if(!isUserLiked.likeStatus) return post
+        post.extendedLikesInfo!.myStatus = isUserLiked.likeStatus
         return post
 
 
