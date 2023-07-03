@@ -11,8 +11,7 @@ export class PostsService {
     constructor(protected postsRepositories : PostsRepositories) {}
 
     //return all posts
-    async allPosts(pagination: PaginationQueryTypeForPostsAndComments, userId: string | null) : Promise<OutputType<PostsTypes<UserLikes>[]>>
-    {
+    async allPosts(pagination: PaginationQueryTypeForPostsAndComments, userId: string | null) {
         return postsRepositories.allPosts(pagination, userId)
     }
 
